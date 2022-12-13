@@ -1,0 +1,151 @@
+import React from "react";
+import { View, Text, Image, ImageBackground, FlatList, TouchableOpacity,StatusBar } from 'react-native';
+import styles from './style'
+import { useNavigation } from '@react-navigation/native';
+import Back from "../../../assets/Svg/back.svg";
+import Recorder from "../../../assets/Svg/recorder.svg";
+import Forward from '../../../assets/Svg/forward.svg';
+import { useSelector, useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Storage from "../../../components/AsyncStorage";
+import Loader from "../../../components/Loader";
+
+const MyOrders = () => {
+    const navigation = useNavigation()
+    const selector = useSelector(state => state.OrderList)
+    const isFetching = useSelector(state => state.isFetching)
+    const dispatch = useDispatch()
+
+    const orderDetail = async (id) => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        dispatch({
+            type: 'Order_Detail_Request',
+            url: 'apiorder/orderinfo',
+            customer_id: customer_id,
+            order_id: id,
+            navigation: navigation
+        });
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+            {isFetching ? <Loader /> : null}
+            <ImageBackground style={{ padding: 6, flex: 1 }}
+                source={require('../../../assets/Icon/bg.png')}>
+                <View style={{ padding: 2 }}>
+                    <TouchableOpacity style={styles.arrow}
+                        onPress={() => navigation.goBack()}>
+                        <Back />
+                    </TouchableOpacity>
+                    <View style={styles.view2}>
+                        <Text style={styles.your}>Your Orders</Text>
+                    </View>
+                </View>
+                <View style={{ marginTop: 10 }}>
+                </View>
+                <View style={{}}>
+                    <FlatList
+                        data={selector}
+                        style={{ marginBottom: 60 }}
+                        renderItem={({ item }) => (
+                            <View style={{}}>
+                                <View style={styles.order}>
+                                    <View style={styles.hash}>
+                                        <Text style={styles.text}>{`#${item.order_id}`}</Text>
+                                        <TouchableOpacity onPress={() => orderDetail(item.order_id)}>
+                                            <Forward />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={[styles.row, { marginTop: 5 }]}>
+                                        <View>
+                                            <Text style={styles.from}>Ordered From</Text>
+                                        </View>
+                                        <View style={styles.row1}>
+                                            <Text style={styles.delivered}>{item.status}</Text>
+                                        </View>
+                                    </View>
+                                    <Text style={styles.delivered}>{item.store_name}</Text>
+                                    <FlatList
+                                      data={item.product_data}
+                                      renderItem={({item})=>(
+                                        <View style={[styles.cont, { marginTop: 12 }]}>
+                                        <View style={styles.view1}>
+                                            <View
+                                                style={styles.view}>
+                                                <View style={styles.square} />
+                                            </View>
+                                            <View style={{ marginLeft: 6, width: 38, height: 31, }}>
+                                                <Image style={{width: 38, height: 31, }} 
+                                                source={require('../../../assets/Logo/cake1.png')} />
+                                            </View>
+                                            <View style={{ marginTop: -12, marginLeft: 6 }}>
+                                                <Text style={styles.title}>{item.model}</Text>
+                                            </View>
+                                        </View>
+                                        <View style={[styles.rView]}>
+                                            <Text style={styles.rupay}>{`₹${(item.price)}`}</Text>
+                                        </View>
+                                    </View>
+                                      )}
+                                    />
+                                    <View style={{borderWidth:0.7,width:'16%',alignSelf:'flex-end',marginTop:-5,borderColor:'#000000'}}>
+
+                                    </View>
+                                    <View style={styles.row3}>
+                                        <Text style={styles.rupay}>{`₹${((item.product_data[0].price))}`}</Text>
+                                    </View>
+                                    <View style={styles.rest}>
+                                        <View>
+                                            <Text style={styles.rupay}>{item.date_added}</Text>
+                                        </View>
+                                        <TouchableOpacity
+
+                                            style={styles.main}>
+                                            <Recorder />
+                                            <Text style={styles.recover}>Reorder</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ height: 5 }} />
+                                </View>
+                            </View>
+                        )}
+                    />
+                </View>
+            </ImageBackground>
+            <StatusBar barStyle="dark-content" backgroundColor={'#fff'} />
+        </View>
+    )
+}
+export default MyOrders;
+
+const data = [
+    { image: require('../../../assets/Logo/cake1.png'), image1: require('../../../assets/Logo/test.png'), title: 'Pineapple Cake', title1: 'Hazelnut Truffle [1 Pc]', price: 290.00 },
+    { image: require('../../../assets/Logo/cake1.png'), image1: require('../../../assets/Logo/test.png'), title: 'Pineapple Cake', title1: 'Hazelnut Truffle [1 Pc]', price: 290.00 },
+
+]
+const pdata=[
+    {
+        "order_product_id": "182735",
+        "order_id": "2442",
+        "product_id": "303",
+        "name": "Test Product",
+        "model": "Chocolate Square",
+        "quantity": "1",
+        "price": "1.0000",
+        "total": "1.0000",
+        "tax": "0.0000",
+        "reward": "0"
+    },
+    {
+        "order_product_id": "182735",
+        "order_id": "2442",
+        "product_id": "303",
+        "name": "Test Product",
+        "model": "Chocolate Square",
+        "quantity": "1",
+        "price": "1.0000",
+        "total": "1.0000",
+        "tax": "0.0000",
+        "reward": "0"
+    }
+]
