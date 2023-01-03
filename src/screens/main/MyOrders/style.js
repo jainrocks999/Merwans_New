@@ -89,7 +89,6 @@ export default StyleSheet.create({
         paddingVertical:4
     },
     view2:{ 
-        marginTop: 0, 
         alignItems: 'center', 
         justifyContent: 'center', 
     },

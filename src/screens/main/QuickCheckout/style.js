@@ -230,7 +230,7 @@ export default StyleSheet.create({
     bottom: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 0
+        marginTop: 2
     },
     pri: { color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 13 },
     uri: {

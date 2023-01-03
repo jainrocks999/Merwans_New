@@ -53,7 +53,7 @@ export default StyleSheet.create({
         fontFamily:"Montserrat-SemiBold",
         fontSize:15,
         color:'#232323',
-        marginTop:4
+        marginLeft:5
     },
     title1:{
         fontFamily:"Montserrat-SemiBold",
@@ -177,7 +177,7 @@ export default StyleSheet.create({
     bottom1:{
         alignItems:'center',
         justifyContent:'center',
-        bottom:60,
+        bottom:15,
         position:'absolute',
         left:0,right:0
     },
@@ -199,7 +199,7 @@ export default StyleSheet.create({
         flexDirection:'row',
         justifyContent:'space-between',
         alignItems:'center',
-        width:'80%'
+        // width:'80%'
     },
     pl:{
         width:15,
@@ -337,6 +337,11 @@ export default StyleSheet.create({
         alignItems: 'center', 
         marginTop: 20 
     },
+    bests1:{ 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        marginTop: 0 
+    },
     pname:{ 
         flexDirection: 'row', 
         justifyContent: 'space-between', 
@@ -418,7 +423,7 @@ export default StyleSheet.create({
     },
     mod:{
         backgroundColor: '#FFF',
-        width: '66%',
+        width: '86%',
         alignSelf: 'center',
         elevation: 5,
         borderRadius: 20

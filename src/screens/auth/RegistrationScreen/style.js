@@ -83,7 +83,7 @@ export default StyleSheet.create({
     have: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft: 8
+        marginLeft: 4
     },
     read: {
         fontSize: 12,

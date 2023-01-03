@@ -89,7 +89,7 @@ export default StyleSheet.create({
     bottom:{ 
         flexDirection: 'row', 
         alignItems: 'center', 
-        marginTop: 0
+        marginTop: 2
     },
     pric:{ 
         color: '#000000', 

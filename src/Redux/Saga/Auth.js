@@ -9,6 +9,7 @@ function* doLogin(action) {
     try {
       const data = new FormData();
       data.append('email', action.email);
+      data.append('mobile', action.mobile);
       data.append('password',action.password)
       const response = yield call(Api.fetchDataByPOST, action.url, data);
       if (response.status == true) {
@@ -65,7 +66,7 @@ function* doRegister(action) {
       AsyncStorage.setItem(Storage.telephone,response.telephone)
       action.navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "Main" }],
       })
     } else {
       Toast.show(response.message);
@@ -121,7 +122,6 @@ function* editProfile(action) {
     data.append('telephone',action.telephone)
     data.append('email',action.email)
     data.append('customer_id',action.customer_id)
-    console.log('this is action data',action);
     const response = yield call(Api.fetchDataByPOST, action.url, data);
     console.log('this is user res1',response);
     if (response.status == true) {
@@ -129,14 +129,15 @@ function* editProfile(action) {
         type: 'Edit_Profile_Success',
         payload: response,
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
       AsyncStorage.setItem(Storage.firstname,response.user_data.firstname)
       AsyncStorage.setItem(Storage.lastname,response.user_data.lastname)
       AsyncStorage.setItem(Storage.email,response.user_data.email)
       AsyncStorage.setItem(Storage.telephone,response.user_data.telephone)
+      console.log('this is respponse userdata',response.user_data);
       action.navigation.push('MyAccountPage')
     } else {
-      Toast.show(response.message);
+      // Toast.show(response.message);
       yield put({
         type: 'Edit_Profile_Error',
       });
@@ -161,10 +162,15 @@ function* addressList(action) {
         type: 'Address_List_Success',
         payload: response.addresses,
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
+      if(action.from=='carts'){
+
+      }
+      else{
       action.navigation.navigate('MyAddress',{from:action.from});
+      }
     } else {
-      Toast.show(response.message);
+      // Toast.show(response.message);
       console.log('else block');
       yield put({
         type: 'Address_List_Error',
@@ -191,10 +197,10 @@ function* orderList(action) {
         type: 'Order_List_Success',
         payload: response.data,
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
       action.navigation.navigate('MyOrders');
     } else {
-      Toast.show(response.message);
+      // Toast.show(response.message);
       console.log('else block');
       yield put({
         type: 'Order_List_Error',
@@ -244,11 +250,12 @@ function* categoryList(action) {
       yield put({
         type: 'Category_List_Success',
         payload: response.products,
+        payload1:response.category
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
       action.navigation.navigate('CategoryList');
     } else {
-      Toast.show(response.message);
+      // Toast.show(response.message);
       console.log('else block');
       yield put({
         type: 'Category_List_Error',
@@ -307,9 +314,9 @@ function* addAddress(action) {
       yield put({
         type: 'Add_Address_Success',
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
     } else {
-      Toast.show(response.message);
+      // Toast.show(response.message);
       console.log('else block');
       yield put({
         type: 'Add_Address_Error',
@@ -382,10 +389,15 @@ function* orderDetail(action) {
 }
 
 function* addItemToCart(action) {
+  console.log('this is action option',action.option);
   try {
     const data = new FormData();
     data.append('customer_id',action.customer_id);
     data.append('product_id',action.product_id)
+    data.append('select_key',action.select_key)
+    data.append('select_value',action.select_value)
+    data.append('text_key',action.text_key)
+    data.append('text_value',action.text_value)
     data.append('quantity','1')
     data.append('api_token','')
     const response = yield call(Api.fetchDataByPOST, action.url, data);
@@ -396,7 +408,7 @@ function* addItemToCart(action) {
         // payload:response.data
       });
       // action.navigation.navigate('Payment')
-      Toast.show(response.message)
+      // Toast.show(response.message)
     } else {
       console.log('else block');
       yield put({
@@ -409,6 +421,43 @@ function* addItemToCart(action) {
     }
     yield put({
       type: 'Add_Item_Error',
+    });
+  }
+}
+
+function* addItemToCart1(action) {
+  console.log('this is action option',action.option);
+  try {
+    const data = new FormData();
+    data.append('customer_id',action.customer_id);
+    data.append('product_id',action.product_id)
+    data.append('select_key',action.select_key)
+    data.append('select_value',action.select_value)
+    data.append('text_key',action.text_key)
+    data.append('text_value',action.text_value)
+    data.append('quantity','1')
+    data.append('api_token','')
+    const response = yield call(Api.fetchDataByPOST, action.url, data);
+    console.log('response block',response);
+    if (response.status == true) {
+      yield put({
+        type: 'Add_Item_Success1',
+        // payload:response.data
+      });
+      // action.navigation.navigate('Payment')
+      // Toast.show(response.message)
+    } else {
+      console.log('else block');
+      yield put({
+        type: 'Add_Item_Error1',
+      });
+    }
+  } catch (error) {
+    console.log('catch block');
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Add_Item_Error1',
     });
   }
 }
@@ -507,6 +556,7 @@ function* getAddress1(action) {
         payload:response.data
       });
       action.navigation.navigate('Payment')
+      AsyncStorage.setItem("Address_id",action.address_id)
     } else {
       console.log('else block');
       yield put({
@@ -533,7 +583,7 @@ function* wishlist(action) {
         type: 'Wish_List_Success',
         payload:response.products
       });
-      action.navigation.navigate('Whish')
+      action.navigation.push('Whish')
     } else {
       console.log('else block');
       yield put({
@@ -560,7 +610,7 @@ function* removewishlist(action) {
       yield put({
         type: 'Wish_Remove_Success',
       });
-      Toast.show(response.message)
+      // Toast.show(response.message)
       action.navigation.navigate('Whish')
     } else {
       console.log('else block');
@@ -589,7 +639,7 @@ function* addWish(action) {
         type: 'Add_Wish_Success',
         payload:response.products
       });
-      Toast.show(response.message)
+      // Toast.show(response.message)
       // action.navigation.navigate('Whish')
     } else {
       console.log('else block');
@@ -603,6 +653,188 @@ function* addWish(action) {
     }
     yield put({
       type: 'Add_Wish_Error',
+    });
+  }
+}
+
+
+function* about(action) {
+  try {
+    const response = yield call(Api.fetchDataByGET, action.url);
+    if (response) {
+      yield put({
+        type: 'About_Us_Success',
+        payload: response.description,
+      });
+      action.navigation.navigate('About')
+    } else {
+      // Toast.show(response.messages)
+      yield put({
+        type: 'About_Us_Error',
+      });
+    }
+  } catch (error) {
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'About_Us_Error',
+    });
+  }
+}
+function* policy(action) {
+  try {
+    const response = yield call(Api.fetchDataByGET, action.url);
+    if (response) {
+      yield put({
+        type: 'Privacy_Policy_Success',
+        payload: response.description,
+      });
+      action.navigation.navigate('Privacy')
+    } else {
+      // Toast.show(response.messages)
+      yield put({
+        type: 'Privacy_Policy_Error',
+      });
+    }
+  } catch (error) {
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Privacy_Policy_Error',
+    });
+  }
+}
+
+function* policy1(action) {
+  try {
+    const response = yield call(Api.fetchDataByGET, action.url);
+    if (response) {
+      yield put({
+        type: 'Privacy_Policy_Success1',
+        payload: response.description,
+      });
+    } else {
+      // Toast.show(response.messages)
+      yield put({
+        type: 'Privacy_Policy_Error1',
+      });
+    }
+  } catch (error) {
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Privacy_Policy_Error1',
+    });
+  }
+}
+
+
+function* term(action) {
+  try {
+    const response = yield call(Api.fetchDataByGET, action.url);
+    if (response) {
+      yield put({
+        type: 'Term_Condition_Success',
+        payload: response.description,
+      });
+      action.navigation.navigate('Term')
+    } else {
+      // Toast.show(response.messages)
+      yield put({
+        type: 'Term_Condition_Error',
+      });
+    }
+  } catch (error) {
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Term_Condition_Error',
+    });
+  }
+}
+
+function* resetPass(action) {
+  try {
+    const data = new FormData();
+    data.append('email',action.email)
+    const response = yield call(Api.fetchDataByPOST, action.url, data);
+    if (response.status == true) {
+      yield put({
+        type: 'Reset_Pass_Success',
+      });
+      Toast.show(response.message)
+      action.navigation.navigate('Otp',{
+        customer_id:response.customer_id,
+        otp:response.otp
+      })
+    } else {
+      console.log('else block');
+      yield put({
+        type: 'Reset_Pass_Error',
+      });
+    }
+  } catch (error) {
+    // console.log('catch block');
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Reset_Pass_Error',
+    });
+  }
+}
+
+function* changePassword(action) {
+  try {
+    const data = new FormData();
+    data.append('password',action.password)
+    data.append('customer_id',action.customer_id)
+    const response = yield call(Api.fetchDataByPOST, action.url, data);
+    if (response.status == true) {
+      yield put({
+        type: 'Change_Pass_Success',
+      });
+      Toast.show(response.message)
+      action.navigation.navigate('Login')
+    } else {
+      console.log('else block');
+      yield put({
+        type: 'Change_Pass_Error',
+      });
+    }
+  } catch (error) {
+    // console.log('catch block');
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Change_Pass_Error',
+    });
+  }
+}
+
+function* addLat(action) {
+  try {
+    const data = new FormData();
+    data.append('address_id',action.address_id)
+    data.append('latitude',action.lat)
+    data.append('longitude',action.long)
+    const response = yield call(Api.fetchDataByPOST, action.url, data);
+    if (response.status == true) {
+      yield put({
+        type: 'Add_Lat_Success',
+      });
+      // Toast.show(response.message)
+    } else {
+      console.log('else block');
+      yield put({
+        type: 'Add_Lat_Error',
+      });
+    }
+  } catch (error) {
+    // console.log('catch block');
+    if (error.message == 'Network Error') {
+    }
+    yield put({
+      type: 'Add_Lat_Error',
     });
   }
 }
@@ -621,6 +853,7 @@ export default function* authSaga() {
   yield takeEvery('Order_List_Request',orderList)
   yield takeEvery('Order_Detail_Request',orderDetail)
   yield takeEvery('Add_Item_Request',addItemToCart)
+  yield takeEvery('Add_Item_Request1',addItemToCart1)
   yield takeEvery('Shipping_List_Request',shipping)
   yield takeEvery('Time_Drop_Request',timeDrop)
   yield takeEvery('Get_Address_Request',getAddress)
@@ -628,8 +861,13 @@ export default function* authSaga() {
   yield takeEvery('Wish_List_Request',wishlist)
   yield takeEvery('Wish_Remove_Request',removewishlist)
   yield takeEvery('Add_Wish_Request',addWish)
-
-
-
+  yield takeEvery('About_Us_Request',about)
+  yield takeEvery('Privacy_Policy_Request',policy)
+  yield takeEvery('Privacy_Policy_Request1',policy1)
+  yield takeEvery('Term_Condition_Request',term)
+  yield takeEvery('Reset_Pass_Request',resetPass)
+  yield takeEvery('Change_Pass_Request',changePassword)
+  yield takeEvery('Add_Lat_Request',addLat)
 }
 // navigation.navigate('Feedback')
+// navigation.navigate('About')

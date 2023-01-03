@@ -19,8 +19,9 @@ import Toast from "react-native-simple-toast";
 import Loader from "../../../components/Loader";
 import SelectDropdown from 'react-native-select-dropdown'
 import { ScrollView } from "react-native-gesture-handler";
-import {FlatListSlider} from 'react-native-flatlist-slider';
+import { FlatListSlider } from 'react-native-flatlist-slider';
 import Banner from "../../../components/Banner";
+
 
 const HomeScreen = () => {
     const navigation = useNavigation()
@@ -32,27 +33,28 @@ const HomeScreen = () => {
     const [visible, setVisible] = useState(false)
     const [state, setState] = useState(0)
     const [location, setLocation] = useState('Select Store')
-  
-    useEffect(async() => {
-        const data=await AsyncStorage.getItem(Storage.location)
-         data==null? setVisible(true):setVisible(false)
-         setState(data)
-         setLocation(data)
-    },[])
-    useEffect(async()=>{
-        const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+
+    useEffect(async () => {
+        const data = await AsyncStorage.getItem(Storage.location)
+        data == null ? setVisible(true) : setVisible(false)
+        setState(data)
+        setLocation(data)
+    }, [])
+    useEffect(async () => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const address_id = await AsyncStorage.getItem("Address_id")
         dispatch({
             type: 'Menu_List_Request',
             url: 'apiproduct/menuSubmenuList',
-          });
-          dispatch({
+        });
+        dispatch({
             type: 'Get_Address_Request',
             url: 'apiorder/addressById',
-            customer_id:customer_id,
+            customer_id: customer_id,
             address_id:0
-          });
-    },[])
-
+        });
+    }, [])
+// address_id==null?0:address_id
 
     const handleLocation = () => {
         if (state == 0) {
@@ -60,9 +62,9 @@ const HomeScreen = () => {
         }
         else {
             for (let index = 0; index < selector.length; index++) {
-                 if(state==selector[index].label){
-                  AsyncStorage.setItem(Storage.store_id,selector[index].store_id)
-                 }    
+                if (state == selector[index].label) {
+                    AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
+                }
             }
             setVisible(false)
             setLocation(state)
@@ -135,7 +137,7 @@ const HomeScreen = () => {
         }
     };
 
-    
+
     return (
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
@@ -166,27 +168,27 @@ const HomeScreen = () => {
                     >
                         {images.map((image, index) => renderPage(image, index))}
                     </Carousel> */}
-                    <FlatListSlider 
-                        data={images5} 
+                    <FlatListSlider
+                        data={images5}
                         imageKey={'banner'}
                         local
-                        width= {BannerWidth}
-                        height= {BannerHeight}
-                        contentContainerStyle={{paddingHorizontal: 0}}
-                        indicatorContainerStyle={{position:'absolute', bottom: 5,}}
+                        width={BannerWidth}
+                        height={BannerHeight}
+                        contentContainerStyle={{ paddingHorizontal: 0 }}
+                        indicatorContainerStyle={{ position: 'absolute', bottom: 5, }}
                         indicatorActiveColor={'#ED1B1A'}
                         indicatorInActiveColor={'#737373'}
                         loop={false}
                         autoscroll={false}
-                        // animation
+                    // animation
                     />
                 </View>
-                <ImageBackground source={require('../../../assets/Icon/bg.png')} 
-                style={{ backgroundColor: '#fff', paddingBottom: 11,  }}>
-                    <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: 5 }}>
+                <ImageBackground source={require('../../../assets/Icon/bg.png')}
+                    style={{ backgroundColor: '#fff', paddingBottom: 11, }}>
+                    <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: 2 }}>
                         <Text style={{ color: '#ED1B1A', fontFamily: 'Montserrat-Bold', fontSize: 22 }}>Merwans Special</Text>
                     </View>
-                    <View style={{ paddingHorizontal: 10, marginBottom: 25}}>
+                    <View style={{ paddingHorizontal: 10, marginBottom: 25 }}>
                         {/* <Carousel
                             autoplay={false}
                             autoplayTimeout={5000}
@@ -200,21 +202,21 @@ const HomeScreen = () => {
                         >
                             {images1.map((image, index) => renderPage1(image, index))}
                         </Carousel> */}
-                        <FlatListSlider 
-                        data={images5} 
-                        imageKey={'banner'}
-                        local
-                        width= {BannerWidth}
-                        height= {BannerHeight}
-                        contentContainerStyle={{paddingHorizontal: 0}}
-                        indicatorContainerStyle={{position:'absolute', bottom: -15}}
-                        indicatorActiveColor={'#ED1B1A'}
-                        indicatorInActiveColor={'#737373'}
-                        component={<Banner/>}
-                        loop={false}
-                        autoscroll={false}
+                        <FlatListSlider
+                            data={images5}
+                            imageKey={'banner'}
+                            local
+                            width={BannerWidth}
+                            height={BannerHeight}
+                            contentContainerStyle={{ paddingHorizontal: 0 }}
+                            indicatorContainerStyle={{ position: 'absolute', bottom: -15 }}
+                            indicatorActiveColor={'#ED1B1A'}
+                            indicatorInActiveColor={'#737373'}
+                            component={<Banner />}
+                            loop={false}
+                            autoscroll={false}
                         // animation
-                    />
+                        />
                     </View>
                 </ImageBackground>
                 <View style={{ backgroundColor: '#E2E2E2' }}>
@@ -338,7 +340,12 @@ const HomeScreen = () => {
 
             </ScrollView>
             <View>
-                <BottomTab />
+                <BottomTab 
+                home={true}
+                search={false}
+                cart={false}
+                profile={false}
+                />
             </View>
             <Modal
                 isVisible={visible}
@@ -468,13 +475,13 @@ const images1 = [
 
 const images5 = [
     {
-     banner:require('../../../assets/Logo/banner.png'),
-    
-    },
-   {
-     banner:require('../../../assets/Logo/banner.png'),
+        banner: require('../../../assets/Logo/banner.png'),
+
     },
     {
-     banner:require('../../../assets/Logo/banner.png'),
+        banner: require('../../../assets/Logo/banner.png'),
+    },
+    {
+        banner: require('../../../assets/Logo/banner.png'),
     }
-   ]
+]

@@ -4,7 +4,9 @@ import Navigation from './src/navigation/index';
 import { Provider } from 'react-redux';
 import Store from './src/Redux/Store';
 import { NativeBaseProvider, Box ,} from "native-base";
+import {enableLatestRenderer} from 'react-native-maps';
 
+enableLatestRenderer();
 const App = () => {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreLogs(['new NativeEventEmitter']);

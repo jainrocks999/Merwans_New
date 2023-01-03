@@ -54,5 +54,21 @@ export default StyleSheet.create({
         fontFamily:'Montserrat-Regular',
         color:'#000000',
         marginLeft:3
-    }
+    },
+    btns:{
+        width: '100%',
+        backgroundColor: '#ED1B1A',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        elevation: 3,
+        marginTop: 10,
+        justifyContent: 'center',
+        height: 38
+    },
+    pro:{
+        color: "#fff",
+        fontFamily: 'Montserrat-Bold',
+        fontSize: 16
+    },
 })

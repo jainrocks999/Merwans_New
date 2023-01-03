@@ -18,7 +18,7 @@ function MyDrawer() {
         <Drawer.Screen name="Payment" component={PaymentPage}/>
         <Drawer.Screen name="ProfileWithLogin" component={ProfileWithLogin}/>
         <Drawer.Screen name="Quick" component={QuickCheckout}/>
-        <Drawer.Screen name="Whish" component={Whishlist}/>
+       
     </Drawer.Navigator>
   );
 

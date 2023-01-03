@@ -13,13 +13,36 @@ const OrderDetail = () => {
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
-                <View style={{ padding: 8 }}>
+                {/* <View style={{ padding: 8 }}>
                     <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
                         <Back />
                     </TouchableOpacity>
                     <View style={styles.title1}>
                         <Text style={styles.tag}>Order Detail</Text>
                     </View>
+                </View> */}
+                   <View style={{
+                    flexDirection:'row',
+                    justifyContent:'space-between',
+                    alignItems:'center',
+                    backgroundColor:'#232323',
+                    height:40
+                     }}>
+                    <TouchableOpacity style={{
+        paddingHorizontal:10,
+        paddingVertical:8,
+        paddingRight:30
+    }}
+                        onPress={() => navigation.goBack()}>
+                        <Back />
+                    </TouchableOpacity>
+                    <View style={{ alignItems: 'center', 
+        justifyContent: 'center', }}>
+                        <Text style={{color: '#ED1B1A', 
+        fontFamily: 'Montserrat-Bold', 
+        fontSize: 20 }}>Order Detail</Text>
+                    </View>
+                    <View style={{width:40}}/>
                 </View>
 
                 <View style={{ paddingHorizontal: 5 }}>
@@ -80,7 +103,7 @@ const OrderDetail = () => {
                 </View>
 
             </ImageBackground>
-            <StatusBar barStyle="dark-content" backgroundColor={'#fff'} />
+            <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
     )
 }

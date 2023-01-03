@@ -49,7 +49,7 @@ export default StyleSheet.create({
         fontFamily:"Montserrat-SemiBold",
         fontSize:15,
         color:'#232323',
-        marginTop:4
+       
     },
     title1:{
         fontFamily:"Montserrat-SemiBold",
@@ -236,7 +236,7 @@ export default StyleSheet.create({
         fontFamily:"Montserrat-SemiBold",
         fontSize:15,
         color:'#232323',
-        marginTop:4
+        // marginTop:4
     },
     title1:{
         fontFamily:"Montserrat-SemiBold",
@@ -519,6 +519,11 @@ export default StyleSheet.create({
         flexDirection: 'row', 
         alignItems: 'center', 
         marginTop: 20 
+    },
+    bests1:{ 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        // marginTop: 20 
     },
     pname:{ 
         flexDirection: 'row', 

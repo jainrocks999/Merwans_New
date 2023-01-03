@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity,StatusBar } from "react-native";
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
-import Back from "../../../assets/Svg/back.svg";
+import Back from "../../../assets/Svg/back1.svg";
 import Edit from '../../../assets/Svg/edit.svg';
 import List from "../../../assets/Svg/check-list.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -33,7 +33,7 @@ const MyAccountPage = () => {
             <ImageBackground style={{ padding: 8 }}
                 source={require('../../../assets/Icon/bg1.png')}>
                 <TouchableOpacity style={styles.arrow}
-                    onPress={() => navigation.goBack()}>
+                    onPress={() => navigation.navigate('ProfileWithLogin')}>
                     <Back />
                 </TouchableOpacity>
                 <View>

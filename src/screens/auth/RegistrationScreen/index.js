@@ -9,9 +9,13 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Checkbox } from "native-base";
+import { Checkbox, } from "native-base";
 import Loader from "../../../components/Loader";
-
+import Dialog, {DialogContent} from 'react-native-popup-dialog'
+import HTMLView from "react-native-htmlview";
+import Multi from "../../../assets/Svg/multi.svg";
+import Toast from "react-native-simple-toast";
+import CheckBox from '@react-native-community/checkbox';
 const loginValidationSchema = yup.object().shape({
   fname: yup
     .string()
@@ -52,8 +56,14 @@ const RegistrationScreen = () => {
   const [visible, setVisible] = useState(true)
   const [visible1, setVisible1] = useState(true)
   const isFetching = useSelector(state => state.isFetching)
+  const selector1 = useSelector(state => state.Policy1)
+  const [showModal, setShowModal] = useState(false);
+  const [policy,setPolicy]=useState(false)
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  console.log('this is policy valu',policy);
 
   const validateUser = (values) => {
+    if(toggleCheckBox){
     dispatch({
       type: 'User_Register_Request',
       url: 'api/register',
@@ -64,6 +74,10 @@ const RegistrationScreen = () => {
       password: values.password,
       navigation: navigation
     });
+  }
+  else{
+    Toast.show('Please accept Privacy Policy');
+  }
   }
 
   const showVisible = () => {
@@ -138,7 +152,7 @@ const RegistrationScreen = () => {
                     </View>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                       <Text style={styles.here}>Login here</Text>
-                      <View style={{borderWidth:0.5,borderColor:'#000000'}}/>
+                      <View style={{borderBottomWidth:1,borderColor:'#000000',}}/>
                     </TouchableOpacity>
                   </View>
                   <View style={{ paddingHorizontal: 45, marginTop: 17 }}>
@@ -248,19 +262,23 @@ const RegistrationScreen = () => {
                     </View>
                   </View>
                   <View style={styles.space}>
-                    <Checkbox
-                      value="red"
-                      size="sm"
-                      defaultIsChecked={false}
-                      colorScheme='green'
+                  <CheckBox
+                      disabled={false}
+                      value={toggleCheckBox}
+                      onValueChange={newValue => setToggleCheckBox(newValue)}
+                      tintColors={{true: '#ED1B1A', false: 'grey'}}
+                      onTintColor='#ED1B1A'
+                      onCheckColor='#ED1B1A'
+                      boxType='square'
+                      style={{height:16,width:18}}
                     />
                     <View style={styles.have}>
                       <Text style={styles.read}>{'I have read and agree to the '}
                       </Text>
-                      <View>
+                      <TouchableOpacity onPress={()=>setShowModal(true)}>
                       <Text style={styles.policy}>Privacy Policy</Text>
-                      <View style={{borderWidth:0.5,borderColor:'#000000'}}/>
-                      </View>
+                      <View style={{borderBottomWidth:1,borderColor:'#000000',}}/>
+                      </TouchableOpacity>
                     </View>
                   </View>
                   <View style={styles.bView}>
@@ -273,6 +291,36 @@ const RegistrationScreen = () => {
                 </View>
               </KeyboardAwareScrollView>
             </ScrollView>
+            <Dialog
+            dialogStyle={{
+              width: '95%',
+              paddingHorizontal: 0,
+              height: '90%',
+              paddingTop: 10,
+            }}
+            visible={showModal}
+            onHardwareBackPress={() => setShowModal(false)}>
+            <DialogContent>
+              <View style={{alignSelf: 'flex-end', padding: -20}}>
+                <TouchableOpacity
+                  delayPressIn={0}
+                  onPress={() => setShowModal(false)}
+                  style={styles.cross}>
+                 <Multi/>
+                </TouchableOpacity>
+              </View>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={{marginBottom: 30}}>
+                  <HTMLView
+                    value={selector1
+                      .trim()
+                      .replace(new RegExp('<p>', 'g'), '<span>')}
+                    addLineBreaks={false}
+                  />
+                </View>
+              </ScrollView>
+            </DialogContent>
+          </Dialog>
             <View style={styles.bottom}>
             </View>
           </ImageBackground>

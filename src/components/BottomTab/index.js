@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import {Image, View, TouchableOpacity, Text} from 'react-native';
 import styles from './style';
 import {useNavigation} from '@react-navigation/native';
@@ -7,14 +7,26 @@ import Search from "../../assets/Svg/search.svg";
 import Shopping from "../../assets/Svg/shopping-bag.svg";
 import User from "../../assets/Svg/user.svg";
 
-const BottomTab = () => {
+const BottomTab = ({home,search,cart,profile}) => {
   const navigation = useNavigation();
+  const handlePress=()=>{
+    navigation.navigate('Home');
+  }
+  const handlePress1=()=>{
+    navigation.navigate('SecondSearch');
+  }
+  const handlePress2=()=>{
+    navigation.navigate('Payment')
+  }
+  const handlePress3=()=>{
+    navigation.navigate('ProfileWithLogin');
+  }
 
   const renderHome = () => {
     return (
       <View style={styles.container}>
-        <View >
-          <Home/>
+        <View style={{backgroundColor:home==true?'#808080':'#232323',borderRadius:20,padding:3}}>
+          <Home height={18} width={18}/>
         </View>
         <Text style={[styles.text, {marginTop: 0}]}>{'Home'}</Text>
       </View>
@@ -24,8 +36,8 @@ const BottomTab = () => {
   const renderBank = () => {
     return (
       <View style={styles.container}>
-        <View >
-         <Search/>
+        <View style={{backgroundColor:search==true?'#808080':'#232323',borderRadius:20,padding:3}}>
+         <Search height={18} width={18}/>
         </View>
         <Text style={[styles.text]}>{'Search'}</Text>
       </View>
@@ -34,8 +46,8 @@ const BottomTab = () => {
   const renderKnowledge = () => {
     return (
       <View style={styles.container}>
-        <View >
-           <Shopping/>
+        <View style={{backgroundColor:cart==true?'#808080':'#232323',borderRadius:20,padding:3}}>
+           <Shopping height={18} width={18}/>
         </View>
         <Text style={styles.text}>{'Cart'}</Text>
       </View>
@@ -44,8 +56,9 @@ const BottomTab = () => {
   const renderTrending = () => {
     return (
       <View style={styles.container}>
-        <View >
-           <User/>
+        <View style={{backgroundColor:profile==true?'#808080':'#232323',borderRadius:20,padding:3}}>
+
+           <User height={18} width={18}/>
         </View>
         <Text style={styles.text}>{'Profile'}</Text>
       </View>
@@ -56,34 +69,28 @@ const BottomTab = () => {
       <TouchableOpacity
         delayPressIn={0}
         style={styles.bottomTabContainer}
-        onPress={() => {
-          navigation.navigate('Home');
-        }}>
+        onPress={() => handlePress()}>
         {renderHome()}
       </TouchableOpacity>
 
       <TouchableOpacity
         delayPressIn={0}
         style={styles.bottomTabContainer}
-        onPress={() => {
-          navigation.navigate('SecondSearch');
-        }}>
+        onPress={() => handlePress1()}>
         {renderBank()}
       </TouchableOpacity>
 
       <TouchableOpacity
         delayPressIn={0}
         style={styles.bottomTabContainer}
-        onPress={() => navigation.navigate('Payment')}>
+        onPress={() => handlePress2()}>
         {renderKnowledge()}
       </TouchableOpacity>
 
       <TouchableOpacity
         delayPressIn={0}
         style={styles.bottomTabContainer}
-        onPress={() => {
-          navigation.navigate('ProfileWithLogin');
-        }}>
+        onPress={() => handlePress3()}>
         {renderTrending()}
       </TouchableOpacity>
     </View>

@@ -75,7 +75,7 @@
 
 // ]
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, FlatList, TextInput, TouchableOpacity, ScrollView, Dimensions, StatusBar,Platform } from "react-native";
+import { View, Text, Image, FlatList, TextInput, TouchableOpacity, ScrollView, Dimensions, StatusBar, Platform, ImageBackground } from "react-native";
 import Stars from "react-native-stars";
 import styles from "./style";
 import SwipeablePanel from 'react-native-sheets-bottom';
@@ -87,7 +87,7 @@ import Full from "../../../assets/Svg/fullStar.svg";
 import Blank from "../../../assets/Svg/blankStar.svg";
 import Heart from "../../../assets/Svg/heart.svg";
 import Poly from "../../../assets/Svg/poly.svg";
-import { useSelector ,useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import Loader from "../../../components/Loader";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -99,7 +99,7 @@ import Done from '../../../assets/Svg/Done.svg';
 const CategoryList = () => {
   const [openPanel, setOpenPanel] = useState(false)
   const navigation = useNavigation()
-  const dispatch=useDispatch()
+  const dispatch = useDispatch()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [pref, setPref] = useState('checked');
   const [msg, setMsg] = useState('unchecked')
@@ -107,7 +107,7 @@ const CategoryList = () => {
   const [gram, setGram] = useState('unchecked')
   const [cake, setCake] = useState(false)
   const selector = useSelector(state => state.CategoryList)
-  const isFetching1=useSelector(state=>state.isFetching)
+  const isFetching1 = useSelector(state => state.isFetching)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)
@@ -116,33 +116,33 @@ const CategoryList = () => {
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState();
   const [masterDataSource, setMasterDataSource] = useState();
-  const [data1,setData1]=useState([])
+  const [data1, setData1] = useState([])
 
-  const searchFilterFunction = async(text) => {
+  const searchFilterFunction = async (text) => {
     try {
-        const data = new FormData();
-        data.append('search',text);
-        setSearch(text)
-        const response = await axios({
-            method: 'POST',
-            data,
-            headers: {
-                'content-type': 'multipart/form-data',
-                Accept: 'multipart/form-data',
-            },
-            url: 'https://merwans.co.in/index.php?route=api/apiproduct/search',
-        });
+      const data = new FormData();
+      data.append('search', text);
+      setSearch(text)
+      const response = await axios({
+        method: 'POST',
+        data,
+        headers: {
+          'content-type': 'multipart/form-data',
+          Accept: 'multipart/form-data',
+        },
+        url: 'https://merwans.co.in/index.php?route=api/apiproduct/search',
+      });
 
-        if (response.data) {
-            setData1(response.data.products)
-            setSearch(text)
-        }
-        else {
-            setFetching(false)
-            setSearch(text);
-        }
-    } catch (error) {
+      if (response.data) {
+        setData1(response.data.products)
+        setSearch(text)
+      }
+      else {
         setFetching(false)
+        setSearch(text);
+      }
+    } catch (error) {
+      setFetching(false)
     }
     // if (text) {
     //   const newData = masterDataSource.filter(function (item) {
@@ -192,14 +192,14 @@ const CategoryList = () => {
       throw error;
     }
   };
-  const addItemToCart=async()=>{
-    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+  const addItemToCart = async () => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     dispatch({
       type: 'Add_Item_Request',
       url: 'apiorder/add_to_cart',
-      customer_id:customer_id,
-      product_id:product.product_id,
-      navigation:navigation
+      customer_id: customer_id,
+      product_id: product.product_id,
+      navigation: navigation
     });
   }
 
@@ -219,48 +219,48 @@ const CategoryList = () => {
     setGram('unchecked')
     setKg('checked')
   }
-  const version=Platform.OS
+  const version = Platform.OS
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      {isFetching||isFetching1 ? <Loader /> : null}
+      {isFetching || isFetching1 ? <Loader /> : null}
       <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
-                     <View style={styles.container}>
-                         <View style={styles.container1}>
-                         <Search1 />
-                         <TextInput
-                             placeholder="Cakes"
-                             style={styles.search}
-                             placeholderTextColor={'#000000'}
-                             onChangeText={val => searchFilterFunction(val)}
-                             value={search}
-                             returnKeyType="done"
-                         />
-                         </View>
-                         {search ? (
-                        <TouchableOpacity
-                            delayPressIn={0}
-                            onPress={() => handleSearch()}
-                            style={{
-                            backgroundColor: '#ED1717',
-                            borderRadius: 15,
-                            justifyContent: 'center',
-                            height: 30,
-                            width: 30,
-                            alignItems: 'center',
-                            }}>
-                            <Text
-                            style={{
-                                marginRight: 10,
-                                color: '#fff',
-                                marginLeft: 10,
-                                marginBottom: 3,
-                            }}>
-                            x
-                            </Text>
-                        </TouchableOpacity>
-                        ) : null}
-                     </View>
-                 </View>
+        <View style={styles.container}>
+          <View style={styles.container1}>
+            <Search1 />
+            <TextInput
+              placeholder="Cakes"
+              style={styles.search}
+              placeholderTextColor={'#000000'}
+              onChangeText={val => searchFilterFunction(val)}
+              value={search}
+              returnKeyType="done"
+            />
+          </View>
+          {search ? (
+            <TouchableOpacity
+              delayPressIn={0}
+              onPress={() => handleSearch()}
+              style={{
+                backgroundColor: '#ED1717',
+                borderRadius: 15,
+                justifyContent: 'center',
+                height: 30,
+                width: 30,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  marginRight: 10,
+                  color: '#fff',
+                  marginLeft: 10,
+                  marginBottom: 3,
+                }}>
+                x
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: 10 }}>
           <View>
@@ -361,7 +361,9 @@ const CategoryList = () => {
               contentContainerStyle={{ flex: 1 }}>
               <View />
               <View />
-              <View style={{ backgroundColor: '#fff', padding: 10, height: msg == 'checked' ?  600 : 700 }}>
+              <ImageBackground
+                source={require('../../../assets/Icon/bg.png')}
+                style={{ backgroundColor: '#fff', padding: 10, height: msg == 'checked' ? 600 : 700 }}>
 
                 <View style={styles.thumb}>
                   <Image style={styles.url}
@@ -415,7 +417,7 @@ const CategoryList = () => {
                         fontSize: 10,
                       }}>{'Preference & Size'}</Text>
                       <View >
-                      {pref == 'checked' ? <RadioButton
+                        {pref == 'checked' ? <RadioButton
                           value="checked"
                           status={pref}
                           uncheckedColor='#ED1B1A'
@@ -457,7 +459,7 @@ const CategoryList = () => {
                           marginLeft: 20
                         }}>{'Message'}</Text>
                       <View style={{}}>
-                      {msg == 'checked' ? <RadioButton
+                        {msg == 'checked' ? <RadioButton
                           value="first"
                           status={msg}
                           onPress={() => manageMsg()}
@@ -533,7 +535,7 @@ const CategoryList = () => {
                           style={styles.row}>
                           <Text style={styles.gram}>500  grams</Text>
                           <View style={{ marginLeft: 10 }}>
-                          {gram == 'checked' ? <RadioButton
+                            {gram == 'checked' ? <RadioButton
                               value="first"
                               status={gram}
                               onPress={() => manageGram()}
@@ -565,7 +567,7 @@ const CategoryList = () => {
                           style={styles.row}>
                           <Text style={styles.gram}>1  KG</Text>
                           <View style={{ marginLeft: 10 }}>
-                          {kg == 'checked' ? <RadioButton
+                            {kg == 'checked' ? <RadioButton
                               value="first"
                               status={kg}
                               onPress={() => manageKg()}
@@ -616,18 +618,23 @@ const CategoryList = () => {
                   </TouchableOpacity>
                 </View>
 
-              </View>
+              </ImageBackground>
 
-              <View style={{ height: 100 }} />
+              {/* <View style={{ height: 100 }} /> */}
             </KeyboardAwareScrollView>
           </ScrollView>
         </View>
       </SwipeablePanel>
       <View style={styles.bot}>
-        <BottomTab />
+        <BottomTab 
+        home={false}
+        search={true}
+        cart={false}
+        profile={false}
+        />
       </View>
-      
-      <StatusBar backgroundColor={'#fff'} barStyle="dark-content"/>
+
+      <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
     </View>
   )
 }
@@ -635,12 +642,12 @@ export default CategoryList
 
 
 const data = [
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
-    { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') }
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') },
+  { name: 'Black Forest', review: '142 Reviews', price: '₹70.00', description: 'Evergreen  Red Velvet pastries It is a long established fact.', image: require('../../../assets/Logo/redv.png') }
 ]
 
 

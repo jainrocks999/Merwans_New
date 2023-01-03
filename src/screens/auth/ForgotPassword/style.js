@@ -61,5 +61,18 @@ export default StyleSheet.create({
         fontSize: 18, 
         color: '#FFFFFF', 
         fontFamily: 'Montserrat-bold', 
-    }
+    },
+    error:
+    {
+        width:'90%',
+        justifyContent:'center',
+        alignItems:'flex-start',
+        paddingHorizontal:8,
+        marginTop:6
+    },
+    warn:
+    {
+        fontSize:12,
+        color:'#ED1B1A'
+    },
 })

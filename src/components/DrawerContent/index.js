@@ -37,19 +37,21 @@ const Drawer=()=>{
      
       return (
         <View>
-          <TouchableOpacity activeOpacity={0.8}  onPress={onClickFunction} style={[styles.cmn]}>
-                <View 
-                // activeOpacity={0.8} onPress={()=>manageData(item.category_id)}
+          <View 
+          // activeOpacity={0.8}  onPress={onClickFunction} 
+          style={[styles.cmn]}>
+                <TouchableOpacity 
+                activeOpacity={0.8} onPress={()=>manageData(item.category_id)}
                 >
-                <Text style={styles.home}>{item.name}</Text>
-                </View>
+                <Text style={[styles.home,{textTransform:'uppercase'}]}>{(item.name)}</Text>
+                </TouchableOpacity>
                 {visible? handleSubCategory(item):<View/>}
-                <View 
-               
+                <TouchableOpacity 
+               activeOpacity={0.8}  onPress={onClickFunction} 
                 style={{paddingHorizontal:6,paddingVertical:5}}>
                { layoutHeight==0?<Plus/>:<Minus/>}
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </View>
           <View
             style={{
               height: layoutHeight,
@@ -60,8 +62,8 @@ const Drawer=()=>{
             {item.submenus.map((item, key) => (
             <TouchableOpacity 
             onPress={()=>manageData(item.category_id)} 
-            style={styles.margin}>
-              <Text style={styles.item}>{item.name}</Text>
+            style={[styles.margin,{width:'90%'}]}>
+              <Text style={[styles.item,{textTransform:'uppercase'}]}>{item.name}</Text>
               <View style={styles.round2}>
                 <Text style={styles.num}>{item.productCount}</Text>
               </View>
@@ -103,7 +105,7 @@ const Drawer=()=>{
           <TouchableOpacity 
           onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}
           >
-             <Text style={[styles.home,{marginBottom:4}]}>Home</Text>
+             <Text style={[styles.home,{marginBottom:4,textTransform:'uppercase'}]}>Home</Text>
           </TouchableOpacity>
            <View>
            {selector.map((item, key) => (
@@ -116,7 +118,7 @@ const Drawer=()=>{
             />
           ))}
            </View>
-            <Text style={[styles.home, { marginTop: 3 }]}>Contact Us</Text>
+            <Text style={[styles.home, { marginTop: 3 ,textTransform:'uppercase'}]}>Contact Us</Text>
         </View>
      
       </View>

@@ -1,12 +1,30 @@
 import { View, Text, Image, Platform, TouchableOpacity, ImageBackground } from 'react-native';
-import React from 'react';
+import React,{useState} from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
 import Back from "../../../assets/Svg/back.svg";
 import OtpInputs from "react-native-otp-inputs";
+import Toast from "react-native-simple-toast";
 
-const Otp = () => {
+const Otp = ({route}) => {
     const navigation = useNavigation()
+    const [code,setCode]=useState('')
+    console.log('this is route data',route.params);
+
+    const verifyOtp=()=>{
+        if(code==''){
+            Toast.show('Please enter otp')
+        }
+    else{
+       if(code==route.params.otp){
+        navigation.navigate('Change',{customer_id:route.params.customer_id})
+       }
+       else{
+           Toast.show('Please enter correct otp')
+       }
+    }
+
+    }
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground style={{ flex: 1 }}
@@ -19,7 +37,7 @@ const Otp = () => {
                             <Back />
                         </TouchableOpacity>
                         <Text style={styles.verify}>Verify Your Email</Text>
-                        <View />
+                        <View style={{width:15}}/>
                     </View>
                     <View style={styles.please}>
                         <Text style={styles.enter}>Please Enter The 4 Digit Code Sent To</Text>
@@ -27,7 +45,7 @@ const Otp = () => {
                     <View style={{ paddingHorizontal: 45, marginTop: 12 }}>
                         <View style={styles.inputContainer}>
                             <OtpInputs
-                                // handleChange={code => this.setState({otp: code})}
+                                handleChange={code => setCode(code)}
                                 numberOfInputs={4}
                                 // defaultValue={this.state.otp}
                                 autofillFromClipboard={true}
@@ -39,13 +57,19 @@ const Otp = () => {
                             />
                         </View>
                     </View>
-                    <View style={styles.code}>
+                    {/* <View style={styles.code}>
                         <Text style={styles.resend}>Resend Code</Text>
-                        <View style={{borderWidth:0.6,width:'24%'}}/>
+                        <View style={{borderWidth:0.6,}}/>
+                    </View> */}
+                    <View style={{alignItems: 'center',marginTop:30 }}>
+                      <TouchableOpacity onPress={() => navigation.navigate('Forgot')}>
+                        <Text style={styles.resend}>Resend Code</Text>
+                        <View style={{borderWidth:0.6,borderColor:'#000000'}}/>
+                      </TouchableOpacity>
                     </View>
                     <View style={styles.bottom}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('Change')}
+                            onPress={() => verifyOtp()}
                             style={styles.touch}>
                             <Text style={styles.text}>Verify</Text>
                         </TouchableOpacity>

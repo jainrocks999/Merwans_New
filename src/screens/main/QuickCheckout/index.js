@@ -14,8 +14,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
 import Loader from "../../../components/Loader";
-import { useDispatch, useSelector } from "react-redux";
-import SelectDropdown from 'react-native-select-dropdown'
+import { useSelector } from "react-redux";
 import RNPickerSelect from 'react-native-picker-select';
 import Done from '../../../assets/Svg/Done.svg';
 
@@ -44,18 +43,111 @@ const Payment = ({ route }) => {
     const inputRef = React.useRef()
     const [isFetching, setFetching] = useState(false)
     const [state, setState] = useState(0)
-    const [data, setData] = useState(route.params.data)
+    const [data, setData] = useState()
     const selector = useSelector(state => state.Shipping)
     const selector1 = useSelector(state => state.Time)
-    console.log(selector.shipping_methods.dunzo.quote.dunzo.title, selector1);
+
+    useEffect(async () => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('shipping_code',selector.shipping_methods.dunzo.quote.dunzo.code)
+            data.append('shipping_cost',route.params.dunzo.price)
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
+            });
+
+            if (response.data) {
+                setData(response.data)
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }, [0])
+
+    const manageRadioDunzo=async()=>{
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('shipping_code',selector.shipping_methods.dunzo.quote.dunzo.code)
+            data.append('shipping_cost',route.params.dunzo.price)
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
+            });
+
+            if (response.data) {
+                setData(response.data)
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }
+    const manageRadioPick=async()=>{
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('shipping_code',selector.shipping_methods.pickup.quote.pickup.code)
+            data.append('shipping_cost',0)
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
+            });
+
+            if (response.data) {
+                setData(response.data)
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }
 
     const manageDunzo = () => {
         setDunzo('checked')
         setPick('unchecked')
+        manageRadioDunzo()
     }
     const managePick = () => {
         setDunzo('unchecked')
         setPick('checked')
+        manageRadioPick()
     }
     const manageMcpg = () => {
         setMcpg('checked')
@@ -76,7 +168,7 @@ const Payment = ({ route }) => {
 
     const updateCart = async (item) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        if (item.quantity > 1) {
+        if (item.quantity) {
             try {
                 setFetching(true)
                 const data = new FormData();
@@ -143,7 +235,7 @@ const Payment = ({ route }) => {
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
-                <ScrollView stickyHeaderIndices={[0]}>
+               {data && data.products? <ScrollView stickyHeaderIndices={[0]}>
                     <Header
                         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
                     />
@@ -178,7 +270,7 @@ const Payment = ({ route }) => {
                                             />
                                     }
                                 </View>
-                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ${selector.shipping_methods.dunzo.quote.dunzo.text}`}</Text>
+                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ₹${route.params.dunzo.price}`}</Text>
                             </View>
                             <View style={styles.pick}>
                                 <Delivery />
@@ -410,13 +502,17 @@ const Payment = ({ route }) => {
                                 <View style={styles.bill}>
                                     <Text style={styles.bll}>Bill Summary</Text>
                                     <View style={styles.row1}>
-                                        <Text style={styles.sub}>Sub-Total</Text>
+                                        <Text style={styles.sub}>{data.totals[0].title}</Text>
                                         <Text style={styles.rok}>{data.totals[0].text}</Text>
                                     </View>
 
                                     <View style={styles.row2}>
-                                        <Text style={styles.total}>Total</Text>
-                                        <Text style={styles.sp}>{data.totals[1].text}</Text>
+                                        <Text style={styles.sub}>{data.totals[1].title}</Text>
+                                        <Text style={styles.rok}>{data.totals[1].text}</Text>
+                                    </View>
+                                    <View style={styles.row2}>
+                                        <Text style={styles.total}>{data.totals[2].title}</Text>
+                                        <Text style={styles.sp}>{data.totals[2].text}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -501,11 +597,13 @@ const Payment = ({ route }) => {
 
                         <View style={{ height: 20 }} />
                     </View>
-                </ScrollView>
+                </ScrollView>:
+                <Loader/>
+                }
             </ImageBackground>
 
 
-            <BottomTab />
+            {/* <BottomTab /> */}
             <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
     )

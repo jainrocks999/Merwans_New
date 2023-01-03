@@ -30,16 +30,30 @@ const MyOrders = () => {
     return (
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
-            <ImageBackground style={{ padding: 6, flex: 1 }}
+            <ImageBackground style={{ flex: 1 }}
                 source={require('../../../assets/Icon/bg.png')}>
-                <View style={{ padding: 2 }}>
-                    <TouchableOpacity style={styles.arrow}
+                <View style={{
+                    flexDirection:'row',
+                    justifyContent:'space-between',
+                    alignItems:'center',
+                    backgroundColor:'#232323',
+                    height:40
+                     }}>
+                    <TouchableOpacity style={{
+        paddingHorizontal:10,
+        paddingVertical:8,
+        paddingRight:30
+    }}
                         onPress={() => navigation.goBack()}>
                         <Back />
                     </TouchableOpacity>
-                    <View style={styles.view2}>
-                        <Text style={styles.your}>Your Orders</Text>
+                    <View style={{ alignItems: 'center', 
+        justifyContent: 'center', }}>
+                        <Text style={{color: '#ED1B1A', 
+        fontFamily: 'Montserrat-Bold', 
+        fontSize: 20 }}>Your Orders</Text>
                     </View>
+                    <View style={{width:40}}/>
                 </View>
                 <View style={{ marginTop: 10 }}>
                 </View>
@@ -52,7 +66,9 @@ const MyOrders = () => {
                                 <View style={styles.order}>
                                     <View style={styles.hash}>
                                         <Text style={styles.text}>{`#${item.order_id}`}</Text>
-                                        <TouchableOpacity onPress={() => orderDetail(item.order_id)}>
+                                        <TouchableOpacity
+                                        style={{paddingLeft:14,paddingVertical:2}}
+                                         onPress={() => orderDetail(item.order_id)}>
                                             <Forward />
                                         </TouchableOpacity>
                                     </View>
@@ -112,7 +128,7 @@ const MyOrders = () => {
                     />
                 </View>
             </ImageBackground>
-            <StatusBar barStyle="dark-content" backgroundColor={'#fff'} />
+            <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
     )
 }

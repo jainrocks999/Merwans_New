@@ -2,6 +2,7 @@ initialstate = {
   AddressList:[],
   Store:[],
   CategoryList:[],
+  Category:'',
   MenuList:[],
   City:[],
   OrderList:[],
@@ -9,7 +10,11 @@ initialstate = {
   Shipping:'',
   Time:[],
   Address:'',
-  wishlist:''
+  wishlist:'',
+  About:'',
+  Policy:'',
+  Policy1:'',
+  Term:''
 };
 export default (state = initialstate, action) => {
   switch (action.type) {
@@ -59,7 +64,7 @@ export default (state = initialstate, action) => {
       case 'Category_List_Request':
         return { ...state, isFetching: true };
       case 'Category_List_Success':
-        return { ...state, isFetching: false,CategoryList: action.payload};
+        return { ...state, isFetching: false,CategoryList: action.payload,Category:action.payload1};
       case 'Category_List_Error':
         return { ...state, isFetching: false };
 
@@ -152,6 +157,48 @@ export default (state = initialstate, action) => {
       case 'Add_Wish_Success':
         return { ...state, isFetching: false,};
       case 'Add_Wish_Error':
+        return { ...state, isFetching: false };
+
+      case 'About_Us_Request':
+        return { ...state, isFetching: true };
+      case 'About_Us_Success':
+        return { ...state, isFetching: false,About:action.payload};
+      case 'About_Us_Error':
+        return { ...state, isFetching: false };
+
+      case 'Privacy_Policy_Request':
+        return { ...state, isFetching: true };
+      case 'Privacy_Policy_Success':
+        return { ...state, isFetching: false,Policy:action.payload};
+      case 'Privacy_Policy_Error':
+        return { ...state, isFetching: false };
+
+      case 'Privacy_Policy_Request1':
+        return { ...state, isFetching: true };
+      case 'Privacy_Policy_Success1':
+        return { ...state, isFetching: false,Policy1:action.payload};
+      case 'Privacy_Policy_Error1':
+        return { ...state, isFetching: false };
+
+      case 'Term_Condition_Request':
+        return { ...state, isFetching: true };
+      case 'Term_Condition_Success':
+        return { ...state, isFetching: false,Term:action.payload};
+      case 'Term_Condition_Error':
+        return { ...state, isFetching: false };
+
+      case 'Reset_Pass_Request':
+        return { ...state, isFetching: true };
+      case 'Reset_Pass_Success':
+        return { ...state, isFetching: false};
+      case 'Reset_Pass_Error':
+        return { ...state, isFetching: false };
+
+      case 'Change_Pass_Request':
+        return { ...state, isFetching: true };
+      case 'Change_Pass_Success':
+        return { ...state, isFetching: false};
+      case 'Change_Pass_Error':
         return { ...state, isFetching: false };
 
     default:

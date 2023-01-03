@@ -2,7 +2,6 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
     view:{
-        marginTop:8,
         alignItems:'center',
         justifyContent:'center',
     },
@@ -27,7 +26,8 @@ export default StyleSheet.create({
         borderRadius:6,
         shadowColor:'#000',
         shadowOffset:{width:0,height:2},
-        shadowOpacity:0.5
+        shadowOpacity:0.5,
+        marginHorizontal:1
     },
     round:{
         backgroundColor:"#D9D9D9",
@@ -47,5 +47,6 @@ export default StyleSheet.create({
         fontFamily:'Montserrat-Medium',
         // width:'90%'
     },
-    arrow:{ alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4 }
+    arrow:{  paddingHorizontal: 10, paddingVertical:8,
+        paddingRight:30 }
 })

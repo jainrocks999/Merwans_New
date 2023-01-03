@@ -10,7 +10,8 @@ import {
   Dimensions,
   StatusBar,
   TextInput,
-  Platform
+  Platform,
+  ImageBackground
 } from "react-native";
 import Stars from "react-native-stars";
 import styles from "./style";
@@ -47,14 +48,13 @@ const CategoryList = () => {
   const isFetching = useSelector(state => state.isFetching)
   const [isFetching1, setFetching] = useState(false)
   const selector = useSelector(state => state.wishlist)
-  console.log('this is selector dsts', selector);
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState(selector);
   const [masterDataSource, setMasterDataSource] = useState(selector);
+  const [text,setText]=useState('')
   const [click, setClick] = useState(false)
   const dispatch = useDispatch()
   const inputRef = React.useRef()
-
   const productDetail = async (id) => {
     setOpenPanel(true)
     try {
@@ -118,6 +118,7 @@ const CategoryList = () => {
   }
   const removeWishList = async (id) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    console.log(id);
     try {
       setFetching(true)
       const data = new FormData();
@@ -142,19 +143,11 @@ const CategoryList = () => {
       }
     } catch (error) {
       setFetching(false)
-      // throw error;
     }
-    // dispatch({
-    //     type: 'Wish_Remove_Request',
-    //     url: 'apiproduct/delete_wishlist',
-    //     customer_id: customer_id,
-    //     product_id: id,
-    //     navigation:navigation
-    // });
+   
   }
   const handleWidth = () => {
     setClick(true)
-    // inputRef.current.focus()
   }
   const handleSearch = () => {
     setSearch('');
@@ -164,19 +157,51 @@ const CategoryList = () => {
 
   const addItemToCart = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-    dispatch({
-      type: 'Add_Item_Request',
-      url: 'apiorder/add_to_cart',
-      customer_id: customer_id,
-      product_id: product.product_id,
-      navigation: navigation
-    });
+    if(product.options.length>1){
+      dispatch({
+        type: 'Add_Item_Request',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        select_key:product.options[0].product_option_id,
+        select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
+       product.options[0].product_option_value[1].product_option_value_id,
+        text_key:product.options[1].product_option_id,
+        text_value:text,
+        navigation: navigation
+      });
+    }
+    else if(product.options.length>0){
+      dispatch({
+        type: 'Add_Item_Request',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        select_key:product.options[0].product_option_id,
+        select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
+       product.options[0].product_option_value[1].product_option_value_id,
+        text_key:0,
+        text_value:'',
+        navigation: navigation
+      });
+    }
+    else{
+      dispatch({
+        type: 'Add_Item_Request1',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        navigation: navigation
+      });
+    }
+ 
   }
   const length = data.length
   const version = Platform.OS
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', paddingTop: 0 }}>
       {isFetching || isFetching1 ? <Loader /> : null}
+      <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
       <View style={styles.main}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -236,7 +261,7 @@ const CategoryList = () => {
               justifyContent: 'space-between',
               alignItems: 'center'
             }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center',marginTop:2 }}>
               <Search />
               <Text style={styles.search}>Search</Text>
             </View>
@@ -247,11 +272,7 @@ const CategoryList = () => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: 10 }}>
-          {/* <View style={styles.cak}>
-                        <Text style={styles.cakes}>{'Cakes'}</Text>
-                        <Text style={styles.black}>{' /  Black Forest'}</Text>
-                    </View> */}
-          <View>
+         {filteredDataSource.length>0? <View>
             <FlatList
               data={filteredDataSource}
               showsVerticalScrollIndicator={false}
@@ -264,12 +285,13 @@ const CategoryList = () => {
                         style={styles.view1}>
                         <View style={styles.border} />
                       </View>
-                      <View style={styles.tag}>
+                      {/* <View style={styles.tag}>
                         <Text style={styles.best}>{'Best Seller'}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.title}
+                      </View> */}
+                      <Text style={[styles.title,{marginLeft:5}]}
                     >{item.name}</Text>
+                    </View>
+                    
                     <View
                       style={styles.round}>
                       <Stars
@@ -280,14 +302,14 @@ const CategoryList = () => {
                         starSize={12}
                         fullStar={<Blank />}
                         emptyStar={<Full />} />
-                      <Text style={styles.review}>{'142 Reviews'}</Text>
+                      {/* <Text style={styles.review}>{'142 Reviews'}</Text> */}
                     </View>
                     <View style={styles.pCont}>
                       <Text style={styles.price}>{item.price}</Text>
                     </View>
                     <View style={{ marginTop: 6 }}>
                       <Text style={styles.desc}>{item.description}
-                        {item.description ? <Text style={styles.read}>{'  read more'}</Text> : null}
+                        {/* {item.description ? <Text style={styles.read}>{'  read more'}</Text> : null} */}
                       </Text>
                     </View>
                     {/* <View style={styles.image}>
@@ -325,8 +347,12 @@ const CategoryList = () => {
                 </View>
               )}
             />
-            <View style={{ marginBottom: 60 }} />
+            <View style={{ marginBottom: 0 }} />
+          </View>:
+          <View style={{alignItems:'center',justifyContent:'center',marginTop:'80%'}}>
+             <Text>No Products added in the Wishlist </Text>
           </View>
+          }
         </View>
       </ScrollView>
       <SwipeablePanel
@@ -347,7 +373,7 @@ const CategoryList = () => {
         }}
       >
         <View style={{ flex: 1 }}>
-          <ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
+        {product&&product.products?<ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
             <KeyboardAwareScrollView
               extraScrollHeight={10}
               enableOnAndroid={true}
@@ -355,45 +381,51 @@ const CategoryList = () => {
               contentContainerStyle={{ flex: 1 }}>
               <View />
               <View />
-              <View style={{ backgroundColor: '#fff', padding: 10, height: msg == 'checked' ? 600 : 700 }}>
+              <ImageBackground 
+              source={require('../../../assets/Icon/bg.png')}
+              style={{backgroundColor:'#fff',padding: 10, height: msg == 'checked' ?  600 : 700 }}>
 
                 <View style={styles.thumb}>
                   <Image style={styles.url}
-                    source={{ uri: product.thumb }} />
+                    source={{ uri: product.products.thumb }} />
                 </View>
-                <View style={styles.bests}>
+                <View style={[styles.bests,{justifyContent:'space-between'}]}>
+                  <View style={styles.bests1}>
                   <View
                     style={styles.view1}>
                     <View style={styles.border} />
                   </View>
-                  <View style={styles.tag}>
+                  {/* <View style={styles.tag}>
                     <Text style={styles.best}>{'Best Seller'}</Text>
-
-                  </View>
-                </View>
-                <View style={styles.pname}>
-                  <Text style={styles.title}>{product.name}</Text>
-                  <View style={styles.image}>
+                  </View> */}
+                   <Text style={[styles.title,{marginLeft:5}]}>{product.products.name}</Text>
+                   </View>
+                   <View style={styles.image}>
                     <Image source={require('../../../assets/Icon/redHeart.png')} />
                   </View>
                 </View>
+                {/* <View style={styles.pname}>
+                 
+                
+                </View> */}
                 <View
                   style={styles.round1}>
                   <Stars
                     disabled={true}
-                    default={product.rating}
+                    default={product.products.rating}
                     spacing={3}
                     count={5}
                     starSize={12}
                     fullStar={require('../../../assets/Icon/fullstar.png')}
                     emptyStar={require('../../../assets/Icon/emptystar.png')} />
-                  <Text style={styles.review}>{'142 Reviews'}</Text>
+                  <Text style={styles.review}>{`${product.products.reviews} Reviews`}</Text>
                 </View>
                 <View style={{ marginTop: 10 }}>
                   <Text style={styles.descr}>
-                    {product.description}
+                    {product.products.description}
                   </Text>
                 </View>
+                {product.options.length>0? <View>
                 <View style={styles.show}>
                   <View style={{ width: '48%' }}>
                     <TouchableOpacity
@@ -526,7 +558,7 @@ const CategoryList = () => {
                         style={styles.bottom}>
                         <View
                           style={styles.row}>
-                          <Text style={styles.gram}>500  grams</Text>
+                         <Text style={styles.gram}>{product.options[0].product_option_value[0].name}</Text>
                           <View style={{ marginLeft: 10 }}>
                             {gram == 'checked' ? <RadioButton
                               value="first"
@@ -550,7 +582,7 @@ const CategoryList = () => {
                             }
                           </View>
                         </View>
-                        <Text style={styles.text}>Rs 315.26</Text>
+                        <Text style={styles.text}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
 
@@ -558,7 +590,7 @@ const CategoryList = () => {
                         style={styles.bottom}>
                         <View
                           style={styles.row}>
-                          <Text style={styles.gram}>1  KG</Text>
+                         <Text style={styles.gram}>{product.options[0].product_option_value[1].name}</Text>
                           <View style={{ marginLeft: 10 }}>
                             {kg == 'checked' ? <RadioButton
                               value="first"
@@ -582,7 +614,8 @@ const CategoryList = () => {
                             }
                           </View>
                         </View>
-                        <Text style={styles.text}>Rs 629.66</Text>
+                        <Text style={styles.text}>{
+                          `₹${(parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -596,6 +629,8 @@ const CategoryList = () => {
                       <TextInput
                         ref={inputRef}
                         placeholderTextColor={'#000000'}
+                        value={text}
+                        onChangeText={(val)=>setText(val)}
                         style={styles.msg}
                         placeholder='Message'
                         multiline={true}
@@ -603,23 +638,27 @@ const CategoryList = () => {
                     </TouchableOpacity>
                   </View>
                 }
+                </View>:null}
                 <View style={styles.pay}>
                   <TouchableOpacity
                     onPress={() => addItemToCart()}
                     style={styles.items}>
-                    <Text style={styles.rs}>{`Add item ${product.price}`}</Text>
+                     <Text style={styles.rs}>
+                        {`Add item ₹${gram == 'checked'?parseInt(product.products.price).toFixed(2):
+                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-              <View style={{ height: 100 }} />
+              </ImageBackground>
+              {/* <View style={{ height: 100 }} /> */}
             </KeyboardAwareScrollView>
-          </ScrollView>
+          </ScrollView>:null}
         </View>
       </SwipeablePanel>
-      <View style={styl.bottom}>
+      {/* <View style={styl.bottom}>
         <BottomTab />
-      </View>
+      </View> */}
       <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
+      </ImageBackground>
     </View>
   )
 }

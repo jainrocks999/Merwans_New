@@ -33,6 +33,10 @@ const Splash = () => {
             type: 'Get_Store_Request',
             url: 'apiproduct/getstore',
         });
+        dispatch({
+            type: 'Privacy_Policy_Request1',
+            url: 'api/privacy_policy',
+          });
     }, [])
     return (
         <View style={{ flex: 1 }}>

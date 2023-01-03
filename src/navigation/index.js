@@ -27,12 +27,14 @@ import QuickCheckout from '../screens/main/QuickCheckout';
 import Coupon from "../screens/main/Coupon";
 import Otp from "../screens/auth/OtpPage"
 import Modal from "../screens/main/LocationModal";
+import Address from "../screens/main/AddressModal";
 import Main from "./DrawerNavigation";
 import About from "../screens/main/About";
 import Favorite from "../screens/main/Favorite";
 import Privacy from "../screens/main/Privacy";
 import Term from "../screens/main/TermCondition";
-
+import Whishlist from "../screens/main/Whishlist";
+import EditAddress from "../screens/main/EditAddress";
 const Stack = createNativeStackNavigator();
 function Navigate() {
 
@@ -86,14 +88,20 @@ function Navigate() {
         <Stack.Screen name="ManagePayment" component={ManagePayment}/>
         <Stack.Screen name="Quick" component={QuickCheckout}/>
         <Stack.Screen name="Coupon" component={Coupon}/>
+        <Stack.Screen name="Whish" component={Whishlist}/>
         <Stack.Screen name={"Otp"} component={Otp}/>
         <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name={'MyModal'} component={Modal}/>
+        <Stack.Screen name={'Address'} component={Address}/>
+        </Stack.Group>
+        <Stack.Group screenOptions={{ presentation: 'modal' }}>
+       
         </Stack.Group>
         <Stack.Screen name={"About"} component={About}/>
         <Stack.Screen name={"Favorite"} component={Favorite}/>
         <Stack.Screen name={"Privacy"} component={Privacy}/>
         <Stack.Screen name={"Term"} component={Term}/>
+        <Stack.Screen name={"EditAddress"} component={EditAddress}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

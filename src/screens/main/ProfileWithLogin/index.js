@@ -19,8 +19,6 @@ const Profile = () => {
   const [lname,setLname]=useState('')
   const [email,setEmail]=useState('')
 
-
-
   useEffect(async()=>{
       const fname=await AsyncStorage.getItem(Storage.firstname)
       const lname=await AsyncStorage.getItem(Storage.lastname)
@@ -68,6 +66,28 @@ const Profile = () => {
     ]);
   };
 
+  const about=()=>{
+    dispatch({
+      type: 'About_Us_Request',
+      url: 'api/about_us',
+      navigation:navigation
+    });
+  }
+  const Policy=()=>{
+    dispatch({
+      type: 'Privacy_Policy_Request',
+      url: 'api/privacy_policy',
+      navigation:navigation
+    });
+  }
+  const Term=()=>{
+    dispatch({
+      type: 'Term_Condition_Request',
+      url: 'api/terms_conditions',
+      navigation:navigation
+    });
+  }
+
   return (
     <View style={{ flex: 1 }}>
       {isFetching?<Loader/>:null}
@@ -105,7 +125,7 @@ const Profile = () => {
                     <Forward />
                   </View>
                 </TouchableOpacity>
-                <TouchableOpacity 
+                {/* <TouchableOpacity 
                 onPress={()=>navigation.navigate('Favorite')}
                 style={[styles.card1]}>
                   <View style={styles.main}>
@@ -117,7 +137,7 @@ const Profile = () => {
                   <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => 
                     manageAddress()
@@ -142,7 +162,7 @@ const Profile = () => {
                 style={styles.food}>More</Text>
               <View style={{ marginTop: 0 }}>
                 <TouchableOpacity
-                onPress={()=>navigation.navigate('About')}
+                onPress={()=>about()}
                  style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
@@ -169,7 +189,7 @@ const Profile = () => {
 
 
                 <TouchableOpacity 
-                onPress={()=>navigation.navigate('Privacy')}
+                onPress={()=>Policy()}
                 style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
@@ -184,7 +204,7 @@ const Profile = () => {
 
 
                 <TouchableOpacity
-                onPress={()=>navigation.navigate('Term')}
+                onPress={()=>Term()}
                 style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
@@ -217,7 +237,12 @@ const Profile = () => {
           </View>
         </ScrollView>
         <View style={{ bottom: 0, left: 0, right: 0, position: 'absolute' }}>
-          <BottomTab />
+          <BottomTab
+          home={false}
+          search={false}
+          cart={false}
+          profile={true}
+          />
         </View>
       </ImageBackground>
       <StatusBar barStyle="light-content" backgroundColor={'#232323'} />

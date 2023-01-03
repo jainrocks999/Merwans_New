@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity,StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -11,13 +11,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
 import Edit from "../../../assets/Svg/edit1.svg";
 import Delete from "../../../assets/Svg/dele.svg";
+import axios from "axios";
 
 const MyAddress = ({route}) => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.AddressList)
     const isFetching = useSelector(state => state.isFetching)
+    const [fetching,setFetching]=useState(false)
     const type=route.params
-    console.log('this is user detail',type);
+    console.log('this is user detail',selector);
     console.log('this is selector response', selector);
     const dispatch = useDispatch()
     useEffect(() => {
@@ -43,21 +45,104 @@ const MyAddress = ({route}) => {
         }
        
     }
+    const deleteAddress=async(item)=>{
+        const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+        const address_id = await AsyncStorage.getItem("Address_id")
+    
+           try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token','');
+            data.append('customer_id',customer_id);
+            data.append('address_id',item.address_id);
+            const response = await axios({
+              method: 'POST',
+              data,
+              headers: {
+                'content-type': 'multipart/form-data',
+                Accept: 'multipart/form-data',
+              },
+              url: 'https://merwans.co.in/index.php?route=api/apiorder/addressDelete',
+            });
+            console.log('thisi i suser respone', response.data);
+            if (response.data.status == true) {
+              setFetching(false)
+              
+              dispatch({
+                type: 'Address_List_Request',
+                url: 'apiorder/addressList',
+                customer_id:customer_id,
+                from:'profile',
+                navigation:navigation
+              });
+              dispatch({
+                type: 'Get_Address_Request',
+                url: 'apiorder/addressById',
+                customer_id: customer_id,
+                address_id:0
+            });
+              item.address_id==address_id?AsyncStorage.setItem('Address_id','0'):null
+            }
+            else{
+                setFetching(false)
+            }
+          } catch (error) {
+            throw error;
+          }
+    }
+
+    const editAddress=async(item)=>{
+        const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token','');
+            data.append('customer_id',customer_id);
+            data.append('address_id',item.address_id);
+            const response = await axios({
+              method: 'POST',
+              data,
+              headers: {
+                'content-type': 'multipart/form-data',
+                Accept: 'multipart/form-data',
+              },
+              url: 'https://merwans.co.in/index.php?route=api/apiorder/addressById',
+            });
+            console.log('thisi i suser respone', response.data);
+            if (response.data.status == true) {
+              setFetching(false)
+              navigation.navigate('EditAddress',response.data.data)
+            }
+            else{
+                setFetching(false)
+            }
+          } catch (error) {
+            setFetching(false)
+          }
+    }
     return (
         <View style={{ flex: 1 }}>
-            {isFetching?<Loader/>:null}
+            {isFetching || fetching?<Loader/>:null}
             <ImageBackground 
-            style={{ flex: 1, padding: 6 }} 
+            style={{ flex: 1, }} 
             source={require('../../../assets/Icon/bg.png')}>
-                <View style={{ padding: 2 }}>
-                    <TouchableOpacity style={styles.arrow} onPress={() => navigation.goBack()}>
+                 <View style={{
+                    flexDirection:'row',
+                    justifyContent:'space-between',
+                    alignItems:'center',
+                    backgroundColor:'#232323',
+                    height:40
+                     }}>
+                    <TouchableOpacity style={styles.arrow}
+                        onPress={() => route.params.from=='cart'?navigation.navigate('Payment'):navigation.goBack()}>
                         <Back />
                     </TouchableOpacity>
                     <View style={styles.view}>
                         <Text style={styles.my}>My Addresses</Text>
                     </View>
+                    <View style={{width:40}}/>
                 </View>
-                <View style={{ paddingHorizontal: 6, marginTop: 5 }}>
+                <View style={{ paddingHorizontal: 6, marginTop: 14 }}>
                     <TouchableOpacity onPress={() => navigation.navigate('ChangeAddress')}
                         style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.add}>+  Add Address</Text>
@@ -68,8 +153,8 @@ const MyAddress = ({route}) => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <TouchableOpacity
-                            //    onPress={()=>addAddress(item.address_id)}
-                                disabled
+                               onPress={()=>addAddress(item.address_id)}
+                                // disabled
                                 style={styles.card}>
                                 <View style={{ flexDirection: 'row', width: '100%' }}>
                                     <View style={{ width: '8%' }}>
@@ -79,12 +164,14 @@ const MyAddress = ({route}) => {
                                     </View>
                                     <View style={{ marginLeft: 8, width: '90%', }}>
                                         <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                          <Text style={styles.title}>{item.addressName}</Text>
+                                          <Text style={styles.title}>{item.address_type}</Text>
                                           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
-                                              <View style={{marginRight:20}}>
+                                              <TouchableOpacity onPress={()=>editAddress(item)} style={{marginRight:15}}>
                                                <Edit height={13} width={13}/>
-                                             </View>
+                                             </TouchableOpacity>
+                                             <TouchableOpacity style={{paddingHorizontal:5}} onPress={()=>deleteAddress(item)}>
                                              <Delete height={14} width={13}/>
+                                             </TouchableOpacity>
                                           </View>
                                         </View>
                                         <Text style={[styles.desc, { width: '100%',marginTop:3 }]}>{item.address}</Text>
@@ -96,7 +183,7 @@ const MyAddress = ({route}) => {
                     />
                 </View>
             </ImageBackground>
-            <StatusBar barStyle="dark-content" backgroundColor={'#fff'} />
+            <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
     )
 }

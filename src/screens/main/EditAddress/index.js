@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, ImageBackground, TouchableOpacity, TextInput, ScrollView, StatusBar,Platform } from "react-native";
+import { View, Text, Image, ImageBackground, TouchableOpacity, TextInput, ScrollView, StatusBar, Platform } from "react-native";
 import styles from './style';
 import Home from "../../../components/Home";
 import Multi from "../../../assets/Svg/multip.svg";
@@ -31,20 +31,35 @@ const loginValidationSchema = yup.object().shape({
     land: yup.string()
 });
 
-const AddressForm = ({route}) => {
+
+const AddressForm = ({ route }) => {
 
     const [home, setHome] = useState(true)
     const [work, setWork] = useState(false)
     const [hotel, setHotel] = useState(false)
     const [other, setOther] = useState(false)
-    const [type, setType] = useState('Home')
+    const [type, setType] = useState(route.params.type)
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [isFetching, setFetching] = useState(false)
     const City = useSelector(state => state.City)
-    const [state, setState] = useState(0)
+    const [state, setState] = useState(route.params.zone_id)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
 console.log(route.params);
+    useEffect(() => {
+        if (route.params.type == 'Home') {
+         manageHome()
+        }
+        else if (route.params.type == 'Work') {
+         manageWork()
+        }
+        else if (route.params.type == 'Hotel') {
+         manageHotel()
+        }
+        else if (route.params.type == 'Other') {
+        manageOther()
+        }
+    }, [])
     const manageHome = () => {
         setWork(false)
         setHotel(false)
@@ -73,13 +88,7 @@ console.log(route.params);
         setHome(false)
         setType('Other')
     }
-    useEffect(() => {
-        dispatch({
-            type: 'City_List_Request',
-            url: 'apiorder/getStates',
-            country_id: '99',
-        });
-    }, [])
+
 
     const validateUser = async (values) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -93,6 +102,7 @@ console.log(route.params);
                 setFetching(true)
                 const data = new FormData();
                 data.append('api_token', '');
+                data.append('address_id',route.params.address_id);
                 data.append('customer_id', customer_id);
                 data.append('type', type)
                 data.append('company', 'Merwans');
@@ -113,9 +123,8 @@ console.log(route.params);
                         'content-type': 'multipart/form-data',
                         Accept: 'multipart/form-data',
                     },
-                    url: 'https://merwans.co.in/index.php?route=api/apiorder/addressAdd',
+                    url: 'https://merwans.co.in/index.php?route=api/apiorder/addressUpdate',
                 });
-
                 if (response.data.status == true) {
                     Geocoder.from(values.address1)
                         .then(json => {
@@ -130,16 +139,7 @@ console.log(route.params);
                             });
                         })
                         .catch(error => console.warn(error));
-                     if(route.params.from=='cart'){
-                        dispatch({
-                            type: 'Get_Address_Request',
-                            url: 'apiorder/addressById',
-                            customer_id: customer_id,
-                            address_id:0
-                        });
-                        navigation.navigate('Payment')
-                     }
-                     else{
+
                     dispatch({
                         type: 'Address_List_Request',
                         url: 'apiorder/addressList',
@@ -147,7 +147,6 @@ console.log(route.params);
                         from: 'addressForm',
                         navigation: navigation
                     });
-                }
                     setFetching(false)
                 }
                 else {
@@ -162,11 +161,11 @@ console.log(route.params);
     return (
         <Formik
             initialValues={{
-                address1: '',
-                address2: '',
-                city: '',
-                post: '',
-                land: ''
+                address1: route.params.address_1,
+                address2: route.params.address_2,
+                city: route.params.city,
+                post: route.params.postcode,
+                land: route.params.landmark
             }}
             onSubmit={values => validateUser(values)}
             validateOnMount={true}
@@ -193,12 +192,11 @@ console.log(route.params);
                             height: 40
                         }}>
                             <View style={{ width: 30 }} />
-                            <Text style={styles.enter}>Enter Address Details</Text>
+                            <Text style={styles.enter}>Edit Address Details</Text>
                             <TouchableOpacity
                                 onPress={() => navigation.goBack()}
                                 style={{ marginRight: 10 }}>
                                 <Multi width={20} height={20} />
-
                             </TouchableOpacity>
                         </View>
                         <View style={{ paddingHorizontal: 6 }}>
@@ -348,7 +346,7 @@ console.log(route.params);
                                                     useNativeAndroidPickerStyle={false}
                                                     placeholder={{ label: 'Select state', value: '' }}
                                                     Icon={() => (
-                                                        <View  style={{ marginTop:Platform.OS=='ios'? 5:12, marginRight: 4 }}>
+                                                        <View style={{ marginTop: Platform.OS == 'ios' ? 5 : 12, marginRight: 4 }}>
                                                             <Down />
                                                         </View>
                                                     )}

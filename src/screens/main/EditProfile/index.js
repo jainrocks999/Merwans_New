@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ImageBackground, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, ImageBackground, ScrollView, TextInput, TouchableOpacity ,StatusBar} from "react-native";
 import styles from "./style";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
@@ -75,9 +75,9 @@ const EditProfile = ({route}) => {
         }) => (
         <View style={{ flex: 1 }}>
             {isFetching?<Loader/>:null}
-            <ImageBackground style={{ padding: 6,flex:1 }}
+            <ImageBackground style={{ padding: 0,flex:1 }}
              source={require('../../../assets/Icon/bg.png')}>
-                  <View style={{ padding: 2 }}>
+                  {/* <View style={{ padding: 2 }}>
                     <TouchableOpacity 
                     style={styles.arrow} onPress={() => navigation.goBack()}>
                         <Back/>
@@ -85,6 +85,28 @@ const EditProfile = ({route}) => {
                     <View style={styles.header}>
                         <Text style={styles.edit}>Edit Profile</Text>
                     </View>
+                </View> */}
+                <View style={{
+                    flexDirection:'row',
+                    justifyContent:'space-between',
+                    alignItems:'center',
+                    backgroundColor:'#232323',
+                    height:40
+                     }}>
+                    <TouchableOpacity style={{
+        paddingHorizontal:10,
+        paddingVertical:8,
+        paddingRight:30}}
+                        onPress={() => navigation.goBack()}>
+                        <Back />
+                    </TouchableOpacity>
+                    <View style={{ alignItems: 'center', 
+        justifyContent: 'center', }}>
+                        <Text style={{color: '#ED1B1A', 
+        fontFamily: 'Montserrat-Bold', 
+        fontSize: 20 }}>Edit Profile</Text>
+                    </View>
+                    <View style={{width:40}}/>
                 </View>
               <ScrollView>
               <KeyboardAwareScrollView
@@ -178,6 +200,7 @@ const EditProfile = ({route}) => {
                 </KeyboardAwareScrollView>
                 </ScrollView>
             </ImageBackground>
+            <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
        )}
        </Formik>

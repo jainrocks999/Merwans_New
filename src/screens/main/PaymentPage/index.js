@@ -13,6 +13,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
 import Loader from "../../../components/Loader";
 import { useDispatch,useSelector } from "react-redux";
+import Toast from "react-native-simple-toast";
+import Geocoder from 'react-native-geocoding';
+Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const Payment = () => {
     const navigation = useNavigation()
@@ -27,6 +30,7 @@ const Payment = () => {
     useEffect(async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const id=await AsyncStorage.getItem(Storage.store_id)
+
         try {
             setFetching(true)
             const data = new FormData();
@@ -45,7 +49,6 @@ const Payment = () => {
             if (response.data) {
                 setData(response.data)
                 setFetching(false)
-                console.log('this is response data', response.data.products);
             }
             else {
                 setFetching(false)
@@ -69,7 +72,7 @@ const Payment = () => {
 
     const updateCart = async (item) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        if(item.quantity>1){
+        if(item.quantity){
         try {
             setFetching(true)
             const data = new FormData();
@@ -86,11 +89,9 @@ const Payment = () => {
                 },
                 url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
             });
-
             if (response.data) {
                 setData(response.data)
                 setFetching(false)
-                console.log('this is response data', response.data.products);
             }
             else {
                 setFetching(false)
@@ -118,11 +119,9 @@ const Payment = () => {
                 },
                 url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
             });
-
             if (response.data) {
                 setData(response.data)
                 setFetching(false)
-                console.log('this is response data', response.data.products);
             }
             else {
                 setFetching(false)
@@ -132,24 +131,89 @@ const Payment = () => {
         }
     }
     const manageAddress=async()=>{
+    //    navigation.navigate('Address')
+       const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+       const id = await AsyncStorage.getItem("Address_id")
+       dispatch({
+         type: 'Address_List_Request',
+         url: 'apiorder/addressList',
+         customer_id:customer_id,
+         from:'cart',
+         navigation:navigation
+       });
+    //    dispatch({
+    //     type: 'Get_Address_Request1',
+    //     url: 'apiorder/addressById',
+    //     customer_id:customer_id,
+    //     address_id:id,
+    //     navigation:navigation
+    //   });
+      }
+      const manageAddress1=async()=>{
         const customer_id=await AsyncStorage.getItem(Storage.customer_id)
-        dispatch({
-          type: 'Address_List_Request',
-          url: 'apiorder/addressList',
-          customer_id:customer_id,
-          from:'cart',
-          navigation:navigation
-        });
+        // dispatch({
+        //   type: 'Address_List_Request',
+        //   url: 'apiorder/addressList',
+        //   customer_id:customer_id,
+        //   from:'cart',
+        //   navigation:navigation
+        // });
+        navigation.navigate('AddressForm',{from:'cart'})
+      }
+      const manageDunzo=async()=>{
+        const store_id=await AsyncStorage.getItem(Storage.store_id)
+        const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+        Geocoder.from(`${selector.address_1} ${selector.address_2} ${selector.city}`)
+        .then(async(json) => {
+          var location = json.results[0].geometry.location;
+         if(location&&store_id){
+            try {
+                setFetching(true)
+                const data1 = new FormData();
+                data1.append('store_id',2);
+                data1.append('customer_id', customer_id);
+                data1.append('latitude', location.lat);
+                data1.append('longitude',location.lng);
+                const response = await axios({
+                    method: 'POST',
+                    data:data1,
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                        Accept: 'multipart/form-data',
+                    },
+                    url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
+                });
+    
+                if (response.data) {
+                    navigation.navigate('Quick',{
+                        data:data,
+                        dunzo:response.data
+                    })
+                    setFetching(false)
+                }
+                else {
+                    setFetching(false)
+                }
+            } catch (error) {
+                setFetching(false)
+            }
+         }
+         else{
+             Toast.show('Something went wrong')
+         }
+        })
+        .catch(error => console.warn(error));
+       
       }
     return (
         <View style={{ flex: 1 }}>
             {isFetching ||isFetching1 ? <Loader /> : null}
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
-                <ScrollView stickyHeaderIndices={[0]}>
+               <ScrollView stickyHeaderIndices={[0]}>
                     <Header
                         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
                     />
-                    <View style={{ paddingHorizontal: 5 }}>
+                     {data && data.products.length>0?<View style={{ paddingHorizontal: 5 }}>
                         <View style={styles.main}>
                             <View style={styles.row}>
                                 <View
@@ -228,6 +292,12 @@ const Payment = () => {
                             />
                                 : <Text style={styles.add}>Add Instructions</Text>}
                         </TouchableOpacity>
+                       {/* {data.products[0].option[1].value? <View style={styles.apply}>
+                            <View>
+                                <Text style={styles.coupon}>Message on Cake</Text>
+                            </View>
+                           <Text style={[styles.floor,{marginTop:3}]}>{data.products[0].option[1].value}</Text>
+                        </View>:null} */}
                         {/* Apply Coupon */}
                         <View style={styles.apply}>
                             <View>
@@ -249,6 +319,7 @@ const Payment = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        
                         {/* Bill Summery */}
                         <View style={styles.sum}>
                             <View style={{
@@ -274,14 +345,14 @@ const Payment = () => {
                             </View>
                         </View>
                         {/* Delivery At Home */}
-                        <TouchableOpacity onPress={()=>manageAddress()} style={styles.dele}>
+                       {selector? <TouchableOpacity onPress={()=>manageAddress()} style={styles.dele}>
                             <View style={{marginTop:-12}}>
                             <Location />
                             </View>
                             <View style={{ marginLeft: 8, width: '92%' }}>
                                 <View style={styles.view1}>
                                    
-                                  <Text style={styles.home}>Delivery at Home</Text>
+                                  <Text style={styles.home}>{`Delivery at ${selector.type}`}</Text>
                                   <TouchableOpacity 
                                   onPress={()=>manageAddress()}
                                   style={styles.btn1}>
@@ -290,23 +361,43 @@ const Payment = () => {
                                 </View>
                                 <Text style={styles.floor}>{`${selector.address_1} ${selector.address_2} ${selector.city}`}</Text>
                             </View>
-                        </TouchableOpacity>
-                    </View>
+                        </TouchableOpacity>:null}
+                  
 
                     <View style={{ paddingHorizontal: 15 }}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('Quick',{
-                                data:data
-                            })}
+                      { selector? <TouchableOpacity
+                            onPress={() => manageDunzo()}
                             style={styles.btns}>
-                            <Text
-                                style={styles.pro}>{`Proceed To Checkout`}</Text>
-                        </TouchableOpacity>
+                            <Text style={styles.pro}>{`Proceed To Checkout`}</Text>
+                        </TouchableOpacity>:
+                        <TouchableOpacity
+                        onPress={() => manageAddress1()}
+                        style={styles.btns}>
+                        <Text style={styles.pro}>{`Add Address`}</Text>
+                    </TouchableOpacity>
+                        }
                     </View>
+                    </View>:
+                <View style={{flex:1,
+                justifyContent:'center',
+                alignItems:'center',
+                marginTop:'80%',
+                flexDirection:'row'
+                }}>
+                    <Text style={{textAlign:'center',fontSize:18}}>Your cart is Empty!</Text>
+                    <Text onPress={()=>navigation.navigate('Home')} style={{borderBottomWidth:1,fontSize:18,}}> Continue Shopping</Text>
+
+                </View>
+                }
                     <View style={{ height: 20 }} />
                 </ScrollView>
             </ImageBackground>
-            <BottomTab />
+            <BottomTab
+             home={false}
+             search={false}
+             cart={true}
+             profile={false}
+             />
             <StatusBar barStyle="light-content" backgroundColor={'#232323'} />
         </View>
     )
