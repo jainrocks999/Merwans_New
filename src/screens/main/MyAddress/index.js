@@ -12,6 +12,8 @@ import Storage from "../../../components/AsyncStorage";
 import Edit from "../../../assets/Svg/edit1.svg";
 import Delete from "../../../assets/Svg/dele.svg";
 import axios from "axios";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const MyAddress = ({route}) => {
     const navigation = useNavigation()
@@ -19,8 +21,18 @@ const MyAddress = ({route}) => {
     const isFetching = useSelector(state => state.isFetching)
     const [fetching,setFetching]=useState(false)
     const type=route.params
-    console.log('this is user detail',selector);
-    console.log('this is selector response', selector);
+
+    useEffect(() => {
+      NetInfo.addEventListener(state => {
+        if(!state.isConnected){
+        showMessage({
+          message:'Please connect to your internet',
+          type:'danger',
+        });
+        }
+      });
+    },[])
+  
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch({
@@ -40,15 +52,12 @@ const MyAddress = ({route}) => {
                 address_id:id,
                 navigation:navigation
               });
-        } else {
-            
+        } else {  
         }
-       
     }
     const deleteAddress=async(item)=>{
         const customer_id=await AsyncStorage.getItem(Storage.customer_id)
         const address_id = await AsyncStorage.getItem("Address_id")
-    
            try {
             setFetching(true)
             const data = new FormData();
@@ -64,7 +73,6 @@ const MyAddress = ({route}) => {
               },
               url: 'https://merwans.co.in/index.php?route=api/apiorder/addressDelete',
             });
-            console.log('thisi i suser respone', response.data);
             if (response.data.status == true) {
               setFetching(false)
               
@@ -108,7 +116,6 @@ const MyAddress = ({route}) => {
               },
               url: 'https://merwans.co.in/index.php?route=api/apiorder/addressById',
             });
-            console.log('thisi i suser respone', response.data);
             if (response.data.status == true) {
               setFetching(false)
               navigation.navigate('EditAddress',response.data.data)

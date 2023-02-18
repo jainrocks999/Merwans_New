@@ -8,6 +8,10 @@ import {
   Platform,
   Dimensions
 } from 'react-native';
+import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Storage from "../AsyncStorage";
+import { useNavigation } from "@react-navigation/native";
 
 const Preview = ({
   style,
@@ -20,24 +24,33 @@ const Preview = ({
 }) => {
   const BannerWidth = Dimensions.get('window').width ;
   const BannerHeight = 180;
+ const dispatch=useDispatch()
+ const navigation=useNavigation()
+  const manageList = async (item) => {
+    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    const store_id=await AsyncStorage.getItem(Storage.store_id)
+    AsyncStorage.setItem("category_id",item.category_id)
+    AsyncStorage.setItem('product_id',item.product_id)
+    dispatch({
+        type: 'Category_List_Request',
+        url: 'apiproduct',
+        customer_id:customer_id,
+        category_id:item.category_id,
+        store_id:store_id,
+        product_id:item.product_id,
+        navigation: navigation
+    });
+}
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10,width:BannerWidth }}>
-    <View style={{ width: '30%', }} >
-        <Image style={{ width: '100%', height: 110 }} source={require('../../assets/Logo/image1.png')} />
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Almond Finger \n[1 Pc]'}</Text>
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
+    <TouchableOpacity
+     onPress={()=>manageList(item)}
+     style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10,width:BannerWidth/3,paddingHorizontal:6 }}>
+    <View style={{ width: '100%', }} >
+        <Image style={{ width: '100%', height: 110,borderRadius:15 }} source={item.image?{uri:item.image}:require('../../assets/Logo/image2.png')} />
+        <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{item.name}</Text>
+        {item.price==undefined?null:<Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{`₹${parseInt(item.price).toFixed(2)}`}</Text>}
     </View>
-    <View style={{ width: '30%' }}>
-        <Image style={{ width: '100%', height: 110 }} source={require('../../assets/Logo/image2.png')} />
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Cashew Butter Biscuits [250 gms]'}</Text>
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
-    </View>
-    <View style={{ width: '30%', marginRight: 20 }}>
-        <Image style={{ width: '100%', height: 110 }} source={require('../../assets/Logo/image3.png')} />
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Blueberry Cheese Cake'}</Text>
-        <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
-    </View>
-</View>
+</TouchableOpacity>
   );
 };
 export default Preview

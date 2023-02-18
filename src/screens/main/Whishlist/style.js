@@ -199,7 +199,7 @@ export default StyleSheet.create({
         fontFamily:'Montserrat-Regular',
         color:'#353535',
         marginLeft:10,
-        marginBottom:5
+        marginBottom:0
     },
     view:{
         flexDirection:'row',
@@ -513,12 +513,13 @@ export default StyleSheet.create({
     url:{ 
         width: '100%', 
         borderRadius: 10,
-        height:217 
+        // height:217 
+        height:160
     },
     bests:{ 
         flexDirection: 'row', 
         alignItems: 'center', 
-        marginTop: 20 
+        marginTop: 10 
     },
     bests1:{ 
         flexDirection: 'row', 

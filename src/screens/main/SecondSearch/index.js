@@ -1,79 +1,3 @@
-// import React from "react";
-// import { View, Text, Image, TextInput, ImageBackground, FlatList,StatusBar } from 'react-native';
-// import styles from "./style";
-// import BottomTab from "../../../components/BottomTab";
-// import Search1 from "../../../assets/Svg/search1.svg";
-// import Heart from "../../../assets/Svg/heart.svg";
-// const Search = () => {
-//     return (
-//         <View style={{ flex: 1, backgroundColor: '#fff' }}>
-//             <View style={{ paddingHorizontal: 4 }}>
-//                 <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
-//                     <View style={styles.container}>
-//                         <Search1 />
-//                         <TextInput
-//                             placeholder="Cakes"
-//                             style={styles.search}
-//                             placeholderTextColor={'#000000'}
-//                         />
-//                     </View>
-//                 </View>
-//                 <FlatList
-//                     data={data1}
-//                     style={{ marginBottom: 100, marginTop: 20 }}
-//                     renderItem={({ item }) => (
-//                         <View
-//                             style={styles.view}>
-//                             <Image style={styles.img}
-//                                 source={require('../../../assets/Logo/rec.png')} />
-//                             <View style={{ paddingHorizontal: 10, marginTop: 10 }}>
-//                                 <Text style={styles.title}>{item.title}</Text>
-//                                 <Text style={styles.des}>{item.desc}</Text>
-//                                 <View style={styles.row}>
-//                                     <Text style={styles.price}>{'₹110.00'}</Text>
-//                                     <Heart height={20} width={18} />
-//                                 </View>
-//                             </View>
-//                         </View>
-//                     )}
-//                 />
-//             </View>
-//             <View style={styles.position}>
-//                 <BottomTab />
-//             </View>
-//             <StatusBar backgroundColor={'#fff'} barStyle="dark-content"/>
-//         </View>
-//     )
-// }
-// export default Search;
-
-// const data1 = [
-//     {
-//         image: require('../../../assets/Logo/group.png'),
-//         title: 'Choco Bliss Cake',
-//         desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet, sit euismod lacus iaculis sit ut pellentesque volutpat.',
-
-//     },
-//     {
-//         image: require('../../../assets/Logo/group.png'),
-//         title: 'Choco Bliss Cake',
-//         desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet, sit euismod lacus iaculis sit ut pellentesque volutpat.',
-
-//     },
-//     {
-//         image: require('../../../assets/Logo/group.png'),
-//         title: 'Choco Bliss Cake',
-//         desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet, sit euismod lacus iaculis sit ut pellentesque volutpat.',
-
-//     },
-//     {
-//         image: require('../../../assets/Logo/group.png'),
-//         title: 'Choco Bliss Cake',
-//         desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Amet, sit euismod lacus iaculis sit ut pellentesque volutpat.',
-
-//     },
-
-// ]
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, FlatList, TextInput, TouchableOpacity, ScrollView, Dimensions, StatusBar, Platform, ImageBackground } from "react-native";
 import Stars from "react-native-stars";
@@ -86,6 +10,7 @@ import Plus from "../../../assets/Svg/plus.svg";
 import Full from "../../../assets/Svg/fullStar.svg";
 import Blank from "../../../assets/Svg/blankStar.svg";
 import Heart from "../../../assets/Svg/heart.svg";
+import HeartF from "../../../assets/Svg/heartf.svg";
 import Poly from "../../../assets/Svg/poly.svg";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -95,34 +20,47 @@ import Storage from "../../../components/AsyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Search1 from "../../../assets/Svg/search1.svg";
 import Done from '../../../assets/Svg/Done.svg';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const CategoryList = () => {
   const [openPanel, setOpenPanel] = useState(false)
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const [isModalVisible, setIsModalVisible] = useState(false)
   const [pref, setPref] = useState('checked');
   const [msg, setMsg] = useState('unchecked')
-  const [kg, setKg] = useState('checked');
-  const [gram, setGram] = useState('unchecked')
-  const [cake, setCake] = useState(false)
+  const [kg, setKg] = useState('unchecked');
+  const [gram, setGram] = useState('checked')
   const selector = useSelector(state => state.CategoryList)
   const isFetching1 = useSelector(state => state.isFetching)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)
   const inputRef = React.useRef()
+  const inputRef1 = React.useRef()
   const length = selector.length
   const [search, setSearch] = useState('');
-  const [filteredDataSource, setFilteredDataSource] = useState();
-  const [masterDataSource, setMasterDataSource] = useState();
   const [data1, setData1] = useState([])
+  const [text,setText]=useState('')
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
 
   const searchFilterFunction = async (text) => {
+    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
     try {
+      // setSearch(text)
       const data = new FormData();
       data.append('search', text);
-      setSearch(text)
+      data.append('customer_id', customer_id);
       const response = await axios({
         method: 'POST',
         data,
@@ -135,29 +73,15 @@ const CategoryList = () => {
 
       if (response.data) {
         setData1(response.data.products)
-        setSearch(text)
+        // setSearch(text)
       }
       else {
         setFetching(false)
-        setSearch(text);
+        // setSearch(text);
       }
     } catch (error) {
       setFetching(false)
     }
-    // if (text) {
-    //   const newData = masterDataSource.filter(function (item) {
-    //     const itemData = `${item.content}${item.created_date}`
-    //       ? `${item.content} ${item.created_date}`.toUpperCase()
-    //       : ''.toUpperCase();
-    //     const textData = text.toUpperCase();
-    //     return itemData.indexOf(textData) > -1;
-    //   });
-    //   setFilteredDataSource(newData);
-    //   setSearch(text);
-    // } else {
-    //   setFilteredDataSource(masterDataSource);
-    //   setSearch(text);
-    // }
 
   };
 
@@ -167,6 +91,8 @@ const CategoryList = () => {
   };
 
   const productDetail = async (id) => {
+    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    if(customer_id){
     setOpenPanel(true)
     try {
       setFetching(true)
@@ -181,7 +107,6 @@ const CategoryList = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiproduct/productDetails',
       });
-      console.log('thisi i suser respone', response.data);
       if (response.data.status == true) {
         setFetching(false)
         setProduct(response.data.products)
@@ -191,16 +116,59 @@ const CategoryList = () => {
     } catch (error) {
       throw error;
     }
+  }
+  else{
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+  })
+  }
   };
+  
   const addItemToCart = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
+    if(product.options.length>1){
     dispatch({
       type: 'Add_Item_Request',
       url: 'apiorder/add_to_cart',
       customer_id: customer_id,
-      product_id: product.product_id,
+      product_id: product.products.product_id,
+      select_key:product.options[0].product_option_id,
+      select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
+     product.options[0].product_option_value[1].product_option_value_id,
+      text_key:product.options[1].product_option_id,
+      text_value:text,
+      outlet_id:store_id,
       navigation: navigation
     });
+  }
+  else if(product.options.length>0){
+    dispatch({
+      type: 'Add_Item_Request',
+      url: 'apiorder/add_to_cart',
+      customer_id: customer_id,
+      product_id: product.products.product_id,
+      select_key:product.options[0].product_option_id,
+      select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
+     product.options[0].product_option_value[1].product_option_value_id,
+      text_key:0,
+      text_value:'',
+      outlet_id:store_id,
+      navigation: navigation
+    });
+  }
+  else{
+    dispatch({
+      type: 'Add_Item_Request1',
+      url: 'apiorder/add_to_cart',
+      customer_id: customer_id,
+      product_id: product.products.product_id,
+      outlet_id:store_id,
+      navigation: navigation
+    });
+  }
+    setOpenPanel(false)
   }
 
   const managePref = () => {
@@ -219,23 +187,83 @@ const CategoryList = () => {
     setGram('unchecked')
     setKg('checked')
   }
+
+  const addWish = async (id) => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    try {
+      setFetching(true)
+      const data = new FormData();
+      data.append('product_id', id);
+      data.append('customer_id',customer_id)
+      const response = await axios({
+        method: 'POST',
+        data,
+        headers: {
+          'content-type': 'multipart/form-data',
+          Accept: 'multipart/form-data',
+        },
+        url: 'https://merwans.co.in/index.php?route=api/apiproduct/add_wishlist',
+      });
+      if (response.data.status == true) {
+        setFetching(false)
+        try {
+          setSearch(text)
+          const data2 = new FormData();
+          data2.append('search', text);
+          data2.append('customer_id',customer_id)
+          const response = await axios({
+            method: 'POST',
+            data:data2,
+            headers: {
+              'content-type': 'multipart/form-data',
+              Accept: 'multipart/form-data',
+            },
+            url: 'https://merwans.co.in/index.php?route=api/apiproduct/search',
+          });
+    
+          if (response.data) {
+            setData1(response.data.products)
+            setSearch(text)
+          }
+          else {
+            setFetching(false)
+            setSearch(text);
+          }
+        } catch (error) {
+          setFetching(false)
+        }
+      }
+      else{
+        setFetching(false)
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
   const version = Platform.OS
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
       {isFetching || isFetching1 ? <Loader /> : null}
       <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
         <View style={styles.container}>
-          <View style={styles.container1}>
+          <TouchableOpacity 
+          onPress={() => inputRef1.current.focus()}
+          style={[styles.container1]}>
             <Search1 />
             <TextInput
+            ref={inputRef1}
               placeholder="Cakes"
-              style={styles.search}
+              style={[styles.search]}
               placeholderTextColor={'#000000'}
               onChangeText={val => searchFilterFunction(val)}
+              onChange={val => setSearch(val)}
               value={search}
               returnKeyType="done"
             />
-          </View>
+          </TouchableOpacity>
           {search ? (
             <TouchableOpacity
               delayPressIn={0}
@@ -261,27 +289,33 @@ const CategoryList = () => {
           ) : null}
         </View>
       </View>
+     
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: 10 }}>
           <View>
             <FlatList
               data={data1}
               showsVerticalScrollIndicator={false}
+              removeClippedSubviews={true}
+              updateCellsBatchingPeriod={10}
+              maxToRenderPerBatch={5}
+              initialNumToRender={5}
               renderItem={({ item, index }) => (
                 <View
                   style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
-                  <View style={{ width: '60%', marginTop: 20 }}>
+                  <View style={{ width: '56%', marginTop: 20 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                       <View
                         style={styles.view1}>
                         <View style={styles.border} />
                       </View>
-                      <View style={styles.tag}>
+                      {/* <View style={styles.tag}>
                         <Text style={styles.best}>{'Best Seller'}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.title}
+                      </View> */}
+                       <Text style={styles.title}
                     >{item.name}</Text>
+                    </View>
+                   
                     <View
                       style={styles.round}>
                       <Stars
@@ -299,12 +333,23 @@ const CategoryList = () => {
                     </View>
                     <View style={{ marginTop: 6 }}>
                       <Text style={styles.desc}>{item.description}
-                        <Text style={styles.more}>{'  read more'}</Text>
+                        {/* <Text style={styles.more}>{'  read more'}</Text> */}
                       </Text>
                     </View>
-                    <View style={styles.image}>
+                    {item.favourite==false?<TouchableOpacity 
+                    onPress={()=>addWish(item.product_id)} 
+                    style={styles.image}>
                       <Heart />
-                    </View>
+                    </TouchableOpacity>:
+                    <TouchableOpacity 
+                    onPress={()=>addWish(item.product_id)} 
+                    style={styles.image}>
+                      <HeartF />
+                      {/* <Image 
+                      style={{height:10,width:10,tintColor:'grey'}}  
+                      source={require('../../../assets/Icon/heart.png')}/> */}
+                    </TouchableOpacity>
+                    }
                     <View style={{ height: 15 }} />
                   </View>
 
@@ -324,9 +369,9 @@ const CategoryList = () => {
                         </View>
                       </TouchableOpacity>
                     </View>
-                    <View style={styles.cus}>
+                    {/* <View style={styles.cus}>
                       <Text style={styles.custo}>Customise</Text>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
               )}
@@ -353,7 +398,7 @@ const CategoryList = () => {
         }}
       >
         <View style={{ flex: 1 }}>
-          <ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
+        {product&&product.products?<ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
             <KeyboardAwareScrollView
               extraScrollHeight={10}
               enableOnAndroid={true}
@@ -361,48 +406,52 @@ const CategoryList = () => {
               contentContainerStyle={{ flex: 1 }}>
               <View />
               <View />
-              <ImageBackground
-                source={require('../../../assets/Icon/bg.png')}
-                style={{ backgroundColor: '#fff', padding: 10, height: msg == 'checked' ? 600 : 700 }}>
+              <ImageBackground 
+              source={require('../../../assets/Icon/bg.png')}
+              style={{backgroundColor:'#fff',padding: 10, height: msg == 'checked' ?  600 : 700 }}>
 
                 <View style={styles.thumb}>
                   <Image style={styles.url}
-                    source={{ uri: product.thumb }} />
+                    source={{ uri: product.products.thumb }} />
                 </View>
-                <View style={styles.bests}>
+                <View style={[styles.bests,{justifyContent:'space-between'}]}>
+                  <View style={styles.bests1}>
                   <View
                     style={styles.view1}>
                     <View style={styles.border} />
                   </View>
-                  <View style={styles.tag}>
+                  {/* <View style={styles.tag}>
                     <Text style={styles.best}>{'Best Seller'}</Text>
-
-                  </View>
-                </View>
-                <View style={styles.pname}>
-                  <Text style={styles.title}>{product.name}</Text>
-                  <View style={styles.image}>
+                  </View> */}
+                   <Text style={[styles.title,{marginLeft:5}]}>{product.products.name}</Text>
+                   </View>
+                   {/* <View style={styles.image}>
                     <Image source={require('../../../assets/Icon/redHeart.png')} />
-                  </View>
+                  </View> */}
                 </View>
+                {/* <View style={styles.pname}>
+                 
+                
+                </View> */}
                 <View
                   style={styles.round1}>
                   <Stars
                     disabled={true}
-                    default={product.rating}
+                    default={product.products.rating}
                     spacing={3}
                     count={5}
                     starSize={12}
                     fullStar={require('../../../assets/Icon/fullstar.png')}
                     emptyStar={require('../../../assets/Icon/emptystar.png')} />
-                  <Text style={styles.review}>{'142 Reviews'}</Text>
+                  <Text style={styles.review}>{`${product.products.reviews} Reviews`}</Text>
                 </View>
                 <View style={{ marginTop: 10 }}>
                   <Text style={styles.descr}>
-                    {product.description}
+                    {product.products.description}
                   </Text>
                 </View>
-                <View style={styles.show}>
+                {product.options.length>0? <View>
+                {product.options.length>1?<View style={styles.show}>
                   <View style={{ width: '48%' }}>
                     <TouchableOpacity
                       onPress={() => managePref()}
@@ -416,7 +465,7 @@ const CategoryList = () => {
                         fontFamily: 'Montserrat-Medium',
                         fontSize: 10,
                       }}>{'Preference & Size'}</Text>
-                      <View >
+                      <View>
                         {pref == 'checked' ? <RadioButton
                           value="checked"
                           status={pref}
@@ -478,13 +527,14 @@ const CategoryList = () => {
                               color='#ED1B1A'
                             />
                         }
+
                       </View>
                     </TouchableOpacity>
                     <View style={{ alignItems: 'center', marginTop: 2 }}>
                       {msg == 'checked' ? <Poly /> : null}
                     </View>
                   </View>
-                </View>
+                </View>:null}
                 {pref == 'checked' ?
                   <View>
                     <View
@@ -533,7 +583,7 @@ const CategoryList = () => {
                         style={styles.bottom}>
                         <View
                           style={styles.row}>
-                          <Text style={styles.gram}>500  grams</Text>
+                         <Text style={styles.gram}>{product.options[0].product_option_value[0].name}</Text>
                           <View style={{ marginLeft: 10 }}>
                             {gram == 'checked' ? <RadioButton
                               value="first"
@@ -557,7 +607,7 @@ const CategoryList = () => {
                             }
                           </View>
                         </View>
-                        <Text style={styles.text}>Rs 315.26</Text>
+                        <Text style={styles.text}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
 
@@ -565,7 +615,7 @@ const CategoryList = () => {
                         style={styles.bottom}>
                         <View
                           style={styles.row}>
-                          <Text style={styles.gram}>1  KG</Text>
+                         <Text style={styles.gram}>{product.options[0].product_option_value[1].name}</Text>
                           <View style={{ marginLeft: 10 }}>
                             {kg == 'checked' ? <RadioButton
                               value="first"
@@ -589,7 +639,8 @@ const CategoryList = () => {
                             }
                           </View>
                         </View>
-                        <Text style={styles.text}>Rs 629.66</Text>
+                        <Text style={styles.text}>{
+                          `₹${(parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -603,6 +654,8 @@ const CategoryList = () => {
                       <TextInput
                         ref={inputRef}
                         placeholderTextColor={'#000000'}
+                        value={text}
+                        onChangeText={(val)=>setText(val)}
                         style={styles.msg}
                         placeholder='Message'
                         multiline={true}
@@ -610,19 +663,20 @@ const CategoryList = () => {
                     </TouchableOpacity>
                   </View>
                 }
+                </View>:null}
                 <View style={styles.pay}>
                   <TouchableOpacity
                     onPress={() => addItemToCart()}
                     style={styles.items}>
-                    <Text style={styles.rs}>{`Add item ${product.price}`}</Text>
+                     <Text style={styles.rs}>
+                        {`Add item ₹${gram == 'checked'?parseInt(product.products.price).toFixed(2):
+                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
                   </TouchableOpacity>
                 </View>
-
               </ImageBackground>
-
               {/* <View style={{ height: 100 }} /> */}
             </KeyboardAwareScrollView>
-          </ScrollView>
+          </ScrollView>:null}
         </View>
       </SwipeablePanel>
       <View style={styles.bot}>
@@ -635,6 +689,7 @@ const CategoryList = () => {
       </View>
 
       <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
+      </ImageBackground>
     </View>
   )
 }

@@ -35,6 +35,31 @@ import Privacy from "../screens/main/Privacy";
 import Term from "../screens/main/TermCondition";
 import Whishlist from "../screens/main/Whishlist";
 import EditAddress from "../screens/main/EditAddress";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import DrawerContent from '../components/DrawerContent';
+import WebView from "../screens/main/WebView";
+import Status from "../screens/main/Status";
+
+const Drawer1= createDrawerNavigator();
+ function Pay(){
+  return (
+  <Drawer1.Navigator initialRouteName="Payment" screenOptions={{headerShown:false}}
+  drawerContent={() => <DrawerContent/>}>
+      <Drawer1.Screen name="Payment" component={PaymentPage} />
+      <Drawer1.Screen name="Quick" component={QuickCheckout}/>
+  </Drawer1.Navigator>
+  )
+ }
+//  const Drawer2= createDrawerNavigator();
+//  function Check(){
+//   return (
+//   <Drawer1.Navigator initialRouteName="Payment" screenOptions={{headerShown:false}}
+//   drawerContent={() => <DrawerContent/>}>
+    
+//   </Drawer1.Navigator>
+//   )
+//  }
+ 
 const Stack = createNativeStackNavigator();
 function Navigate() {
 
@@ -71,9 +96,12 @@ function Navigate() {
         <Stack.Screen name="Category" component={Category}/>
         <Stack.Screen name="CategoryList" component={CategoryList}/>
         <Stack.Group screenOptions={{ headerShown:false }}>
-        <Stack.Screen name="Payment" component={PaymentPage}/>
+        <Stack.Screen name="Payment" component={Pay}/>
         </Stack.Group>
-        <Stack.Screen name="ProfileWithoutLogin" component={ProfileWithoutLogin}/>
+        <Stack.Group screenOptions={{ headerShown:false }}>
+        {/* <Stack.Screen name="Quick" component={Check}/> */}
+        </Stack.Group>
+        {/* <Stack.Screen name="ProfileWithoutLogin" component={ProfileWithoutLogin}/> */}
         <Stack.Screen name="ProfileWithLogin" component={ProfileWithLogin}/>
         <Stack.Screen name="MyAccountPage" component={MyAccountPage}/>
         <Stack.Screen name="EditProfile" component={EditProfile}/>
@@ -83,10 +111,10 @@ function Navigate() {
         <Stack.Screen name="ChangeAddress" component={ChangeAddress}/>
         <Stack.Screen name="AddressForm" component={AddressForm}/>
         <Stack.Screen name="OnlineOrderingHelp" component={OnlineOrderingHelp}/>
-        <Stack.Screen name="Search" component={Search}/>
-        <Stack.Screen name="SecondSearch" component={SecondSearch} options={horizontalAnimation}/>
+        {/* <Stack.Screen name="Search" component={Search}/> */}
+        {/* <Stack.Screen name="SecondSearch" component={SearchR}/> */}
         <Stack.Screen name="ManagePayment" component={ManagePayment}/>
-        <Stack.Screen name="Quick" component={QuickCheckout}/>
+        {/* <Stack.Screen name="Quick" component={QuickCheckout}/> */}
         <Stack.Screen name="Coupon" component={Coupon}/>
         <Stack.Screen name="Whish" component={Whishlist}/>
         <Stack.Screen name={"Otp"} component={Otp}/>
@@ -102,6 +130,8 @@ function Navigate() {
         <Stack.Screen name={"Privacy"} component={Privacy}/>
         <Stack.Screen name={"Term"} component={Term}/>
         <Stack.Screen name={"EditAddress"} component={EditAddress}/>
+        <Stack.Screen name={"WebView"} component={WebView}/>
+        <Stack.Screen name="Status" component={Status} />
       </Stack.Navigator>
     </NavigationContainer>
   );

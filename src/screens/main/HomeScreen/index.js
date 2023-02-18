@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Image, FlatList, Dimensions, TouchableOpacity, StatusBar, ImageBackground } from 'react-native';
-import Carousel from 'react-native-banner-carousel';
 import BottomTab from '../../../components/BottomTab';
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import styles from "./style";
@@ -10,35 +9,53 @@ import Arrow1 from "../../../assets/Svg/arrow1.svg";
 import Arrow2 from "../../../assets/Svg/arrow2.svg";
 import Modal from 'react-native-modal';
 import Arro from "../../../assets/Svg/arro";
-import Down from "../../../assets/Svg/down.svg";
 import RNPickerSelect from 'react-native-picker-select';
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage"
 import Toast from "react-native-simple-toast";
 import Loader from "../../../components/Loader";
-import SelectDropdown from 'react-native-select-dropdown'
 import { ScrollView } from "react-native-gesture-handler";
 import { FlatListSlider } from 'react-native-flatlist-slider';
 import Banner from "../../../components/Banner";
+import axios from "axios";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 
-const HomeScreen = () => {
+const HomeScreen = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const selector = useSelector(state => state.Store)
+    const selector1 = useSelector(state => state.Home)
     const isFetching = useSelector(state => state.isFetching)
     const BannerWidth = Dimensions.get('window').width;
+    const BannerWidth1 = Dimensions.get('window').width / 3;
     const BannerHeight = 240;
     const [visible, setVisible] = useState(false)
     const [state, setState] = useState(0)
     const [location, setLocation] = useState('Select Store')
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
 
     useEffect(async () => {
         const data = await AsyncStorage.getItem(Storage.location)
         data == null ? setVisible(true) : setVisible(false)
         setState(data)
         setLocation(data)
+        dispatch({
+            type: 'Home_Data_Request',
+            url: 'home/mobileview',
+        });
     }, [])
     useEffect(async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -48,22 +65,50 @@ const HomeScreen = () => {
             url: 'apiproduct/menuSubmenuList',
         });
         dispatch({
+            type: 'User_Detail_Request',
+            url: `customer/getDetail&customer_id=${customer_id}`,
+        });
+        dispatch({
             type: 'Get_Address_Request',
             url: 'apiorder/addressById',
             customer_id: customer_id,
-            address_id:0
+            address_id: 0
+        });
+        dispatch({
+            type: 'Address_List_Req',
+            url: 'apiorder/addressList',
+            customer_id: customer_id,
         });
     }, [])
-// address_id==null?0:address_id
-
-    const handleLocation = () => {
+    const handleLocation = async () => {
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         if (state == 0) {
             Toast.show('Please select store')
         }
         else {
             for (let index = 0; index < selector.length; index++) {
                 if (state == selector[index].label) {
-                    AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
+                    if (selector[index].store_id == store_id) {
+                        AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
+                    } else {
+                        AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
+                        try {
+                            const data = new FormData();
+                            data.append('customer_id', customer_id)
+                            const response = await axios({
+                                method: 'POST',
+                                data,
+                                headers: {
+                                    'content-type': 'multipart/form-data',
+                                    Accept: 'multipart/form-data',
+                                },
+                                url: 'https://merwans.co.in/index.php?route=api/cart/clearcart',
+                            });
+                        } catch (error) {
+                            throw error;
+                        }
+                    }
                 }
             }
             setVisible(false)
@@ -72,54 +117,55 @@ const HomeScreen = () => {
 
         }
     }
-    const handleLocation1 = (val) => {
-        setState(val)
-        setLocation(val)
-        AsyncStorage.setItem(Storage.location, val)
-
-    }
-
-    const renderPage = (image, index) => {
-        return (
-            <View key={index}>
-                <Image style={{ width: BannerWidth, height: BannerHeight }} source={require('../../../assets/Logo/banner.png')} />
-            </View>
-        );
-    }
-    const renderPage1 = (image, index) => {
-        return (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10 }}>
-                <View style={{ width: '30%', }} >
-                    <Image style={{ width: '100%', height: 110 }} source={require('../../../assets/Logo/image1.png')} />
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Almond Finger \n[1 Pc]'}</Text>
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
-                </View>
-                <View style={{ width: '30%' }}>
-                    <Image style={{ width: '100%', height: 110 }} source={require('../../../assets/Logo/image2.png')} />
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Cashew Butter Biscuits [250 gms]'}</Text>
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
-                </View>
-                <View style={{ width: '30%', marginRight: 20 }}>
-                    <Image style={{ width: '100%', height: 110 }} source={require('../../../assets/Logo/image3.png')} />
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-SemiBold', fontSize: 10, marginTop: 5 }}>{'Blueberry Cheese Cake'}</Text>
-                    <Text style={{ color: '#000000', fontFamily: 'Montserrat-Medium', fontSize: 11, marginTop: 10 }}>{'₹ 550.00'}</Text>
-                </View>
-            </View>
-        );
-    }
-
-    const manageList = async () => {
+    const manageListIem = async (id, product_id) => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
+        AsyncStorage.setItem("category_id", id)
+        AsyncStorage.setItem("product_id", product_id)
         dispatch({
             type: 'Category_List_Request',
             url: 'apiproduct',
-            category_id: 24,
+            category_id: id,
+            customer_id: customer_id,
+            store_id: store_id,
+            product_id: product_id,
+            navigation: navigation
+        });
+    }
+    const manageList = async (id) => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
+        AsyncStorage.setItem("category_id", id)
+        AsyncStorage.setItem("product_id", '')
+        dispatch({
+            type: 'Category_List_Request',
+            url: 'apiproduct',
+            category_id: id,
+            customer_id: customer_id,
+            store_id: store_id,
+            navigation: navigation
+        });
+    }
+
+    const manageTranding = async (item) => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
+        AsyncStorage.setItem("category_id", item.category_id)
+        AsyncStorage.setItem("product_id", item.product_id)
+        dispatch({
+            type: 'Category_List_Request',
+            url: 'apiproduct',
+            category_id: item.category_id,
+            customer_id: customer_id,
+            store_id: store_id,
+            product_id: item.product_id,
             navigation: navigation
         });
     }
     const flatListRef = useRef(FlatList);
     const [index, setIndex] = useState(1)
     const nextPress = () => {
-        if (index + 1 < data.length) {
+        if (index + 1 < selector1.trendingProducts.length) {
             flatListRef?.current?.scrollToIndex({
                 animated: true,
                 index: index + 1
@@ -136,42 +182,38 @@ const HomeScreen = () => {
             setIndex(index - 1)
         }
     };
+    const manageBanner = async (item) => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
+        AsyncStorage.setItem("category_id", selector1.bannerData[item].catId)
+        AsyncStorage.setItem("product_id", '')
+        dispatch({
+            type: 'Category_List_Request',
+            url: 'apiproduct',
+            category_id: selector1.bannerData[item].catId,
+            customer_id: customer_id,
+            store_id: store_id,
+            navigation: navigation
+        });
+    }
 
 
     return (
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
             <ScrollView contentInsetAdjustmentBehavior='automatic' stickyHeaderIndices={[0]} style={{ flex: 1 }}>
-
                 <Header
                     location={location}
                     onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
                 />
                 <TouchableOpacity
                     onPress={() => setVisible(true)}
-                    style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: '#E2E2E2',
-                        height: 40, width: '100%'
-                    }}>
-                    <Text style={{ color: '#333333', fontFamily: 'Montserrat-SemiBold', fontSize: 16 }}>{location ? location : 'Select Store'}</Text>
+                    style={styles.header}>
+                    <Text style={styles.location}>{location ? location : 'Select Store'}</Text>
                 </TouchableOpacity>
-                <View style={{ width: '100%', alignItems: 'center', height: 200, marginTop: 0 }}>
-                    {/* <Carousel
-                        autoplay={false}
-                        autoplayTimeout={5000}
-                        loop
-                        index={0}
-                        pageSize={BannerWidth}
-                        activePageIndicatorStyle={{ backgroundColor: '#ED1B1A', }}
-                    >
-                        {images.map((image, index) => renderPage(image, index))}
-                    </Carousel> */}
+                {selector1.banner == true ? <View style={styles.height}>
                     <FlatListSlider
-                        data={images5}
-                        imageKey={'banner'}
-                        local
+                        data={selector1.bannerData}
                         width={BannerWidth}
                         height={BannerHeight}
                         contentContainerStyle={{ paddingHorizontal: 0 }}
@@ -180,33 +222,18 @@ const HomeScreen = () => {
                         indicatorInActiveColor={'#737373'}
                         loop={false}
                         autoscroll={false}
-                    // animation
+                        onPress={(item) => manageBanner(item)}
                     />
-                </View>
-                <ImageBackground source={require('../../../assets/Icon/bg.png')}
-                    style={{ backgroundColor: '#fff', paddingBottom: 11, }}>
-                    <View style={{ alignItems: 'center', paddingVertical: 10, marginTop: 2 }}>
-                        <Text style={{ color: '#ED1B1A', fontFamily: 'Montserrat-Bold', fontSize: 22 }}>Merwans Special</Text>
+                </View> : null}
+                {selector1.specialProduct == true ? <ImageBackground source={require('../../../assets/Icon/bg.png')}
+                    style={styles.special}>
+                    <View style={styles.specialView}>
+                        <Text style={styles.merwans}>Merwans Special</Text>
                     </View>
                     <View style={{ paddingHorizontal: 10, marginBottom: 25 }}>
-                        {/* <Carousel
-                            autoplay={false}
-                            autoplayTimeout={5000}
-                            loop={false}
-                            index={0}
-                            pageSize={BannerWidth}
-                            pageIndicatorStyle={{ marginTop: 20, backgroundColor: 'grey' }}
-                            pageIndicatorContainerStyle={{ marginTop: 20, bottom: -10 }}
-                            activePageIndicatorStyle={{ marginTop: 20, backgroundColor: '#ED1B1A', }}
-                            showsPageIndicator={true}
-                        >
-                            {images1.map((image, index) => renderPage1(image, index))}
-                        </Carousel> */}
                         <FlatListSlider
-                            data={images5}
-                            imageKey={'banner'}
-                            local
-                            width={BannerWidth}
+                            data={selector1.specialProducts}
+                            width={BannerWidth1}
                             height={BannerHeight}
                             contentContainerStyle={{ paddingHorizontal: 0 }}
                             indicatorContainerStyle={{ position: 'absolute', bottom: -15 }}
@@ -215,21 +242,15 @@ const HomeScreen = () => {
                             component={<Banner />}
                             loop={false}
                             autoscroll={false}
-                        // animation
                         />
                     </View>
-                </ImageBackground>
-                <View style={{ backgroundColor: '#E2E2E2' }}>
-                    <View style={{ alignItems: 'flex-end', marginTop: -30 }}>
+                </ImageBackground> : null}
+                {selector1.category == true ? <View style={{ backgroundColor: '#E2E2E2' }}>
+                    <View style={styles.sub}>
                         <Image source={require('../../../assets/Icon/dot.png')} />
                     </View>
-                    <View style={{
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginTop: -92,
-                    }}>
-                        <Text style={{ color: '#ED1B1A', fontFamily: 'Montserrat-SemiBold', fontSize: 22 }}>Ready To Deliver</Text>
+                    <View style={styles.sub1}>
+                        <Text style={styles.ready}>Ready To Deliver</Text>
                     </View>
 
                     <View style={{ height: 340 }} />
@@ -238,131 +259,135 @@ const HomeScreen = () => {
                     </View>
                     <View style={{ paddingHorizontal: 12, marginTop: -425 }}>
                         <View style={styles.row}>
-                            <View style={styles.main}>
-                                <Image
-                                    style={{ width: '100%', borderRadius: 10 }}
-                                    source={require('../../../assets/Logo/rtd1.png')} />
-                            </View>
-                            <View style={styles.main}>
-                                <Image
-                                    style={{ width: '100%', borderRadius: 10 }}
-                                    source={require('../../../assets/Logo/rtd1.png')} />
-                            </View>
-                        </View>
-                        <View style={[styles.row, { marginTop: 12 }]}>
-                            <View style={styles.main}>
-                                <Image
-                                    style={{ width: '100%', borderRadius: 10 }}
-                                    source={require('../../../assets/Logo/rtd1.png')} />
-                            </View>
-                            <View style={styles.main}>
-                                <Image
-                                    style={{ width: '100%', borderRadius: 10 }}
-                                    source={require('../../../assets/Logo/rtd1.png')} />
-                            </View>
-                        </View>
-                    </View>
-
-                    <View style={{ backgroundColor: '#fff', marginTop: 73 }}>
-                        <View style={styles.cont}>
-                            <Text style={{ color: '#EB201F', fontFamily: 'Montserrat-Bold', fontSize: 20 }}>Cakes</Text>
                             <TouchableOpacity
-                                onPress={() => manageList()}
-                                style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={{ color: '#EC1835', fontSize: 13, marginRight: 10, borderBottomWidth: 1, fontFamily: 'Montserrat-Medium' }}>View All</Text>
-                                <Arrow />
+                                onPress={() => manageList(selector1.deliverCategory[0].category_id)}
+                                style={styles.main}>
+                                <Image
+                                    style={styles.image}
+                                    source={selector1.deliverCategory[0].image ? { uri: selector1.deliverCategory[0].image } : require('../../../assets/Logo/rtd1.png')} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => manageList(selector1.deliverCategory[1].category_id)}
+                                style={styles.main}>
+                                <Image
+                                    style={styles.image}
+                                    source={selector1.deliverCategory[1].image ? { uri: selector1.deliverCategory[1].image } : require('../../../assets/Logo/rtd1.png')} />
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.row1}>
-                            <View style={styles.view}>
-                                <Image style={{ width: '100%' }}
-                                    source={require('../../../assets/Logo/cake-box.png')} />
-                                <View style={styles.view2}>
-                                    <Text style={styles.cake}>{'Pineapple Cake'}</Text>
-                                    <Text style={styles.des}>Lorem ipsume dolor sit amet, consectetur adipiscing elit.</Text>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, marginBottom: 10 }}>
-                                        <Text style={{ color: '#232323', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{'₹ 290.00'}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                            <View style={styles.view}>
-                                <Image style={{ width: '100%' }}
-                                    source={require('../../../assets/Logo/cake-box.png')} />
-                                <View style={styles.view2}>
-                                    <Text style={styles.cake}>{'Pineapple Cake'}</Text>
-                                    <Text style={styles.des}>Lorem ipsume dolor sit amet, consectetur adipiscing elit.</Text>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 15, marginBottom: 10 }}>
-                                        <Text style={{ color: '#232323', fontFamily: 'Montserrat-Regular', fontSize: 12 }}>{'₹ 290.00'}</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={{ width: '100%', backgroundColor: '#FFFBDB', marginTop: 30 }}>
-                            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
-                                <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 22, color: '#ED1B1A' }}>Trending Now</Text>
-                            </View>
-                            <View style={{ marginTop: 20 }}>
-                                <FlatList
-                                    data={data}
-                                    ref={flatListRef}
-                                    horizontal={true}
-                                    renderItem={({ item }) => {
-                                        return (
-                                            <View
-                                                style={{
-                                                    marginHorizontal: 8
-                                                }}>
-                                                <Image source={item.image} />
-                                                <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#000000', marginTop: 10 }}>{item.name
-                                                }</Text>
-                                            </View>
-                                        )
-                                    }
-                                    }
+                        <View style={[styles.row, { marginTop: 12 }]}>
+                            <TouchableOpacity
+                                onPress={() => manageList(selector1.deliverCategory[2].category_id)}
+                                style={styles.main}>
+                                <Image
+                                    style={styles.image}
+                                    source={selector1.deliverCategory[2].image ? { uri: selector1.deliverCategory[2].image } : require('../../../assets/Logo/rtd1.png')} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => manageList(selector1.deliverCategory[3].category_id)}
+                                style={styles.main}>
+                                <Image
+                                    style={styles.image}
+                                    source={selector1.deliverCategory[3].image ? { uri: selector1.deliverCategory[3].image } : require('../../../assets/Logo/rtd1.png')}
                                 />
-                                <View style={styles.arrow}>
-                                    <TouchableOpacity
-                                        onPress={() => backPress()}>
-                                        <Arrow1 />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        onPress={() => nextPress()}
-                                        style={{ marginLeft: 12 }}>
-                                        <Arrow2 />
-                                    </TouchableOpacity>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View> : null}
+                <View style={{ backgroundColor: '#fff', marginTop: selector1.category == true ? 73 : 0 }}>
+                    {selector1.specialCategory == true && selector1.specialCategoryData[0].products? <View style={styles.cont}>
+                        <Text style={styles.cat}>{selector1.specialCategoryData[0].name}</Text>
+                        <TouchableOpacity
+                            onPress={() => manageList(selector1.specialCategoryData[0].category_id)}
+                            style={styles.viewAll}>
+                            <Text style={styles.all}>View All</Text>
+                            <Arrow />
+                        </TouchableOpacity>
+                    </View> : null}
+                    {selector1.specialCategory == true &&selector1.specialCategoryData[0].products ? <View style={[styles.row1, { marginBottom: 30 }]}>
+                        <TouchableOpacity
+                            onPress={() => manageListIem(selector1.specialCategoryData[0].category_id, selector1.specialCategoryData[0].products[0].product_id)}
+                            style={styles.view}>
+                            <Image style={styles.radius}
+                                source={selector1.specialCategoryData[0].products[0].image ? { uri: selector1.specialCategoryData[0].products[0].image } : require('../../../assets/Logo/cake-box.png')} />
+                            <View style={styles.view2}>
+                                <Text style={styles.cake}>{selector1.specialCategoryData[0].products[0].name}</Text>
+                                <Text style={styles.des}>{selector1.specialCategoryData[0].products[0].description}</Text>
+                                <View style={styles.rView}>
+                                    <Text style={styles.rupees}>{`₹${parseInt(selector1.specialCategoryData[0].products[0].price).toFixed(2)}`}</Text>
                                 </View>
                             </View>
-                            <View style={{ height: 30 }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => manageListIem(selector1.specialCategoryData[0].category_id, selector1.specialCategoryData[0].products[1].product_id)}
+                            style={styles.view}>
+                            <Image style={styles.radius}
+                                source={selector1.specialCategoryData[0].products[1].image ? { uri: selector1.specialCategoryData[0].products[1].image } : require('../../../assets/Logo/cake-box.png')} />
+                            <View style={styles.view2}>
+                                <Text style={styles.cake}>{selector1.specialCategoryData[0].products[1].name}</Text>
+                                <Text style={styles.des}>{selector1.specialCategoryData[0].products[1].description}</Text>
+                                <View style={styles.rView}>
+                                    <Text style={styles.rupees}>{`₹${parseInt(selector1.specialCategoryData[0].products[1].price).toFixed(2)}`}</Text>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    </View> : null}
+                    {selector1.trendingProduct == true ? <View style={styles.trending}>
+                        <View style={styles.trending1}>
+                            <Text style={styles.trending2}>Trending Now</Text>
                         </View>
+                        <View style={{ marginTop: 20 }}>
+                            <FlatList
+                                data={selector1.trendingProducts}
+                                ref={flatListRef}
+                                horizontal={true}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <TouchableOpacity
+                                            onPress={() => manageTranding(item)}
+                                            style={{
+                                                marginHorizontal: 8
+                                            }}>
+                                            <Image style={{ width: 133, height: 125 }}
+                                                source={item.image ? { uri: item.image } : require('../../../assets/Logo/samosa.png')} />
+                                            <Text style={styles.name}>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                }
+                                }
+                            />
+                            <View style={styles.arrow}>
+                                <TouchableOpacity
+                                    onPress={() => backPress()}>
+                                    <Arrow1 />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => nextPress()}
+                                    style={{ marginLeft: 12 }}>
+                                    <Arrow2 />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ height: 30 }} />
+                    </View> : null}
 
-                    </View>
                 </View>
+                {/* </View> */}
 
             </ScrollView>
             <View>
-                <BottomTab 
-                home={true}
-                search={false}
-                cart={false}
-                profile={false}
+                <BottomTab
+                    home={true}
+                    search={false}
+                    cart={false}
+                    profile={false}
                 />
             </View>
             <Modal
                 isVisible={visible}
             >
-                <View style={{ backgroundColor: '#FFF', width: '100%', alignSelf: 'center' }}>
-                    <View style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 10,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <Text style={{
-                            textAlign: 'center',
-                            color: '#ED1B1A',
-                            fontFamily: 'Montserrat-SemiBold',
-                            fontSize: 13
-                        }}>{'WELCOME TO MERWANS CONFECTIONERS PVT. LTD.'}</Text>
+                <View style={styles.pop}>
+                    <View style={styles.popView}>
+                        <Text style={styles.welcome}>{'WELCOME TO MERWANS CONFECTIONERS PVT. LTD.'}</Text>
                     </View>
                     <View style={{ borderWidth: 0.5, borderColor: '#D9D9D9' }} />
                     <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
@@ -397,27 +422,6 @@ const HomeScreen = () => {
                                     useNativeAndroidPickerStyle={false}
                                     placeholder={{ label: 'Select Store', value: '' }}
                                 />
-                                {/* <SelectDropdown
-                                    data={data1}
-                                    onSelect={(selectedItem, index) => {
-                                        setState(selectedItem)
-                                    }}
-                                    buttonTextAfterSelection={(selectedItem, index) => {
-                                        return selectedItem
-                                    }}
-                                    rowTextForSelection={(item, index) => {
-                                        return item
-                                    }}
-                                    buttonStyle={{
-                                        backgroundColor:'#FAFAFA',
-                                        height:30,
-                                        alignItems:'center',
-                                        justifyContent:'center',
-                                        width:'100%'
-                                    }}
-                                    buttonTextStyle={{fontSize:12}}
-                                    defaultButtonText='Select Store'
-                                /> */}
                             </View>
                             <TouchableOpacity
                                 onPress={() => handleLocation()}
@@ -437,51 +441,4 @@ const HomeScreen = () => {
     )
 }
 export default HomeScreen;
-const Store = ["Egypt", "Canada", "Australia", "Ireland", "Egypt", "Canada", "Australia", "Ireland"]
-const data1 = [
-    {
-        labe: "Andheri West",
-        value: "31"
-    },
-    {
-        label: "West",
-        value: "32"
-    },
-    {
-        label: "West",
-        value: "33"
-    }
-]
 
-const data = [
-    { image: require('../../../assets/Logo/samosa.png'), name: 'Cheese Puff' },
-    { image: require('../../../assets/Logo/samosa.png'), name: 'Cheese Puff' },
-    { image: require('../../../assets/Logo/samosa.png'), name: 'Cheese Puff' },
-    { image: require('../../../assets/Logo/samosa.png'), name: 'Cheese Puff' },
-    { image: require('../../../assets/Logo/samosa.png'), name: 'Cheese Puff' }
-]
-
-const images = [
-    "https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "http://xxx.com/3.png"
-];
-const images1 = [
-    "https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "http://xxx.com/3.png"
-];
-
-
-const images5 = [
-    {
-        banner: require('../../../assets/Logo/banner.png'),
-
-    },
-    {
-        banner: require('../../../assets/Logo/banner.png'),
-    },
-    {
-        banner: require('../../../assets/Logo/banner.png'),
-    }
-]

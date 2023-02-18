@@ -13,7 +13,7 @@ export default StyleSheet.create({
     },
     row:{ 
         flexDirection: 'row', 
-        alignItems: 'center' 
+        // alignItems: 'center' 
     },
     done:{
         backgroundColor: '#D9D9D9',

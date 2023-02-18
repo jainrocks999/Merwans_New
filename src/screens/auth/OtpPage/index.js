@@ -1,16 +1,28 @@
 import { View, Text, Image, Platform, TouchableOpacity, ImageBackground } from 'react-native';
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
 import Back from "../../../assets/Svg/back.svg";
 import OtpInputs from "react-native-otp-inputs";
 import Toast from "react-native-simple-toast";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const Otp = ({route}) => {
     const navigation = useNavigation()
     const [code,setCode]=useState('')
-    console.log('this is route data',route.params);
 
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
     const verifyOtp=()=>{
         if(code==''){
             Toast.show('Please enter otp')

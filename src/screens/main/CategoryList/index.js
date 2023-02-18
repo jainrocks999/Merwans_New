@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,6 @@ import Stars from "react-native-stars";
 import styles from "./style";
 import SwipeablePanel from 'react-native-sheets-bottom';
 import { useNavigation } from "@react-navigation/native";
-import BottomTab from '../../../components/BottomTab';
 import { RadioButton } from 'react-native-paper';
 import Plus from "../../../assets/Svg/plus.svg";
 import Plus2 from "../../../assets/Svg/menuP.svg";
@@ -27,8 +26,6 @@ import Heart from "../../../assets/Svg/heart.svg";
 import Cutlery from "../../../assets/Svg/cutlery-white.svg";
 import Go from "../../../assets/Svg/go.svg";
 import Search from "../../../assets/Svg/search1.svg";
-import Modal from 'react-native-modal';
-import Plus1 from "../../../assets/Svg/menuP.svg";
 import Minus from "../../../assets/Svg/minus.svg";
 import Multi from "../../../assets/Svg/multi.svg";
 import Diamond from "../../../assets/Svg/diamond.svg";
@@ -39,21 +36,14 @@ import Loader from "../../../components/Loader";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Storage from "../../../components/AsyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import White from "../../../assets/Svg/white-mul";
+import HeartF from "../../../assets/Svg/heartf.svg";
 import Done from '../../../assets/Svg/Done.svg';
-import { Dropdown } from 'react-native-element-dropdown';
-const data4 = [
-  { label: 'Item 1', value: '1' },
-  { label: 'Item 2', value: '2' },
-  { label: 'Item 3', value: '3' },
-  { label: 'Item 4', value: '4' },
-  { label: 'Item 5', value: '5' },
-  { label: 'Item 6', value: '6' },
-  { label: 'Item 7', value: '7' },
-  { label: 'Item 8', value: '8' },
-];
-const CategoryList = () => {
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
+import BottomTab from "../../../components/BottomTab";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
+const CategoryList = () => {
   const [openPanel, setOpenPanel] = useState(false)
   const navigation = useNavigation()
   const dispatch = useDispatch()
@@ -62,29 +52,38 @@ const CategoryList = () => {
   const [msg, setMsg] = useState('unchecked')
   const [kg, setKg] = useState('unchecked');
   const [gram, setGram] = useState('checked')
-  const [cake, setCake] = useState(false)
   const selector = useSelector(state => state.CategoryList)
   const category = useSelector(state => state.Category)
   const selector1 = useSelector(state => state.MenuList)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)
-  const [wid, setWid] = useState(122)
   const [search, setSearch] = useState('');
-  const [catname,setcatname]=useState('')
+  const [catname, setcatname] = useState('')
   const [filteredDataSource, setFilteredDataSource] = useState(selector);
   const [masterDataSource, setMasterDataSource] = useState(selector);
   const [listDataSource, setListDataSource] = useState(selector);
   const [multiSelect, setMultiSelect] = useState(false);
-  const [isFocus, setIsFocus] = useState(false);
-  const [value, setValue] = useState(null);
   const [click, setClick] = useState(false)
   const [visible, setVisible] = useState(false)
-  const [text,setText]=useState('')
+  const [text, setText] = useState('')
   const inputRef = React.useRef()
   const length = selector.length
 
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
+
   const productDetail = async (id) => {
+    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    if(customer_id){
     setOpenPanel(true)
     try {
       setFetching(true)
@@ -99,7 +98,6 @@ const CategoryList = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiproduct/productDetails',
       });
-      console.log('thisi i suser respone', response.data);
       if (response.data.status == true) {
         setFetching(false)
         setProduct(response.data.products)
@@ -109,47 +107,58 @@ const CategoryList = () => {
     } catch (error) {
       throw error;
     }
+  }
+  else{
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+  })
+  }
   };
 
   const addItemToCart = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-    if(product.options.length>1){
-    dispatch({
-      type: 'Add_Item_Request',
-      url: 'apiorder/add_to_cart',
-      customer_id: customer_id,
-      product_id: product.products.product_id,
-      select_key:product.options[0].product_option_id,
-      select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
-     product.options[0].product_option_value[1].product_option_value_id,
-      text_key:product.options[1].product_option_id,
-      text_value:text,
-      navigation: navigation
-    });
-  }
-  else if(product.options.length>0){
-    dispatch({
-      type: 'Add_Item_Request',
-      url: 'apiorder/add_to_cart',
-      customer_id: customer_id,
-      product_id: product.products.product_id,
-      select_key:product.options[0].product_option_id,
-      select_value:gram == 'checked'?product.options[0].product_option_value[0].product_option_value_id:
-     product.options[0].product_option_value[1].product_option_value_id,
-      text_key:0,
-      text_value:'',
-      navigation: navigation
-    });
-  }
-  else{
-    dispatch({
-      type: 'Add_Item_Request1',
-      url: 'apiorder/add_to_cart',
-      customer_id: customer_id,
-      product_id: product.products.product_id,
-      navigation: navigation
-    });
-  }
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
+    if (product.options.length > 1) {
+      dispatch({
+        type: 'Add_Item_Request',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        select_key: product.options[0].product_option_id,
+        select_value: gram == 'checked' ? product.options[0].product_option_value[0].product_option_value_id :
+          product.options[0].product_option_value[1].product_option_value_id,
+        text_key: product.options[1].product_option_id,
+        text_value: text,
+        outlet_id:store_id,
+        navigation: navigation
+      });
+    }
+    else if (product.options.length > 0) {
+      dispatch({
+        type: 'Add_Item_Request',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        select_key: product.options[0].product_option_id,
+        select_value: gram == 'checked' ? product.options[0].product_option_value[0].product_option_value_id :
+          product.options[0].product_option_value[1].product_option_value_id,
+        text_key: 0,
+        text_value: '',
+        outlet_id:store_id,
+        navigation: navigation
+      });
+    }
+    else {
+      dispatch({
+        type: 'Add_Item_Request1',
+        url: 'apiorder/add_to_cart',
+        customer_id: customer_id,
+        product_id: product.products.product_id,
+        outlet_id:store_id,
+        navigation: navigation
+      });
+    }
     setOpenPanel(false)
   }
 
@@ -173,10 +182,8 @@ const CategoryList = () => {
   const searchFilterFunction = text => {
     if (text) {
       const newData = masterDataSource.filter(function (item) {
-        console.log(item.name);
         const itemData = `${item.name}${item.price}` ? `${item.description}${item.name}${item.price} `.toUpperCase()
           : ''.toUpperCase();
-        console.log(itemData);
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
       });
@@ -198,13 +205,62 @@ const CategoryList = () => {
   }
   const addWish = async (id) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-    dispatch({
-      type: 'Add_Wish_Request',
-      url: 'apiproduct/add_wishlist',
-      customer_id: customer_id,
-      product_id: id,
-    });
+    const category_id = await AsyncStorage.getItem('category_id')
+    const product_id = await AsyncStorage.getItem('product_id')
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
+    try {
+      setFetching(true)
+      const data = new FormData();
+      data.append('product_id', id);
+      data.append('customer_id', customer_id)
+      const response = await axios({
+        method: 'POST',
+        data,
+        headers: {
+          'content-type': 'multipart/form-data',
+          Accept: 'multipart/form-data',
+        },
+        url: 'https://merwans.co.in/index.php?route=api/apiproduct/add_wishlist',
+      });
+      if (response.data.status == true) {
+        setFetching(false)
+        try {
+          setFetching(true)
+          const data1 = new FormData();
+          data1.append('category_id', category_id);
+          data1.append('customer_id', customer_id)
+          data1.append('product_id', product_id == null ? '' : product_id)
+          data1.append('store_id', store_id)
+          const response = await axios({
+            method: 'POST',
+            data: data1,
+            headers: {
+              'content-type': 'multipart/form-data',
+              Accept: 'multipart/form-data',
+            },
+            url: 'https://merwans.co.in/index.php?route=api/apiproduct',
+          });
+          if (response.data.status == true) {
+            setFetching(false)
+            setFilteredDataSource(response.data.products)
+            setcatname(response.data.category)
+          }
+          else {
+            setFetching(false)
+          }
+        } catch (error) {
+          throw error;
+        }
+
+      }
+      else {
+        setFetching(false)
+      }
+    } catch (error) {
+      throw error;
+    }
   }
+
 
   const ExpandableComponent = ({ item, onClickFunction }) => {
     const [layoutHeight, setLayoutHeight] = useState(0);
@@ -219,7 +275,6 @@ const CategoryList = () => {
     return (
       <View>
         <View
-          // activeOpacity={0.8}  onPress={onClickFunction} 
           style={[styles.cmn]}>
           <TouchableOpacity
             activeOpacity={0.8} onPress={() => manageData(item.category_id)}
@@ -243,13 +298,12 @@ const CategoryList = () => {
           {item.submenus.map((item, key) => (
             <TouchableOpacity
               onPress={() => manageData(item.category_id)}
-              style={[styles.margin,{width:'90%'}]}>
+              style={[styles.margin, { width: '90%' }]}>
               <Text style={[styles.item, { textTransform: 'uppercase', }]}>{item.name}</Text>
               <View style={styles.round2}>
                 <Text style={styles.num}>{item.productCount}</Text>
               </View>
             </TouchableOpacity>
-
           ))}
         </View>
       </View>
@@ -270,11 +324,17 @@ const CategoryList = () => {
     setListDataSource(array);
   };
 
-  const manageData = async(id) => {
+  const manageData = async (id) => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    AsyncStorage.setItem("category_id", id)
+    AsyncStorage.setItem("product_id", '')
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
     try {
       setFetching(true)
       const data = new FormData();
       data.append('category_id', id);
+      data.append('customer_id', customer_id)
+      data.append('store_id', store_id)
       const response = await axios({
         method: 'POST',
         data,
@@ -284,27 +344,19 @@ const CategoryList = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiproduct',
       });
-      console.log('thisi i suser respone', response.data);
       if (response.data.status == true) {
         setFetching(false)
         setFilteredDataSource(response.data.products)
         setcatname(response.data.category)
       }
-      else{
+      else {
         setFetching(false)
       }
     } catch (error) {
       throw error;
     }
-    // dispatch({
-    //   type: 'Category_List_Request',
-    //   url: 'apiproduct',
-    //   category_id: id,
-    //   navigation: navigation
-    // });
     setIsModalVisible(false)
   }
-
   const version = Platform.OS
   return (
     <View style={{ flex: 1, }}>
@@ -312,11 +364,11 @@ const CategoryList = () => {
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
         <View style={styles.main}>
           <View style={styles.go}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={{ paddingRight: 10, paddingVertical: 3 }} onPress={() => navigation.navigate('Home')}>
               <Go />
             </TouchableOpacity>
             {click ? null : <Text style={styles.cake}>{
-            catname?catname.catname:category.catname
+              catname ? catname.catname : category.catname
             }</Text>}
           </View>
           {click ? <TouchableOpacity
@@ -366,48 +418,46 @@ const CategoryList = () => {
           </TouchableOpacity> :
             <TouchableOpacity
               onPress={() => handleWidth()}
-              // disabled
               style={[styles.container, {
-                marginRight: 0,
                 width: 122,
                 height: 30,
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                justifyContent: 'flex-start'
               }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center',marginTop:2 }}>
-                <Search />
-                <Text style={styles.search}>Search</Text>
-              </View>
-
+              <Search />
+              <Text style={[styles.search, { marginTop: 0 }]}>Search</Text>
             </TouchableOpacity>
           }
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ paddingHorizontal: 10 }}>
             {category.subcatname || catname.subcatname ? <View style={styles.row1}>
-              <Text style={styles.cakes}>{catname?catname.catname:category.catname}</Text>
-              <Text style={styles.black}>{` /  ${catname?catname.subcatname:category.subcatname}`}</Text>
+              <Text style={styles.cakes}>{catname ? catname.catname : category.catname}</Text>
+              {category.subcatname == undefined && catname.subcatname == undefined ? null : <Text style={styles.black}>{` /  ${catname ? catname.subcatname : category.subcatname}`}</Text>}
             </View> : <View />}
             <View>
               <FlatList
                 data={filteredDataSource}
                 showsVerticalScrollIndicator={false}
+                keyExtractor={(item)=>item.product_id}
+                removeClippedSubviews={true}
+                updateCellsBatchingPeriod={10}
+                maxToRenderPerBatch={5}
+                initialNumToRender={5}
                 renderItem={({ item, index }) => (
                   <View
                     style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
-                    <View style={{ width: '60%', marginTop: 20 }}>
+                    <View style={{ width: '56%', marginTop: 20 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                        <View
+                        <TouchableOpacity
                           style={styles.view1}>
                           <View style={styles.border} />
-                        </View>
-                        {/* <View style={styles.tag}>
-                          <Text style={styles.best}>{'Best Seller'}</Text>
-                        </View> */}
-                         <Text style={styles.title}
-                      >{item.name}</Text>
+                        </TouchableOpacity>
+
+                        <Text style={[styles.title]}
+                        >{item.name}</Text>
                       </View>
-                     
+
                       <View
                         style={styles.round}>
                         <Stars
@@ -418,21 +468,25 @@ const CategoryList = () => {
                           starSize={12}
                           fullStar={<Blank />}
                           emptyStar={<Full />} />
-                        {/* <Text style={styles.review}>{'142 Reviews'}</Text> */}
                       </View>
                       <View style={styles.views}>
                         <Text style={styles.price}>{item.price}</Text>
                       </View>
                       <View style={{ marginTop: 6 }}>
                         <Text style={styles.desc}>{item.description}
-                          {/* <Text style={styles.more}>{'  read more'}</Text> */}
                         </Text>
                       </View>
-                      <TouchableOpacity
+                      {item.favourite == false ? <TouchableOpacity
                         onPress={() => addWish(item.product_id)}
                         style={styles.image}>
                         <Heart />
-                      </TouchableOpacity>
+                      </TouchableOpacity> :
+                        <TouchableOpacity
+                          // disabled
+                          onPress={() => addWish(item.product_id)}
+                          style={styles.image}>
+                          <HeartF />
+                        </TouchableOpacity>}
                       <View style={{ height: 15 }} />
                     </View>
 
@@ -451,9 +505,6 @@ const CategoryList = () => {
                             <Plus />
                           </View>
                         </TouchableOpacity>
-                      </View>
-                      <View style={styles.cus}>
-                        <Text style={styles.custo}>Customise</Text>
                       </View>
                     </View>
                   </View>
@@ -495,7 +546,7 @@ const CategoryList = () => {
           }}
         >
           <View style={{ flex: 1 }}>
-            {product&&product.products?<ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
+            {product && product.products ? <ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
               <KeyboardAwareScrollView
                 extraScrollHeight={10}
                 enableOnAndroid={true}
@@ -511,26 +562,22 @@ const CategoryList = () => {
                     <Image style={styles.url}
                       source={{ uri: product.products.thumb }} />
                   </View>
-                  <View style={[styles.bests,{justifyContent:'space-between'}]}>
+                  <View style={[styles.bests, { justifyContent: 'space-between' }]}>
                     <View style={styles.bests1}>
-                    <View
-                      style={styles.view1}>
-                      <View style={styles.border} />
+                      <View
+                        style={styles.view1}>
+                        <View style={styles.border} />
+                      </View>
+                      <Text style={styles.title}>{product.products.name}</Text>
                     </View>
-                    {/* <View style={styles.tag}>
-                      <Text style={styles.best}>{'Best Seller'}</Text>
-
-                    </View> */}
-                       <Text style={styles.title}>{product.products.name}</Text>
-                       </View>
-                       <View style={styles.image}>
+                    {/* <View style={styles.image}>
                       <Image source={require('../../../assets/Icon/redHeart.png')} />
-                    </View>
-                   
+                    </View> */}
+
                   </View>
                   <View style={styles.pname}>
-                 
-                   
+
+
                   </View>
                   <View
                     style={styles.round1}>
@@ -549,275 +596,294 @@ const CategoryList = () => {
                       {product.products.description}
                     </Text>
                   </View>
-                 {product.options.length>0? <View>
-                  <View style={styles.show}>
-                    <View style={{ width: '48%' }}>
-                      <TouchableOpacity
-                        onPress={() => managePref()}
-                        style={[styles.button, {
-                          backgroundColor: pref == 'checked' ? '#000000' : '#FFFFFF', borderWidth: 1,
-                          borderColor: '#000000'
-                        }]}>
-                        <View />
-                        <Text style={{
-                          color: pref == 'checked' ? '#FFFFFF' : '#000000',
-                          fontFamily: 'Montserrat-Medium',
-                          fontSize: 10,
-                        }}>{'Preference & Size'}</Text>
-                        <View >
-                          {pref == 'checked' ? <RadioButton
-                            value="checked"
-                            status={pref}
-                            uncheckedColor='#ED1B1A'
-                            color='#ED1B1A'
-                            onPress={() => managePref()}
-                          /> :
-                            version == 'ios' ? <TouchableOpacity onPress={() => managePref()}
-                              style={{ marginRight: 4 }}>
-                              <Done width={26} height={25} />
-                            </TouchableOpacity> :
-                              <RadioButton
-                                value="checked"
-                                status={pref}
-                                uncheckedColor='#ED1B1A'
-                                color='#ED1B1A'
-                                onPress={() => managePref()}
-                              />
-                          }
-                        </View>
-                      </TouchableOpacity>
-                      <View style={{ alignItems: 'center', marginTop: 2 }}>
-                        {pref == 'checked' ? <Poly /> : null}
-                      </View>
-                    </View>
-                    <View style={{ width: '48%' }}>
-                      <TouchableOpacity
-                        onPress={() => manageMsg()}
-                        style={[styles.button, {
-                          backgroundColor: msg == 'checked' ? '#000000' : '#FFFFFF',
-                          borderWidth: 1,
-                          borderColor: '#000000'
-                        }]}>
-                        <View />
-                        <Text
-                          style={{
-                            color: msg == 'checked' ? '#FFFFFF' : '#000000',
+                  {product.options.length > 0 ? <View>
+
+                    {product.options.length > 1 ? <View style={styles.show}>
+                      <View style={{ width: '48%' }}>
+                        <TouchableOpacity
+                          onPress={() => managePref()}
+                          style={[styles.button, {
+                            backgroundColor: pref == 'checked' ? '#000000' : '#FFFFFF', borderWidth: 1,
+                            borderColor: '#000000'
+                          }]}>
+                          <View />
+                          <Text style={{
+                            color: pref == 'checked' ? '#FFFFFF' : '#000000',
                             fontFamily: 'Montserrat-Medium',
                             fontSize: 10,
-                            marginLeft: 20
-                          }}>{'Message'}</Text>
-                        <View style={{}}>
-                          {msg == 'checked' ? <RadioButton
-                            value="first"
-                            status={msg}
-                            onPress={() => manageMsg()}
-                            uncheckedColor='#000000'
-                            color='#ED1B1A'
-                          /> :
-                            version == 'ios' ? <TouchableOpacity onPress={() => manageMsg()}
-                              style={{ marginRight: 4 }}>
-                              <Done width={26} height={25} />
-                            </TouchableOpacity> :
-                              <RadioButton
-                                value="first"
-                                status={msg}
-                                onPress={() => manageMsg()}
-                                uncheckedColor='#000000'
-                                color='#ED1B1A'
-                              />
-                          }
-                        </View>
-                      </TouchableOpacity>
-                      <View style={{ alignItems: 'center', marginTop: 2 }}>
-                        {msg == 'checked' ? <Poly /> : null}
-                      </View>
-                    </View>
-                  </View>
-                  {pref == 'checked' ?
-                    <View>
-                      <View
-                        style={[styles.pref, { marginTop: 3 }]}>
-                        <View>
-                          <Text style={styles.title1}>{'Choose Your preference'}</Text>
-                          <Text style={styles.select}>Select 1 out of options</Text>
-                        </View>
-                        <View style={styles.border2}>
-                          <Text style={styles.req}>REQUIRED</Text>
-                        </View>
-                      </View>
-                      <View
-                        style={styles.pref}>
-                        <View style={{ flexDirection: 'row' }}>
-                          <View
-                            style={styles.view1}>
-                            <View style={styles.border} />
+                          }}>{'Preference & Size'}</Text>
+                          <View >
+                            {pref == 'checked' ? <RadioButton
+                              value="checked"
+                              status={pref}
+                              uncheckedColor='#ED1B1A'
+                              color='#ED1B1A'
+                              onPress={() => managePref()}
+                            /> :
+                              version == 'ios' ? <TouchableOpacity onPress={() => managePref()}
+                                style={{ marginRight: 4 }}>
+                                <Done width={26} height={25} />
+                              </TouchableOpacity> :
+                                <RadioButton
+                                  value="checked"
+                                  status={pref}
+                                  uncheckedColor='#ED1B1A'
+                                  color='#ED1B1A'
+                                  onPress={() => managePref()}
+                                />
+                            }
                           </View>
+                        </TouchableOpacity>
+                        <View style={{ alignItems: 'center', marginTop: 2 }}>
+                          {pref == 'checked' ? <Poly /> : null}
+                        </View>
+                      </View>
+                      <View style={{ width: '48%' }}>
+                        <TouchableOpacity
+                          onPress={() => manageMsg()}
+                          style={[styles.button, {
+                            backgroundColor: msg == 'checked' ? '#000000' : '#FFFFFF',
+                            borderWidth: 1,
+                            borderColor: '#000000'
+                          }]}>
+                          <View />
                           <Text
-                            style={styles.egg}>Eggless </Text>
-                        </View>
-                        <View style={{ marginLeft: 10 }}>
-                          <RadioButton
-                            value="first"
-                            status={'checked'}
-                            uncheckedColor='#ED1B1A'
-                            color='#ED1B1A'
-                          />
+                            style={{
+                              color: msg == 'checked' ? '#FFFFFF' : '#000000',
+                              fontFamily: 'Montserrat-Medium',
+                              fontSize: 10,
+                              marginLeft: 20
+                            }}>{'Message'}</Text>
+                          <View style={{}}>
+                            {msg == 'checked' ? <RadioButton
+                              value="first"
+                              status={msg}
+                              onPress={() => manageMsg()}
+                              uncheckedColor='#000000'
+                              color='#ED1B1A'
+                            /> :
+                              version == 'ios' ? <TouchableOpacity onPress={() => manageMsg()}
+                                style={{ marginRight: 4 }}>
+                                <Done width={26} height={25} />
+                              </TouchableOpacity> :
+                                <RadioButton
+                                  value="first"
+                                  status={msg}
+                                  onPress={() => manageMsg()}
+                                  uncheckedColor='#000000'
+                                  color='#ED1B1A'
+                                />
+                            }
+                          </View>
+                        </TouchableOpacity>
+                        <View style={{ alignItems: 'center', marginTop: 2 }}>
+                          {msg == 'checked' ? <Poly /> : null}
                         </View>
                       </View>
-                      <View
-                        style={styles.pref}>
-                        <View>
-                          <Text style={styles.title1}>{'Pick size of cake'}</Text>
-                          <Text style={styles.lect}>Select 1 out of options</Text>
+                    </View> : null}
+                    {pref == 'checked' ?
+                      <View>
+                        <View
+                          style={[styles.pref, { marginTop: 3 }]}>
+                          <View>
+                            <Text style={styles.title1}>{'Choose Your preference'}</Text>
+                            <Text style={styles.select}>Select 1 out of options</Text>
+                          </View>
+                          <View style={styles.border2}>
+                            <Text style={styles.req}>REQUIRED</Text>
+                          </View>
                         </View>
-                        <View style={styles.border2}>
-                          <Text style={styles.req}>REQUIRED</Text>
+                        <View
+                          style={styles.pref}>
+                          <View style={{ flexDirection: 'row' }}>
+                            <View
+                              style={styles.view1}>
+                              <View style={styles.border} />
+                            </View>
+                            <Text
+                              style={styles.egg}>Eggless </Text>
+                          </View>
+                          <View style={{ marginLeft: 10 }}>
+                            <RadioButton
+                              value="first"
+                              status={'checked'}
+                              uncheckedColor='#ED1B1A'
+                              color='#ED1B1A'
+                            />
+                          </View>
                         </View>
-                      </View>
-                      <View style={styles.grams}>
-                        <TouchableOpacity
+                        <View
+                          style={styles.pref}>
+                          <View>
+                            <Text style={styles.title1}>{'Pick size of cake'}</Text>
+                            <Text style={styles.lect}>Select 1 out of options</Text>
+                          </View>
+                          <View style={styles.border2}>
+                            <Text style={styles.req}>REQUIRED</Text>
+                          </View>
+                        </View>
+                        <View style={styles.grams}>
+                          <TouchableOpacity
 
-                          onPress={() => manageGram()}
-                          style={styles.bottom}>
-                          <View
-                            style={styles.row}>
-                            <Text style={styles.gram}>{product.options[0].product_option_value[0].name}</Text>
-                            <View style={{ marginLeft: 10 }}>
-                              {gram == 'checked' ? <RadioButton
-                                value="first"
-                                status={gram}
-                                onPress={() => manageGram()}
-                                uncheckedColor='#ED1B1A'
-                                color='#ED1B1A'
-                              /> :
-                                version == 'ios' ? <TouchableOpacity
+                            onPress={() => manageGram()}
+                            style={styles.bottom}>
+                            <View
+                              style={styles.row}>
+                              <Text style={styles.gram}>{product.options[0].product_option_value[0].name}</Text>
+                              <View style={{ marginLeft: 10 }}>
+                                {gram == 'checked' ? <RadioButton
+                                  value="first"
+                                  status={gram}
                                   onPress={() => manageGram()}
-                                  style={{ marginRight: 4, marginTop: 6 }}>
-                                  <Done width={26} height={25} />
-                                </TouchableOpacity> :
-                                  <RadioButton
-                                    value="first"
-                                    status={gram}
+                                  uncheckedColor='#ED1B1A'
+                                  color='#ED1B1A'
+                                /> :
+                                  version == 'ios' ? <TouchableOpacity
                                     onPress={() => manageGram()}
-                                    uncheckedColor='#ED1B1A'
-                                    color='#ED1B1A'
-                                  />
-                              }
+                                    style={{ marginRight: 4, marginTop: 6 }}>
+                                    <Done width={26} height={25} />
+                                  </TouchableOpacity> :
+                                    <RadioButton
+                                      value="first"
+                                      status={gram}
+                                      onPress={() => manageGram()}
+                                      uncheckedColor='#ED1B1A'
+                                      color='#ED1B1A'
+                                    />
+                                }
+                              </View>
                             </View>
-                          </View>
-                          <Text style={styles.text}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            <Text style={styles.text}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
 
-                          onPress={() => manageKg()}
-                          style={styles.bottom}>
-                          <View
-                            style={styles.row}>
-                            <Text style={styles.gram}>{product.options[0].product_option_value[1].name}</Text>
-                            <View style={{ marginLeft: 10 }}>
-                              {kg == 'checked' ? <RadioButton
-                                value="first"
-                                status={kg}
-                                onPress={() => manageKg()}
-                                uncheckedColor='#ED1B1A'
-                                color='#ED1B1A'
-                              /> :
-                                version == 'ios' ? <TouchableOpacity
+                            onPress={() => manageKg()}
+                            style={styles.bottom}>
+                            <View
+                              style={styles.row}>
+                              <Text style={styles.gram}>{product.options[0].product_option_value[1].name}</Text>
+                              <View style={{ marginLeft: 10 }}>
+                                {kg == 'checked' ? <RadioButton
+                                  value="first"
+                                  status={kg}
                                   onPress={() => manageKg()}
-                                  style={{ marginRight: 4, marginTop: 6 }}>
-                                  <Done width={26} height={25} />
-                                </TouchableOpacity> :
-                                  <RadioButton
-                                    value="first"
-                                    status={kg}
+                                  uncheckedColor='#ED1B1A'
+                                  color='#ED1B1A'
+                                /> :
+                                  version == 'ios' ? <TouchableOpacity
                                     onPress={() => manageKg()}
-                                    uncheckedColor='#ED1B1A'
-                                    color='#ED1B1A'
-                                  />
-                              }
+                                    style={{ marginRight: 4, marginTop: 6 }}>
+                                    <Done width={26} height={25} />
+                                  </TouchableOpacity> :
+                                    <RadioButton
+                                      value="first"
+                                      status={kg}
+                                      onPress={() => manageKg()}
+                                      uncheckedColor='#ED1B1A'
+                                      color='#ED1B1A'
+                                    />
+                                }
+                              </View>
                             </View>
-                          </View>
-                          <Text style={styles.text}>{
-                          `₹${(parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
+                            <Text style={styles.text}>{
+                              `₹${(parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                      :
+                      <View>
+                        <Text style={styles.title1}>{'Type Your Message'}</Text>
+                        <TouchableOpacity
+                          activeOpacity={1}
+                          onPress={() => inputRef.current.focus()}
+                          style={styles.input}>
+                          <TextInput
+                            ref={inputRef}
+                            value={text}
+                            onChangeText={(val) => setText(val)}
+                            placeholderTextColor={'#000000'}
+                            style={styles.msg}
+                            placeholder='Message'
+                            multiline={true}
+                          />
                         </TouchableOpacity>
                       </View>
-                    </View>
-                    :
-                    <View>
-                      <Text style={styles.title1}>{'Type Your Message'}</Text>
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => inputRef.current.focus()}
-                        style={styles.input}>
-                        <TextInput
-                          ref={inputRef}
-                          value={text}
-                          onChangeText={(val)=>setText(val)}
-                          placeholderTextColor={'#000000'}
-                          style={styles.msg}
-                          placeholder='Message'
-                          multiline={true}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  }
-                  </View>:null}
+                    }
+                  </View> : null}
                   <View style={styles.pay}>
 
                     <TouchableOpacity
                       onPress={() => addItemToCart()}
                       style={styles.items}>
                       <Text style={styles.rs}>
-                        {`Add item ₹${gram == 'checked'?parseInt(product.products.price).toFixed(2):
-                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
+                        {`Add item ₹${gram == 'checked' ? parseInt(product.products.price).toFixed(2) :
+                          (parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}</Text>
                     </TouchableOpacity>
                   </View>
                 </ImageBackground>
                 {/* here */}
 
               </KeyboardAwareScrollView>
-            </ScrollView>:null}
+            </ScrollView> : null}
           </View>
         </SwipeablePanel>
         <View style={styles.bot}>
           {/* <BottomTab /> */}
         </View>
-        <Modal isVisible={isModalVisible}>
-          <View style={styles.mod}>
-            <View style={styles.men}>
-              <View style={styles.space}>
-                <Text style={styles.enu}>Menu</Text>
-                <View style={styles.dia}>
-                  <View style={{ borderWidth: 0.5, width: 30 }} />
-                  <Diamond />
-                  <View style={{ borderWidth: 0.5, width: 30 }} />
+        <Dialog
+          visible={isModalVisible}
+          dialogStyle={{
+            backgroundColor: '#FFF',
+            width: '86%',
+            alignSelf: 'center',
+            elevation: 5,
+            borderRadius: 20
+          }}
+          onTouchOutside={() => setIsModalVisible(false)}
+          onHardwareBackPress={() => setIsModalVisible(false)}
+        >
+          <DialogContent>
+            <View style={styles.mod}>
+              <View style={styles.men}>
+                <View style={{ width: '24%' }} />
+                <View style={styles.space}>
+                  <Text style={styles.enu}>Menu</Text>
+                  <View style={styles.dia}>
+                    <View style={{ borderWidth: 0.5, width: 30 }} />
+                    <Diamond />
+                    <View style={{ borderWidth: 0.5, width: 30 }} />
+                  </View>
                 </View>
-              </View>
-              <TouchableOpacity
-                onPress={() => setIsModalVisible(false)}
-                style={{ marginLeft: 10, marginTop: -20 }}>
-                <Multi />
-              </TouchableOpacity>
-            </View>
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible(false)}
+                  style={{ marginLeft: 36, marginTop: -20 }}>
 
-            <View style={{ paddingVertical: 30, paddingHorizontal: 25 }}>
-              <View>
-                {selector1.map((item, key) => (
-                  <ExpandableComponent
-                    key={item.category_name}
-                    onClickFunction={() => {
-                      updateLayout(key);
-                    }}
-                    item={item}
-                  />
-                ))}
+                  <Multi />
+
+                </TouchableOpacity>
+                <View />
               </View>
-              
+
+              <View style={{ paddingVertical: 30, paddingHorizontal: 25 }}>
+                <View>
+                  {selector1.map((item, key) => (
+                    <ExpandableComponent
+                      key={item.category_name}
+                      onClickFunction={() => {
+                        updateLayout(key);
+                      }}
+                      item={item}
+                    />
+                  ))}
+                </View>
+
+              </View>
             </View>
-          </View>
-        </Modal>
+          </DialogContent>
+        </Dialog>
       </ImageBackground>
       <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
+      <BottomTab/>
     </View>
   )
 }

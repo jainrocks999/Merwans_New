@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Image, ImageBackground, FlatList, TouchableOpacity,StatusBar } from 'react-native';
+import React,{useEffect} from "react";
+import { View, Text, Image, ImageBackground, FlatList, TouchableOpacity,StatusBar,BackHandler } from 'react-native';
 import styles from './style'
 import { useNavigation } from '@react-navigation/native';
 import Back from "../../../assets/Svg/back.svg";
@@ -9,12 +9,25 @@ import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
 import Loader from "../../../components/Loader";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
-const MyOrders = () => {
+const MyOrders = ({route}) => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.OrderList)
     const isFetching = useSelector(state => state.isFetching)
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
 
     const orderDetail = async (id) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -26,7 +39,28 @@ const MyOrders = () => {
             navigation: navigation
         });
     }
+    const manageNav=()=>{
+        if(route.params.page=='Status'){
+         navigation.navigate('Home')
+        }else{
+            navigation.goBack()
+        }
+    }
 
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+         const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackButtonClick);
+         return () => backHandler.remove();
+       }, []);
+
+       function handleBackButtonClick(){
+        if(route.params.page=='Status'){
+            navigation.navigate('Home')
+           }else{
+               navigation.goBack()
+           }
+     }
+     
     return (
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
@@ -44,12 +78,12 @@ const MyOrders = () => {
         paddingVertical:8,
         paddingRight:30
     }}
-                        onPress={() => navigation.goBack()}>
+                        onPress={() => manageNav()}>
                         <Back />
                     </TouchableOpacity>
                     <View style={{ alignItems: 'center', 
         justifyContent: 'center', }}>
-                        <Text style={{color: '#ED1B1A', 
+                        <Text style={{color: '#fff', 
         fontFamily: 'Montserrat-Bold', 
         fontSize: 20 }}>Your Orders</Text>
                     </View>
@@ -99,7 +133,7 @@ const MyOrders = () => {
                                             </View>
                                         </View>
                                         <View style={[styles.rView]}>
-                                            <Text style={styles.rupay}>{`₹${(item.price)}`}</Text>
+                                            <Text style={styles.rupay}>{`₹${parseInt(item.price).toFixed(2)}`}</Text>
                                         </View>
                                     </View>
                                       )}
@@ -108,7 +142,7 @@ const MyOrders = () => {
 
                                     </View>
                                     <View style={styles.row3}>
-                                        <Text style={styles.rupay}>{`₹${((item.product_data[0].price))}`}</Text>
+                                        <Text style={styles.rupay}>{`₹${(parseInt(item.product_data[0].price).toFixed(2))}`}</Text>
                                     </View>
                                     <View style={styles.rest}>
                                         <View>

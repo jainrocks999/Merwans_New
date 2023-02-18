@@ -4,7 +4,7 @@ export default StyleSheet.create({
     main:{
         backgroundColor:'#F4F4F4',
         marginTop:15,
-        paddingVertical:6,
+        paddingVertical:10,
         paddingHorizontal:4,
         elevation:3,
         margin:2,

@@ -7,7 +7,7 @@ const ManagePayment=()=>{
     return(
         <View style={{flex:1}}>
 
-            <ImageBackground 
+            {/* <ImageBackground 
             style={{
                 flex:1,
                 paddingVertical:7,
@@ -35,7 +35,7 @@ const ManagePayment=()=>{
                          <Image source={require('../../../assets/Icon/go.png')}/>
                       </View>
               </View>
-              {/* UPI */}
+             
               <View 
               style={[styles.card,{marginTop:20}]}>
                   <Text 
@@ -54,7 +54,7 @@ const ManagePayment=()=>{
                          <Image source={require('../../../assets/Icon/go.png')}/>
                       </View>
               </View>
-              {/* Wallets */}
+             
               <View 
               style={[styles.card,{marginTop:20}]}>
                   <Text 
@@ -101,7 +101,7 @@ const ManagePayment=()=>{
                          <Image source={require('../../../assets/Icon/go.png')}/>
                       </View>
               </View>
-              {/* Net Banking */}
+              
               <View 
               style={[styles.card,{marginTop:20}]}>
                   <Text 
@@ -113,7 +113,6 @@ const ManagePayment=()=>{
                            </View>
                            <View style={{marginLeft:10,}}>
                            <Text style={{fontFamily:'Montserrat-SemiBold',color:'#333333',fontSize:16}}>{'Netbanking'}</Text>
-                           {/* <Text style={{fontSize:13,color:'#000000',fontFamily:'Montserrat-Medium'}}>{'You need to have a registered UPI ID'}</Text> */}
                            </View>
                          </View>
                          
@@ -123,7 +122,7 @@ const ManagePayment=()=>{
               <View style={{height:30}}/>
               </ScrollView>
               
-            </ImageBackground>
+            </ImageBackground> */}
             <View>
                   <BottomTab/>
               </View>

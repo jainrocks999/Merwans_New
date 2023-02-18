@@ -9,29 +9,17 @@ import Fast from "../../../assets/Svg/fast-delivery1.svg";
 import Delivery from "../../../assets/Svg/fast-delivery.svg";
 import Option from "../../../assets/Svg/option.svg";
 import Plus from '../../../assets/Svg/plus1.svg';
-import { Checkbox } from "native-base";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
 import Loader from "../../../components/Loader";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import RNPickerSelect from 'react-native-picker-select';
 import Done from '../../../assets/Svg/Done.svg';
-
-const data2 = [
-    {
-        label: "10:20-12:40",
-        value: "10:20"
-    },
-    {
-        label: "10:30-01:00",
-        value: "10:30"
-    },
-    {
-        label: "10:40-02:30",
-        value: "10:50"
-    }
-]
+import CheckBox from '@react-native-community/checkbox';
+import Toast from "react-native-simple-toast";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const Payment = ({ route }) => {
     const navigation = useNavigation()
@@ -46,16 +34,101 @@ const Payment = ({ route }) => {
     const [data, setData] = useState()
     const selector = useSelector(state => state.Shipping)
     const selector1 = useSelector(state => state.Time)
+    const detail=useSelector(state=>state.UserDetail)
+    const address = useSelector(state => state.Address)
+    const [toggleCheckBox, setToggleCheckBox] = useState(false);
+    const [toggleCheckBox1, setToggleCheckBox1] = useState(false);
+    const [toggleCheckBox2, setToggleCheckBox2] = useState(false);    
 
-    useEffect(async () => {
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
+
+    useEffect(() => {
+        firstCall()
+    }, [0])
+
+    const confirmOrder = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id=await AsyncStorage.getItem(Storage.store_id)
+        const total=data.totals[2].text
+        if(toggleCheckBox==false){
+           Toast.show('Please select I wish to subscribe to the Merwans Confectioners Pvt. Ltd. newsletter.')
+        }
+        else if(toggleCheckBox1==false){
+            Toast.show('Please select Privacy Policy')
+        }
+        else if(toggleCheckBox2==false){
+            Toast.show('Please select Term & Conditions')
+        }
+        else{
         try {
             setFetching(true)
             const data = new FormData();
-            data.append('api_token', '');
+            data.append('outlet_id', '40');
+            data.append('customer', '');
             data.append('customer_id', customer_id);
-            data.append('shipping_code',selector.shipping_methods.dunzo.quote.dunzo.code)
-            data.append('shipping_cost',route.params.dunzo.price)
+            data.append('firstname', detail.firstname);
+            data.append('lastname', detail.lastname);
+            data.append('email', detail.email);
+            data.append('telephone', detail.telephone);
+            data.append('payment_method', 'CCAvenue MCPG </br> <img src= "https://www.ccavenue.com/images_shoppingcart/ccavenue_pay_options.gif" width="80%" />');
+            data.append('payment_code', 'ccavenuepay');
+            data.append('payment_firstname', '');
+            data.append('payment_lastname', '');
+            data.append('payment_address_id', '');
+            data.append('payment_address_1', '');
+            data.append('payment_address_2', '');
+            data.append('payment_city', '');
+            data.append('payment_postcode', '');
+            data.append('payment_country_id', '');
+            data.append('payment_country', '');
+            data.append('payment_zone_id', '');
+            data.append('payment_zone', '');
+            data.append('payment_latitude', '0.000000000000');
+            data.append('payment_longitude', '0.000000000000');
+            data.append('shipping_firstname', address.firstname);
+            data.append('shipping_lastname', address.lastname);
+            data.append('shipping_company', address.company);
+            data.append('shipping_address_id', address.address_id);
+            data.append('shipping_address_1',address.address_1 );
+            data.append('shipping_address_2',address.address_2 );
+            data.append('shipping_city',address.city );
+            data.append('shipping_postcode',address.postcode );
+            data.append('shipping_country_id', address.country_id);
+            data.append('shipping_country', address.country);
+            data.append('shipping_zone_id', address.zone_id);
+            data.append('shipping_zone', address.zone);
+            data.append('shipping_latitude', route.params.lat);
+            data.append('shipping_longitude', route.params.lng);
+            data.append('shipping_code',pick=='checked'?'pickup.pickup':'dunzo.dunzo');
+            data.append('payment_method', pick=='checked'?'Pickup From Store':'Dunzo Delivery');
+            data.append('ip', '');
+            data.append('user_agent', '');
+            data.append('comment', '');
+            data.append('total',total);
+            data.append('privacy',toggleCheckBox1);
+            data.append('agree',toggleCheckBox2);
+            data.append('subscribe',toggleCheckBox)
+            data.append('payment_address_type', 'existing');
+            data.append('shipping_address_type', 'existing');
+            data.append('billing_name',`${detail.firstname} ${detail.lastname}`);
+            data.append('billing_address','');
+            data.append('billing_state', '');
+            data.append('billing_tel',detail.telephone);
+            data.append('billing_zip', '');
+            data.append('billing_country', '');
+            data.append('delivery_zip', '');
+            data.append('delivery_country', '');
             const response = await axios({
                 method: 'POST',
                 data,
@@ -63,12 +136,36 @@ const Payment = ({ route }) => {
                     'content-type': 'multipart/form-data',
                     Accept: 'multipart/form-data',
                 },
-                url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
+                url: 'https://merwans.co.in/index.php?route=api/neworder/addOrder',
             });
-
-            if (response.data) {
-                setData(response.data)
-                setFetching(false)
+            if (response.data.status==true) {
+                try {
+                    setFetching(true)
+                    const data1 = new FormData();
+                    data1.append('token', 'abcd1234');
+                    data1.append('store_id', store_id);
+                    data1.append('order_id',response.data.order_id)
+                    data1.append('amount',total)
+                    const responsedata = await axios({
+                        method: 'POST',
+                        data:data1,
+                        headers: {
+                            'content-type': 'multipart/form-data',
+                            Accept: 'multipart/form-data',
+                        },
+                        url: 'https://merwans.co.in/index.php?route=api/checkout/payment',
+                    });
+        
+                    if (responsedata.data) {
+                        setFetching(false)
+                        navigation.navigate('WebView',{data:responsedata.data,order_id:response.data.order_id})
+                    }
+                    else {
+                        setFetching(false)
+                    }
+                } catch (error) {
+                    setFetching(false)
+                }
             }
             else {
                 setFetching(false)
@@ -76,17 +173,18 @@ const Payment = ({ route }) => {
         } catch (error) {
             setFetching(false)
         }
-    }, [0])
+    }
+    }
 
-    const manageRadioDunzo=async()=>{
+    const firstCall = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         try {
             setFetching(true)
             const data = new FormData();
             data.append('api_token', '');
             data.append('customer_id', customer_id);
-            data.append('shipping_code',selector.shipping_methods.dunzo.quote.dunzo.code)
-            data.append('shipping_cost',route.params.dunzo.price)
+            data.append('shipping_code', selector.shipping_methods.dunzo.quote.dunzo.code)
+            data.append('shipping_cost', route.params.dunzo.price)
             const response = await axios({
                 method: 'POST',
                 data,
@@ -108,15 +206,48 @@ const Payment = ({ route }) => {
             setFetching(false)
         }
     }
-    const manageRadioPick=async()=>{
+
+
+
+    const manageRadioDunzo = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         try {
             setFetching(true)
             const data = new FormData();
             data.append('api_token', '');
             data.append('customer_id', customer_id);
-            data.append('shipping_code',selector.shipping_methods.pickup.quote.pickup.code)
-            data.append('shipping_cost',0)
+            data.append('shipping_code', selector.shipping_methods.dunzo.quote.dunzo.code)
+            data.append('shipping_cost', route.params.dunzo.price)
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
+            });
+
+            if (response.data) {
+                setData(response.data)
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }
+    const manageRadioPick = async () => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('shipping_code', selector.shipping_methods.pickup.quote.pickup.code)
+            data.append('shipping_cost', 0)
             const response = await axios({
                 method: 'POST',
                 data,
@@ -176,6 +307,8 @@ const Payment = ({ route }) => {
                 data.append('customer_id', customer_id);
                 data.append('cart_id', item.cart_id);
                 data.append('quantity', parseInt(item.quantity) - 1);
+                data.append('shipping_code', dunzo == 'checked' ? selector.shipping_methods.dunzo.quote.dunzo.code : selector.shipping_methods.pickup.quote.pickup.code)
+                data.append('shipping_cost', dunzo == 'checked' ? route.params.dunzo.price : 0)
                 const response = await axios({
                     method: 'POST',
                     data,
@@ -189,7 +322,6 @@ const Payment = ({ route }) => {
                 if (response.data) {
                     setData(response.data)
                     setFetching(false)
-                    console.log('this is response data', response.data.products);
                 }
                 else {
                     setFetching(false)
@@ -208,6 +340,8 @@ const Payment = ({ route }) => {
             data.append('customer_id', customer_id);
             data.append('cart_id', item.cart_id);
             data.append('quantity', parseInt(item.quantity) + 1);
+            data.append('shipping_code', dunzo == 'checked' ? selector.shipping_methods.dunzo.quote.dunzo.code : selector.shipping_methods.pickup.quote.pickup.code)
+            data.append('shipping_cost', dunzo == 'checked' ? route.params.dunzo.price : 0)
             const response = await axios({
                 method: 'POST',
                 data,
@@ -221,7 +355,6 @@ const Payment = ({ route }) => {
             if (response.data) {
                 setData(response.data)
                 setFetching(false)
-                console.log('this is response data', response.data.products);
             }
             else {
                 setFetching(false)
@@ -230,12 +363,27 @@ const Payment = ({ route }) => {
             setFetching(false)
         }
     }
+
+    const Policy = () => {
+        dispatch({
+            type: 'Privacy_Policy_Request',
+            url: 'api/privacy_policy',
+            navigation: navigation
+        });
+    }
+    const Term = () => {
+        dispatch({
+            type: 'Term_Condition_Request',
+            url: 'api/terms_conditions',
+            navigation: navigation
+        });
+    }
     const version = Platform.OS
     return (
         <View style={{ flex: 1 }}>
             {isFetching ? <Loader /> : null}
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
-               {data && data.products? <ScrollView stickyHeaderIndices={[0]}>
+                {data && data.products ? <ScrollView stickyHeaderIndices={[0]}>
                     <Header
                         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
                     />
@@ -243,7 +391,7 @@ const Payment = ({ route }) => {
                         style={styles.container}>
                         <Text style={styles.quick}>Quick Checkout</Text>
                     </View>
-                    <View style={{ paddingHorizontal: 5 }}>
+                    {data && data.products.length > 0 ? <View style={{ paddingHorizontal: 5 }}>
                         <View style={[styles.ship, { marginTop: 15 }]}>
                             <Text style={styles.shipp}>Shipping Method</Text>
                             <View style={styles.checkV}>
@@ -270,7 +418,7 @@ const Payment = ({ route }) => {
                                             />
                                     }
                                 </View>
-                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ₹${route.params.dunzo.price}`}</Text>
+                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ${selector.shipping_methods.dunzo.quote.dunzo.text}`}</Text>
                             </View>
                             <View style={styles.pick}>
                                 <Delivery />
@@ -304,7 +452,7 @@ const Payment = ({ route }) => {
                                     style={styles.drop}>
                                     <RNPickerSelect
                                         onValueChange={val => setState(val)}
-                                        items={data2}
+                                        items={selector1}
                                         style={{
                                             inputAndroid: {
                                                 color: '#000000',
@@ -312,8 +460,10 @@ const Payment = ({ route }) => {
                                                 fontSize: 14,
                                                 marginBottom: 0,
                                                 fontFamily: 'Montserrat-Medium',
-                                                includeFontPadding: false, padding: 0, margin: 0,
-                                                marginRight: 20
+                                                // includeFontPadding: false, padding: 0, margin: 0,
+                                                marginRight: 20,
+                                                // borderWidth:1,
+                                                paddingHorizontal: 8
                                             },
                                             inputIOS: {
                                                 color: '#000000',
@@ -322,7 +472,8 @@ const Payment = ({ route }) => {
                                                 marginBottom: 0,
                                                 fontFamily: 'Montserrat-Medium',
                                                 includeFontPadding: false, padding: 0, margin: 0,
-                                                marginRight: 20
+                                                marginRight: 20,
+                                                paddingHorizontal: 8
                                             },
                                             placeholder: {
                                                 color: '#000000',
@@ -339,7 +490,7 @@ const Payment = ({ route }) => {
                                         placeholder={{ label: 'Time', value: '' }}
                                         Icon={() => (
                                             <Image
-                                                style={{ width: 10, height: 6, marginRight: 0, marginTop: 8 }}
+                                                style={{ width: 10, height: 6, marginRight: 8, marginTop: 8 }}
                                                 source={require('../../../assets/Icon/down.png')} />
                                         )}
                                     />
@@ -402,7 +553,7 @@ const Payment = ({ route }) => {
                                     <Option width={'100%'} />
                                 </View>
                             </View>
-                            <View style={styles.first}>
+                            {/* <View style={styles.first}>
                                 <View style={[{ marginLeft: -7 }]}>
                                     {cash == 'checked' ? <RadioButton
                                         value="first"
@@ -426,7 +577,7 @@ const Payment = ({ route }) => {
                                     }
                                 </View>
                                 <Text style={styles.cash}>{'Cash On Delivery'}</Text>
-                            </View>
+                            </View> */}
                         </View>
                         <View style={[styles.ship, { marginTop: 15 }]}>
                             <View>
@@ -453,22 +604,37 @@ const Payment = ({ route }) => {
                                 <View style={{ marginTop: -3 }}>
                                     <FlatList
                                         data={data.products}
-                                        renderItem={({ item }) => (
+                                        renderItem={({ item,index }) => (
+                                            <View style={{borderBottomWidth:data.products.length-1==index?0:.5, borderColor:'#dae1ed',}}>
                                             <View style={styles.border}>
-                                                <View style={styles.color}>
-                                                    <View
-                                                        style={styles.flex}>
-                                                        <View style={styles.line} />
+                                                <View style={[styles.color, { width: '80%' }]}>
+                                                    <View style={{ height: 38, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <View
+                                                            style={styles.flex}>
+                                                            <View style={styles.line} />
+                                                        </View>
                                                     </View>
-                                                    <View style={{ marginLeft: 12 }}>
-                                                        <Image
-                                                            style={{ height: 38, width: 38, borderRadius: 5 }}
-                                                            source={{ uri: item.image }} />
-                                                    </View>
-                                                    <View style={{ marginTop: -1, marginLeft: 2 }}>
-                                                        <Text style={styles.data}>{item.name}</Text>
-                                                        <View style={{ flexDirection: 'row', marginTop: 3 }}>
-                                                            <Text style={styles.pri}>{item.price}</Text>
+                                                    <View style={{ width: '90%' }}>
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            <View style={{ marginLeft: 12 }}>
+                                                                <Image
+                                                                    style={{ height: 38, width: 38, borderRadius: 5 }}
+                                                                    source={{ uri: item.image }} />
+                                                            </View>
+                                                            <View style={{ marginTop: -1, marginLeft: 2 }}>
+                                                                <Text style={styles.data}>{item.name}</Text>
+                                                                <View style={{ flexDirection: 'row', marginTop: 3 }}>
+                                                                    <Text style={styles.pri}>{item.price}</Text>
+                                                                </View>
+                                                            </View>
+                                                        </View>
+                                                        <View style={{ marginLeft: 12, width: '100%' }}>
+                                                            {item.option.length > 0 ? <View style={{ marginTop: 2 }}>
+                                                                <Text style={styles.pric}>{`Size - ${item.option[0].value}`}</Text>
+                                                            </View> : null}
+                                                            {item.option.length > 1 ? <View style={{ marginTop: 2 }}>
+                                                                <Text style={styles.pric}>{`Message - ${item.option[1].value}`}</Text>
+                                                            </View> : null}
                                                         </View>
                                                     </View>
                                                 </View>
@@ -492,6 +658,8 @@ const Payment = ({ route }) => {
                                                     </View>
                                                 </View>
                                             </View>
+                                            <View style={{height:10}}/>
+                                            </View>
                                         )}
                                     />
                                 </View>
@@ -501,6 +669,7 @@ const Payment = ({ route }) => {
                             <View>
                                 <View style={styles.bill}>
                                     <Text style={styles.bll}>Bill Summary</Text>
+
                                     <View style={styles.row1}>
                                         <Text style={styles.sub}>{data.totals[0].title}</Text>
                                         <Text style={styles.rok}>{data.totals[0].text}</Text>
@@ -534,57 +703,87 @@ const Payment = ({ route }) => {
                                     />
                                 </TouchableOpacity>
                                 <View style={[styles.view, { marginTop: 10 }]}>
-                                    <Checkbox
+                                    {/* <Checkbox
                                         value="red"
                                         size="sm"
                                         defaultIsChecked={false}
                                         colorScheme='green'
                                         borderRadius={'none'}
                                         borderWidth={1.2}
+                                    /> */}
+                                     <CheckBox
+                                        disabled={false}
+                                        value={toggleCheckBox}
+                                        onValueChange={newValue => setToggleCheckBox(newValue)}
+                                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
+                                        onTintColor='#ED1B1A'
+                                        onCheckColor='#ED1B1A'
+                                        boxType='square'
+                                        style={{ height: Platform.OS == 'android' ? 17 : 17, width: Platform.OS == 'android' ? 30 : 17 }}
                                     />
-                                    <Text style={[styles.check1, { width: '96%', marginLeft: 10, marginTop: 7 }]}>I wish to subscribe to the Merwans Confectioners Pvt. Ltd. newsletter.</Text>
+                                    <Text style={[styles.check1, { width: '96%', marginLeft: 10, marginTop: 9 }]}>I wish to subscribe to the Merwans Confectioners Pvt. Ltd. newsletter.</Text>
                                 </View>
                                 <View style={styles.view}>
-                                    <Checkbox
+                                    {/* <Checkbox
                                         value="red"
                                         size="sm"
                                         defaultIsChecked={false}
                                         colorScheme='green'
                                         borderRadius={'none'}
                                         borderWidth={1.2}
+                                    /> */}
+                                     <CheckBox
+                                        disabled={false}
+                                        value={toggleCheckBox1}
+                                        onValueChange={newValue => setToggleCheckBox1(newValue)}
+                                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
+                                        onTintColor='#ED1B1A'
+                                        onCheckColor='#ED1B1A'
+                                        boxType='square'
+                                        style={{ height: Platform.OS == 'android' ? 17 : 17, width: Platform.OS == 'android' ? 30 : 17 }}
                                     />
                                     <View style={styles.have}>
                                         <Text style={styles.check1}>{'I have read and agree to the '}</Text>
-                                        <View>
+                                        <TouchableOpacity onPress={() => Policy()}>
                                             <Text style={styles.priv}>
                                                 Privacy Policy</Text>
-                                            <View style={{ borderWidth: 0.2 }} />
-                                        </View>
+                                            <View style={{ borderWidth: 0.5 ,borderColor:'#000'}} />
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
                                 <View style={styles.views}>
-                                    <Checkbox
+                                    <CheckBox
+                                        disabled={false}
+                                        value={toggleCheckBox2}
+                                        onValueChange={newValue => setToggleCheckBox2(newValue)}
+                                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
+                                        onTintColor='#ED1B1A'
+                                        onCheckColor='#ED1B1A'
+                                        boxType='square'
+                                        style={{ height: Platform.OS == 'android' ? 17 : 17, width: Platform.OS == 'android' ? 30 : 17 }}
+                                    />
+                                    {/* <Checkbox
                                         value="red"
                                         size="sm"
                                         defaultIsChecked={false}
                                         colorScheme='green'
                                         borderRadius={'none'}
                                         borderWidth={1.2}
-
-                                    />
+                                        on
+                                    /> */}
                                     <View style={styles.amage}>
                                         <Text style={styles.check1}>{'I have read and agree to the '}</Text>
-                                        <View>
+                                        <TouchableOpacity onPress={() => Term()}>
                                             <Text style={styles.term}>
                                                 {'Terms & Conditions'}</Text>
-                                            <View style={{ borderWidth: 0.2 }} />
-                                        </View>
+                                            <View style={{ borderWidth: 0.5,borderColor:'#000' }} />
+                                        </TouchableOpacity>
                                     </View>
                                 </View>
 
                                 <View style={{ paddingHorizontal: 0 }}>
                                     <TouchableOpacity
-                                        // onPress={()=>navigation.navigate('ProfileWithoutLogin')}
+                                        onPress={()=>confirmOrder()}
                                         style={styles.mainBtn}>
                                         <Text
                                             style={styles.confirm1}>{`Confirm Order`}</Text>
@@ -593,12 +792,23 @@ const Payment = ({ route }) => {
                                 </View>
                             </View>
                         </View>
-
-
                         <View style={{ height: 20 }} />
-                    </View>
-                </ScrollView>:
-                <Loader/>
+                    </View> : <View style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginTop: '80%',
+                        flexDirection: 'row'
+                    }}>
+                        <Text style={{ textAlign: 'center', fontSize: 18 }}>Your cart is Empty! </Text>
+                        <View>
+                            <Text onPress={() => navigation.navigate('Home')}
+                                style={{ fontSize: 18, }}>Continue Shopping</Text>
+                            <View style={{ borderWidth: 0.6 }} />
+                        </View>
+                    </View>}
+                </ScrollView> :
+                    <Loader />
                 }
             </ImageBackground>
 
@@ -610,8 +820,3 @@ const Payment = ({ route }) => {
 }
 export default Payment;
 
-const data1 = [
-    { image: require('../../../assets/Logo/cake1.png'), title: 'Pineapple Cake', price: '₹290.00' },
-
-]
-const Store = ["Egypt", "Canada", "Australia", "Ireland", "Egypt", "Canada", "Australia", "Ireland"]

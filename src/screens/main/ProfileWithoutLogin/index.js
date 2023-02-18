@@ -55,14 +55,14 @@ const Profile=()=>{
     return(
         <View style={{flex:1}}>
            
-            <ImageBackground source={require('../../../assets/Icon/bg.png')}>
+            {/* <ImageBackground source={require('../../../assets/Icon/bg.png')}>
                 <View style={styles.header}>
                   <View style={{marginTop:15}}>
                       <Image  source={require('../../../assets/Logo/logo.png')}/>
                       </View>
                      <View 
                      style={styles.location}>
-                         {/* <Image source={require('../../../assets/Icon/location.png')}/> */}
+                        
                          <Text style={{color:'#fff',marginLeft:10,fontFamily:'Montserrat-Regular'}}>Thane</Text>
                      </View>
                 </View>
@@ -100,7 +100,7 @@ const Profile=()=>{
                            <Text style={styles.text}>Settings</Text>
                        </View>
                    </View>
-                   {/* Food Orders */}
+                 
                    <View style={styles.cont}>
                     <Text 
                     style={{
@@ -154,7 +154,7 @@ const Profile=()=>{
                 <View style={{height:50}}/>
                 </ScrollView>
                
-            </ImageBackground>
+            </ImageBackground> */}
            
         </View>
     )
@@ -164,92 +164,6 @@ export default Profile;
 
 const CONTENT = [
     
-    {
-      isExpanded: false,
-      image: require('../../../assets/Icon/shopping-bag.png'),
-      name:'Your Order',
-      date:'23 Sep 2021',
-      subcategory: [
-        {id: 7, val: 'Sub Cat 7'},
-      ],
-    },
-    {
-      isExpanded: false,
-      image: require('../../../assets/Icon/like.png'),
-      name:'Favorite Orders',
-      date:'23 Sep 2021',
-      subcategory: [
-        {id: 7, val: 'Sub Cat 7'},
-      ],
-    },
-    {
-      isExpanded: false,
-      image: require('../../../assets/Icon/person.png'),
-      name:'Address Book',
-      date:'23 Sep 2021',
-      subcategory: [
-        {id: 7, val: 'Sub Cat 7'},
-      ],
-    },
-    {
-      isExpanded: false,
-      image: require('../../../assets/Icon/msg.png'),
-      name:'Online Odering help',
-      date:'23 Sep 2021',
-      subcategory: [
-        {id: 7, val: 'Sub Cat 7'},
-      ],
-    },
-
-    
-  ];
-  const CONTENT1 = [
-    {
-      isExpanded: false,
-      image: require('../../../assets/Icon/info.png'),
-      name:'About',
-      date:'23 Sep 2021',
-      subcategory: [
-        {id: 7, val: 'Sub Cat 7'},
-      ],
-    },
-      {
-        isExpanded: false,
-        image: require('../../../assets/Icon/rating1.png'),
-        name:'Rate Us on Play store',
-        date:'23 Sep 2021',
-        subcategory: [
-          {id: 7, val: 'Sub Cat 7'},
-        ],
-      },
-      {
-        isExpanded: false,
-        image: require('../../../assets/Icon/insur.png'),
-        name:'Privacy Policy',
-        date:'23 Sep 2021',
-        subcategory: [
-          {id: 7, val: 'Sub Cat 7'},
-        ],
-      },
-      {
-        isExpanded: false,
-        image: require('../../../assets/Icon/terms.png'),
-        name:'Terms & Conditions',
-        date:'23 Sep 2021',
-        subcategory: [
-          {id: 7, val: 'Sub Cat 7'},
-        ],
-      },
-      {
-        isExpanded: false,
-        image: require('../../../assets/Icon/log-out.png'),
-        name:'Logout',
-        date:'23 Sep 2021',
-        subcategory: [
-          {id: 7, val: 'Sub Cat 7'},
-        ],
-      },
-     
 
     
   ];

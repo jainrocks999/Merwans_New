@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ImageBackground, Image, TouchableOpacity, StatusBar, StyleSheet, PermissionsAndroid } from "react-native";
+import React, { useEffect, useState,useRef } from "react";
+import { View, Text, ImageBackground, Image, TouchableOpacity, StatusBar, StyleSheet, PermissionsAndroid, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Location from "../../../assets/Svg/location.svg";
 import styles from "./style";
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import Loader from "../../../components/Loader";
 import Geocoder from 'react-native-geocoding';
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
-import Geolocation1 from 'react-native-geolocation-service';
 import Gps from "../../../assets/Svg/gps.svg";
-const ChangeAddress = () => {
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
+const ChangeAddress = () => {
+ const ref=useRef()
   const navigation = useNavigation()
   const [address, setAddress] = useState('')
   const [position, setPosition] = useState({
@@ -20,6 +23,17 @@ const ChangeAddress = () => {
     latitudeDelta: 0.001,
     longitudeDelta: 0.001,
   });
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
   useEffect(() => {
     Geolocation.getCurrentPosition((pos) => {
       const crd = pos.coords;
@@ -61,33 +75,67 @@ const ChangeAddress = () => {
       setAddress(location)
     })
     .catch(error => console.warn(error));
-
+   
   const getCurrentLocation = () => {
-    console.log('this i working');
-    Geolocation.getCurrentPosition((pos) => {
-      const crd = pos.coords;
-      setPosition({
-        latitude: crd.latitude,
-        longitude: crd.longitude,
-        latitudeDelta: 0.0421,
-        longitudeDelta: 0.0421,
-      });
-    })
+    if (Platform.OS=='android') {
+      RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+        interval: 10000,
+        fastInterval: 5000,
+      }).then((data) => {
+        Geolocation.getCurrentPosition((pos) => {
+          const crd = pos.coords;
+          setPosition({
+            latitude: crd.latitude,
+            longitude: crd.longitude,
+            latitudeDelta: 0.0421,
+            longitudeDelta: 0.0421,
+          });
+          ref.current.animateToRegion({
+            latitude: crd.latitude,
+            longitude: crd.longitude,
+            latitudeDelta: 0.0421,
+            longitudeDelta: 0.0421,
+          });
+        })
+        })
+        .catch((err) => {
+        });
+    } else {
+      Geolocation.getCurrentPosition((pos) => {
+        const crd = pos.coords;
+        setPosition({
+          latitude: crd.latitude,
+          longitude: crd.longitude,
+          latitudeDelta: 0.0421,
+          longitudeDelta: 0.0421,
+        });
+        ref.current.animateToRegion({
+          latitude: crd.latitude,
+          longitude: crd.longitude,
+          latitudeDelta: 0.0421,
+          longitudeDelta: 0.0421,
+        });
+      })
+    }
   }
+  
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
         <View style={{ height: 260 }}>
           <View
-            style={[StyleSheet.absoluteFillObject,
+            style={[
             {
-              top: '50%',
-              left: '50%',
+              top: '40%',
+              // left: '50%',
               zIndex: 1,
+              alignItems:'center',
+              justifyContent:'center'
             }]}>
             <Location width={30} height={30} />
           </View>
           <MapView
+            ref={ref}
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             style={StyleSheet.absoluteFillObject}
             initialRegion={position}
@@ -97,6 +145,8 @@ const ChangeAddress = () => {
               latitudeDelta: 0.0421,
               longitudeDelta: 0.0421,
             })}
+            showsUserLocation={true}
+          followsUserLocation={position}
             onPress={(val) => setPosition({
               latitude: val.nativeEvent.coordinate.latitude,
               longitude: val.nativeEvent.coordinate.longitude,
@@ -138,18 +188,18 @@ const ChangeAddress = () => {
                 <Text style={[styles.first, {}]}>{address}</Text>
               </View>
             </View>
-            <View style={{ marginTop: 0, alignItems: 'center' }}>
-              <TouchableOpacity
+            {/* <View style={{ marginTop: 0, alignItems: 'center' }}> */}
+              {/* <TouchableOpacity
                 onPress={() => navigation.navigate('ChangeAddress')}
                 style={{ alignSelf: 'flex-end', padding: 6, borderRadius: 15 }}>
                 <Text style={styles.change}>Change</Text>
-              </TouchableOpacity>
-            </View>
+              </TouchableOpacity> */}
+            {/* </View> */}
           </View>
 
           <View style={styles.view}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('AddressForm')}
+              onPress={() => navigation.navigate('AddressForm',{address:address})}
               style={styles.button}>
               <Text style={styles.enter}>Enter Complete Address</Text>
             </TouchableOpacity>

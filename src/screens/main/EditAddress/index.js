@@ -17,10 +17,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import axios from "axios";
 import CheckBox from '@react-native-community/checkbox';
 import Geocoder from 'react-native-geocoding';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const loginValidationSchema = yup.object().shape({
     address1: yup.string().required('Please enter your address1'),
+    fName: yup.string().required('Please enter your first name'),
+    lName: yup.string().required('Please enter your last name'),
     address2: yup.string(),
     city: yup.string().required('Please enter your city'),
     post: yup.string()
@@ -45,7 +49,17 @@ const AddressForm = ({ route }) => {
     const City = useSelector(state => state.City)
     const [state, setState] = useState(route.params.zone_id)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
-console.log(route.params);
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
     useEffect(() => {
         if (route.params.type == 'Home') {
          manageHome()
@@ -95,7 +109,7 @@ console.log(route.params);
         const first = await AsyncStorage.getItem(Storage.firstname)
         const last = await AsyncStorage.getItem(Storage.lastname)
         if (state == '' || state == 0) {
-            Toast.show('Please select city')
+            Toast.show('Please select state')
         }
         else {
             try {
@@ -113,8 +127,8 @@ console.log(route.params);
                 data.append('country_id', '99');
                 data.append('zone_id', state);
                 data.append('landmark', values.land)
-                data.append('firstname', first)
-                data.append('lastname', last)
+                data.append('firstname', values.fName)
+                data.append('lastname', values.lName)
                 data.append('default', toggleCheckBox == true ? 1 : 0)
                 const response = await axios({
                     method: 'POST',
@@ -129,7 +143,6 @@ console.log(route.params);
                     Geocoder.from(values.address1)
                         .then(json => {
                             var location = json.results[0].geometry.location;
-                            console.log('this is user detail', location);
                             dispatch({
                                 type: 'Add_Lat_Request',
                                 url: 'apiorder/addlatlong',
@@ -165,7 +178,9 @@ console.log(route.params);
                 address2: route.params.address_2,
                 city: route.params.city,
                 post: route.params.postcode,
-                land: route.params.landmark
+                land: route.params.landmark,
+                fName:route.params.firstname,
+                lName:route.params.lastname
             }}
             onSubmit={values => validateUser(values)}
             validateOnMount={true}
@@ -234,15 +249,59 @@ console.log(route.params);
                                     <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
                                         <View style={{ height: 20 }}>
                                         </View>
-                                        <View>
+                                        <View >
                                             <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>Address 1</Text>
+                                                <Text style={styles.heading}>First Name</Text>
+                                                <Text style={styles.str}>*</Text>
+                                            </View>
+
+                                            <View style={styles.view}>
+                                                <TextInput
+                                                    style={styles.input}
+                                                    placeholder="First Name"
+                                                    placeholderTextColor={'#000000'}
+                                                    onChangeText={handleChange('fName')}
+                                                    onBlur={handleBlur('fName')}
+                                                    value={values.fName}
+                                                />
+                                            </View>
+                                        </View>
+                                        <View style={styles.error}>
+                                            {errors.fName && touched.fName && (
+                                                <Text style={styles.warn}>{errors.fName}</Text>
+                                            )}
+                                        </View>
+                                        <View style={{ marginTop: 15 }}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.heading}>Last Name</Text>
+                                                <Text style={styles.str}>*</Text>
+                                            </View>
+
+                                            <View style={styles.view}>
+                                                <TextInput
+                                                    style={styles.input}
+                                                    placeholder="Last Name"
+                                                    placeholderTextColor={'#000000'}
+                                                    onChangeText={handleChange('lName')}
+                                                    onBlur={handleBlur('lName')}
+                                                    value={values.lName}
+                                                />
+                                            </View>
+                                        </View>
+                                        <View style={styles.error}>
+                                            {errors.lName && touched.lName && (
+                                                <Text style={styles.warn}>{errors.lName}</Text>
+                                            )}
+                                        </View>
+                                        <View style={{marginTop:15}}>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <Text style={styles.heading}>Location</Text>
                                                 <Text style={styles.str}>*</Text>
                                             </View>
                                             <View style={styles.view}>
                                                 <TextInput
                                                     style={styles.input}
-                                                    placeholder="Address 1"
+                                                    placeholder="Location"
                                                     placeholderTextColor={'#000000'}
                                                     onChangeText={handleChange('address1')}
                                                     onBlur={handleBlur('address1')}
@@ -258,12 +317,12 @@ console.log(route.params);
 
                                         <View style={{ marginTop: 10 }}>
                                             <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>Address 2</Text>
+                                                <Text style={styles.heading}>Flat No./Building Name</Text>
                                             </View>
                                             <View style={styles.view}>
                                                 <TextInput
                                                     style={styles.input}
-                                                    placeholder="Address 2"
+                                                    placeholder="Flat No./Building Name"
                                                     placeholderTextColor={'#000000'}
                                                     onChangeText={handleChange('address2')}
                                                     onBlur={handleBlur('address2')}
@@ -380,7 +439,7 @@ console.log(route.params);
                                                 onTintColor='#ED1B1A'
                                                 onCheckColor='#ED1B1A'
                                                 boxType='square'
-                                                style={{ height: 16, width: 18 }}
+                                                style={{ height:Platform.OS=='android'?30:17, width:Platform.OS=='android'?30:17}}
                                             />
                                             <Text style={[styles.as1, { marginLeft: 10 }]}>Set as default address</Text>
                                         </View>
@@ -391,7 +450,7 @@ console.log(route.params);
                                                 <Text style={styles.save}>Save Address</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <View style={{ height: 10 }} />
+                                        <View style={{ height: 130 }} />
                                     </View>
                                 </KeyboardAwareScrollView>
                             </ScrollView>

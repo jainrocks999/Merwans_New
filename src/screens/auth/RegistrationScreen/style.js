@@ -83,7 +83,7 @@ export default StyleSheet.create({
     have: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft: 4
+        marginLeft: 10
     },
     read: {
         fontSize: 12,
@@ -98,7 +98,7 @@ export default StyleSheet.create({
     bView: {
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 30
+        // marginTop: 30
     },
     touch: {
         width: 180,
@@ -112,6 +112,12 @@ export default StyleSheet.create({
         fontSize: 18,
         color: '#FFFFFF',
         fontFamily: 'Montserrat-bold',
+    },
+    sign1: {
+        fontSize: 18,
+        color: '#ED1B1A',
+        fontFamily: 'Montserrat-bold',
+      
     },
     bottom: {
         bottom: 30,

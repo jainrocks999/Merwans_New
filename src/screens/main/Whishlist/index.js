@@ -34,6 +34,8 @@ import { RadioButton } from 'react-native-paper';
 import Heart from "../../../assets/Svg/heart.svg";
 import Search from "../../../assets/Svg/search1.svg";
 import Done from '../../../assets/Svg/Done.svg';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const CategoryList = () => {
   const [openPanel, setOpenPanel] = useState(false)
@@ -41,8 +43,8 @@ const CategoryList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [pref, setPref] = useState('checked');
   const [msg, setMsg] = useState('unchecked')
-  const [kg, setKg] = useState('checked');
-  const [gram, setGram] = useState('unchecked')
+  const [kg, setKg] = useState('unchecked');
+  const [gram, setGram] = useState('checked')
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const isFetching = useSelector(state => state.isFetching)
@@ -55,6 +57,18 @@ const CategoryList = () => {
   const [click, setClick] = useState(false)
   const dispatch = useDispatch()
   const inputRef = React.useRef()
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
+
   const productDetail = async (id) => {
     setOpenPanel(true)
     try {
@@ -70,7 +84,6 @@ const CategoryList = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiproduct/productDetails',
       });
-      console.log('thisi i suser respone', response.data);
       if (response.data.status == true) {
         setFetching(false)
         setProduct(response.data.products)
@@ -85,10 +98,8 @@ const CategoryList = () => {
   const searchFilterFunction = text => {
     if (text) {
       const newData = masterDataSource.filter(function (item) {
-        console.log(item.name);
         const itemData = `${item.name}${item.price}` ? `${item.description}${item.name}${item.price} `.toUpperCase()
           : ''.toUpperCase();
-        console.log(itemData);
         const textData = text.toUpperCase();
         return itemData.indexOf(textData) > -1;
       });
@@ -118,7 +129,6 @@ const CategoryList = () => {
   }
   const removeWishList = async (id) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-    console.log(id);
     try {
       setFetching(true)
       const data = new FormData();
@@ -136,7 +146,9 @@ const CategoryList = () => {
       if (response.data.status == true) {
         Toast.show(response.data.message)
         setFilteredDataSource(response.data.products)
+        setMasterDataSource(response.data.products)
         setFetching(false)
+        
       }
       else {
         setFetching(false)
@@ -157,6 +169,7 @@ const CategoryList = () => {
 
   const addItemToCart = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
     if(product.options.length>1){
       dispatch({
         type: 'Add_Item_Request',
@@ -168,6 +181,7 @@ const CategoryList = () => {
        product.options[0].product_option_value[1].product_option_value_id,
         text_key:product.options[1].product_option_id,
         text_value:text,
+        outlet_id:store_id,
         navigation: navigation
       });
     }
@@ -182,6 +196,7 @@ const CategoryList = () => {
        product.options[0].product_option_value[1].product_option_value_id,
         text_key:0,
         text_value:'',
+        outlet_id:store_id,
         navigation: navigation
       });
     }
@@ -191,10 +206,11 @@ const CategoryList = () => {
         url: 'apiorder/add_to_cart',
         customer_id: customer_id,
         product_id: product.products.product_id,
+        outlet_id:store_id,
         navigation: navigation
       });
     }
- 
+    setOpenPanel(false)
   }
   const length = data.length
   const version = Platform.OS
@@ -258,13 +274,13 @@ const CategoryList = () => {
               marginRight: 0,
               width: 122,
               height: 30,
-              justifyContent: 'space-between',
+              justifyContent: 'flex-start',
               alignItems: 'center'
             }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center',marginTop:2 }}>
+            {/* <View style={{ flexDirection: 'row', alignItems: 'center',marginTop:2 }}> */}
               <Search />
               <Text style={styles.search}>Search</Text>
-            </View>
+            {/* </View> */}
 
           </TouchableOpacity>
         }
@@ -274,12 +290,16 @@ const CategoryList = () => {
         <View style={{ paddingHorizontal: 10 }}>
          {filteredDataSource.length>0? <View>
             <FlatList
+              removeClippedSubviews={true}
+              updateCellsBatchingPeriod={10}
+              maxToRenderPerBatch={5}
+              initialNumToRender={5}
               data={filteredDataSource}
               showsVerticalScrollIndicator={false}
               renderItem={({ item, index }) => (
                 <View
                   style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
-                  <View style={{ width: '60%', marginTop: 20 }}>
+                  <View style={{ width: '56%', marginTop: 20 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                       <View
                         style={styles.view1}>
@@ -289,6 +309,7 @@ const CategoryList = () => {
                         <Text style={styles.best}>{'Best Seller'}</Text>
                       </View> */}
                       <Text style={[styles.title,{marginLeft:5}]}
+                     
                     >{item.name}</Text>
                     </View>
                     
@@ -340,9 +361,9 @@ const CategoryList = () => {
                         <View style={{ borderWidth: 0.4, borderColor: '#ED1717', width: '42%', }} />
                       </View>
                     </View>
-                    <View style={styles.cusView}>
+                    {/* <View style={styles.cusView}>
                       <Text style={styles.custom}>Customise</Text>
-                    </View>
+                    </View> */}
                   </View>
                 </View>
               )}
@@ -395,19 +416,14 @@ const CategoryList = () => {
                     style={styles.view1}>
                     <View style={styles.border} />
                   </View>
-                  {/* <View style={styles.tag}>
-                    <Text style={styles.best}>{'Best Seller'}</Text>
-                  </View> */}
+                
                    <Text style={[styles.title,{marginLeft:5}]}>{product.products.name}</Text>
                    </View>
-                   <View style={styles.image}>
+                   {/* <View style={styles.image}>
                     <Image source={require('../../../assets/Icon/redHeart.png')} />
-                  </View>
+                  </View> */}
                 </View>
-                {/* <View style={styles.pname}>
-                 
-                
-                </View> */}
+               
                 <View
                   style={styles.round1}>
                   <Stars
@@ -426,7 +442,7 @@ const CategoryList = () => {
                   </Text>
                 </View>
                 {product.options.length>0? <View>
-                <View style={styles.show}>
+                {product.options.length>1?<View style={styles.show}>
                   <View style={{ width: '48%' }}>
                     <TouchableOpacity
                       onPress={() => managePref()}
@@ -509,7 +525,7 @@ const CategoryList = () => {
                       {msg == 'checked' ? <Poly /> : null}
                     </View>
                   </View>
-                </View>
+                </View>:null}
                 {pref == 'checked' ?
                   <View>
                     <View
@@ -649,14 +665,12 @@ const CategoryList = () => {
                   </TouchableOpacity>
                 </View>
               </ImageBackground>
-              {/* <View style={{ height: 100 }} /> */}
+           
             </KeyboardAwareScrollView>
           </ScrollView>:null}
         </View>
       </SwipeablePanel>
-      {/* <View style={styl.bottom}>
-        <BottomTab />
-      </View> */}
+      
       <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
       </ImageBackground>
     </View>

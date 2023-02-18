@@ -1,59 +1,83 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ImageBackground, TouchableOpacity, ScrollView,Alert ,StatusBar} from 'react-native';
-import { useNavigation ,DrawerActions} from "@react-navigation/native";
+import { View, Text, Image, ImageBackground, TouchableOpacity, ScrollView, Alert, StatusBar } from 'react-native';
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import styles from "./style";
 import BottomTab from "../../../components/BottomTab";
 import Header from "../../../components/Header";
-import Down from "../../../assets/Svg/down.svg";
 import Forward from "../../../assets/Svg/forward.svg";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from '../../../components/AsyncStorage';
 import Loader from "../../../components/Loader";
+import Order from "../../../assets/Svg/your-order.svg";
+import Address from "../../../assets/Svg/add-book.svg";
+import About from "../../../assets/Svg/about-info.svg";
+import Rating from "../../../assets/Svg/rating-rate.svg";
+import Privacy from "../../../assets/Svg/privacy-info.svg";
+import Terms from "../../../assets/Svg/terms-and-conditions.svg";
+import Logout from "../../../assets/Svg/log-out.svg";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const Profile = () => {
   const navigation = useNavigation()
-  const dispatch=useDispatch()
-  const isFetching=useSelector(state=>state.isFetching)
-  const [fname,setFname]=useState('')
-  const [lname,setLname]=useState('')
-  const [email,setEmail]=useState('')
+  const dispatch = useDispatch()
+  const isFetching = useSelector(state => state.isFetching)
+  const detail=useSelector(state=>state.UserDetail)
+  const [fname, setFname] = useState('')
+  const [lname, setLname] = useState('')
+  const [email, setEmail] = useState('')
+  const [customer_id,set_customeer_id]=useState('')
 
-  useEffect(async()=>{
-      const fname=await AsyncStorage.getItem(Storage.firstname)
-      const lname=await AsyncStorage.getItem(Storage.lastname)
-      const email=await AsyncStorage.getItem(Storage.email)
-      setFname(fname)
-      setLname(lname)
-      setEmail(email)
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
   },[])
 
-  const logoutUser=async()=>{
+  useEffect(async () => {
+    const fname = await AsyncStorage.getItem(Storage.firstname)
+    const lname = await AsyncStorage.getItem(Storage.lastname)
+    const email = await AsyncStorage.getItem(Storage.email)
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    setFname(fname)
+    setLname(lname)
+    setEmail(email)
+    set_customeer_id(customer_id)
+  }, [])
+
+  const logoutUser = async () => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     dispatch({
       type: 'User_Logout_Request',
       url: 'api/logout',
-      customer_id:customer_id,
-      navigation:navigation
+      customer_id: customer_id,
+      navigation: navigation
     });
   }
-  const manageAddress=async()=>{
-    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+  const manageAddress = async () => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     dispatch({
       type: 'Address_List_Request',
       url: 'apiorder/addressList',
-      customer_id:customer_id,
-      from:'profile',
-      navigation:navigation
+      customer_id: customer_id,
+      from: 'profile',
+      navigation: navigation
     });
   }
-  const manageOrder=async()=>{
-    const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+  const manageOrder = async () => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     dispatch({
       type: 'Order_List_Request',
       url: 'apiorder',
-      customer_id:customer_id,
-      navigation:navigation
+      customer_id: customer_id,
+      route:'Profile',
+      navigation: navigation
     });
   }
   const logout = () => {
@@ -62,53 +86,53 @@ const Profile = () => {
         text: 'Cancel',
         style: 'cancel',
       },
-      {text: 'YES', onPress: () => logoutUser()},
+      { text: 'YES', onPress: () => logoutUser() },
     ]);
   };
 
-  const about=()=>{
+  const about = () => {
     dispatch({
       type: 'About_Us_Request',
       url: 'api/about_us',
-      navigation:navigation
+      navigation: navigation
     });
   }
-  const Policy=()=>{
+  const Policy = () => {
     dispatch({
       type: 'Privacy_Policy_Request',
       url: 'api/privacy_policy',
-      navigation:navigation
+      navigation: navigation
     });
   }
-  const Term=()=>{
+  const Term = () => {
     dispatch({
       type: 'Term_Condition_Request',
       url: 'api/terms_conditions',
-      navigation:navigation
+      navigation: navigation
     });
   }
 
   return (
     <View style={{ flex: 1 }}>
-      {isFetching?<Loader/>:null}
+      {isFetching ? <Loader /> : null}
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
         <ScrollView stickyHeaderIndices={[0]}>
-          <Header 
-          onPress={()=>navigation.dispatch(DrawerActions.openDrawer())}
+          <Header
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           />
           <View style={{ paddingHorizontal: 5, marginTop: 10 }}>
-            <View style={styles.view}>
-              <View style={{width:'75%'}}>
-                <Text style={styles.name}>{`${fname} ${lname}`}</Text>
-                <Text style={[styles.email, { marginTop: 4}]}>{email}</Text>
+           {customer_id? <View style={styles.view}>
+              <View style={{ width: '75%' }}>
+                <Text style={styles.name}>{`${detail.firstname} ${detail.lastname}`}</Text>
+                <Text style={[styles.email, { marginTop: 4 }]}>{detail.email}</Text>
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('MyAccountPage')}
                 style={{ height: 59, width: 59 }}>
                 <Image style={{ height: 58, width: 58 }} source={require('../../../assets/Logo/profile.png')} />
               </TouchableOpacity>
-            </View>
-            <View style={styles.cont}>
+            </View>:null}
+          {customer_id?<View style={styles.cont}>
               <Text
                 style={styles.food}>Food Orders</Text>
               <View style={{ marginTop: 0 }}>
@@ -117,7 +141,8 @@ const Profile = () => {
                   style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/shopping-bag.png')} />
+                      <Order />
+                      {/* <Image source={require('../../../assets/Icon/shopping-bag.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Your Orders'}</Text>
                   </View>
@@ -125,28 +150,17 @@ const Profile = () => {
                     <Forward />
                   </View>
                 </TouchableOpacity>
-                {/* <TouchableOpacity 
-                onPress={()=>navigation.navigate('Favorite')}
-                style={[styles.card1]}>
-                  <View style={styles.main}>
-                    <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/like.png')} />
-                    </View>
-                    <Text style={styles.title}>{'Favorite Orders'}</Text>
-                  </View>
-                  <View style={{ marginRight: 0 }}>
-                    <Forward />
-                  </View>
-                </TouchableOpacity> */}
+
                 <TouchableOpacity
-                  onPress={() => 
+                  onPress={() =>
                     manageAddress()
                     // navigation.navigate('MyAddress')
                   }
                   style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/book.png')} />
+                      <Address />
+                      {/* <Image source={require('../../../assets/Icon/book.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Address Book'}</Text>
                   </View>
@@ -155,18 +169,19 @@ const Profile = () => {
                   </View>
                 </TouchableOpacity>
               </View>
-            </View>
+            </View>:null}
             <View
               style={styles.cont}>
               <Text
                 style={styles.food}>More</Text>
               <View style={{ marginTop: 0 }}>
                 <TouchableOpacity
-                onPress={()=>about()}
-                 style={[styles.card1]}>
+                  onPress={() => about()}
+                  style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/info.png')} />
+                      <About />
+                      {/* <Image source={require('../../../assets/Icon/info.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'About'}</Text>
                   </View>
@@ -178,7 +193,8 @@ const Profile = () => {
                 <TouchableOpacity style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/rating1.png')} />
+                      <Rating />
+                      {/* <Image source={require('../../../assets/Icon/rating1.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Rate Us on Play store'}</Text>
                   </View>
@@ -188,12 +204,13 @@ const Profile = () => {
                 </TouchableOpacity>
 
 
-                <TouchableOpacity 
-                onPress={()=>Policy()}
-                style={[styles.card1]}>
+                <TouchableOpacity
+                  onPress={() => Policy()}
+                  style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/insur.png')} />
+                      <Privacy />
+                      {/* <Image source={require('../../../assets/Icon/insur.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Privacy Policy'}</Text>
                   </View>
@@ -204,11 +221,12 @@ const Profile = () => {
 
 
                 <TouchableOpacity
-                onPress={()=>Term()}
-                style={[styles.card1]}>
+                  onPress={() => Term()}
+                  style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/terms.png')} />
+                      <Terms />
+                      {/* <Image source={require('../../../assets/Icon/terms.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Terms & Conditions'}</Text>
                   </View>
@@ -217,19 +235,20 @@ const Profile = () => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
-                onPress={()=>logout()}
-                style={[styles.card1]}>
+               {customer_id? <TouchableOpacity
+                  onPress={() => logout()}
+                  style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
-                      <Image source={require('../../../assets/Icon/log-out.png')} />
+                      <Logout />
+                      {/* <Image source={require('../../../assets/Icon/log-out.png')} /> */}
                     </View>
                     <Text style={styles.title}>{'Logout'}</Text>
                   </View>
                   <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity>:null}
 
               </View>
             </View>
@@ -238,10 +257,10 @@ const Profile = () => {
         </ScrollView>
         <View style={{ bottom: 0, left: 0, right: 0, position: 'absolute' }}>
           <BottomTab
-          home={false}
-          search={false}
-          cart={false}
-          profile={true}
+            home={false}
+            search={false}
+            cart={false}
+            profile={true}
           />
         </View>
       </ImageBackground>

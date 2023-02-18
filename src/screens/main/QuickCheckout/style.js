@@ -82,7 +82,7 @@ export default StyleSheet.create({
         elevation: 4,
         marginLeft: 10,
         backgroundColor: '#F4F4F4',
-        paddingHorizontal: 8,
+        // paddingHorizontal: 8,
         paddingVertical: 2,
         flexDirection: 'row',
         alignItems: 'center',
@@ -100,7 +100,7 @@ export default StyleSheet.create({
         fontSize: 12,
         color: '#000',
         fontFamily: 'Montserrat-Medium',
-        marginTop:-6
+        marginTop:-5
     },
     view: {
         flexDirection: 'row',
@@ -209,7 +209,7 @@ export default StyleSheet.create({
     },
     color: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     line: {
         height: 6,

@@ -7,6 +7,8 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch,useSelector } from "react-redux";
 import Loader from "../../../components/Loader";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const loginValidationSchema = yup.object().shape({
     password: yup
@@ -26,6 +28,17 @@ const ForgotScreen=({route})=>{
     const navigation=useNavigation()
     const dispatch=useDispatch()
     const isFetching=useSelector(state=>state.isFetching)
+
+    useEffect(() => {
+      NetInfo.addEventListener(state => {
+        if(!state.isConnected){
+        showMessage({
+          message:'Please connect to your internet',
+          type:'danger',
+        });
+        }
+      });
+    },[])
 
     const validateUser =(values) => {
       dispatch({

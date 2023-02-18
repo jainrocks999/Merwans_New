@@ -1,5 +1,6 @@
 initialstate = {
   AddressList:[],
+  AddressData:[],
   Store:[],
   CategoryList:[],
   Category:'',
@@ -14,7 +15,10 @@ initialstate = {
   About:'',
   Policy:'',
   Policy1:'',
-  Term:''
+  Term:'',
+  Home:'',
+  UserDetail:'',
+
 };
 export default (state = initialstate, action) => {
   switch (action.type) {
@@ -52,6 +56,13 @@ export default (state = initialstate, action) => {
       case 'Address_List_Success':
         return { ...state, isFetching: false,AddressList: action.payload};
       case 'Address_List_Error':
+        return { ...state, isFetching: false };
+
+      case 'Address_List_Req':
+        return { ...state, isFetching: true };
+      case 'Address_List_Suc':
+        return { ...state, isFetching: false,AddressData: action.payload};
+      case 'Address_List_Err':
         return { ...state, isFetching: false };
 
       case 'Get_Store_Request':
@@ -138,6 +149,13 @@ export default (state = initialstate, action) => {
       case 'Get_Address_Error1':
         return { ...state, isFetching: false };
 
+      case 'Get_Address_Request2':
+        return { ...state, isFetching: true };
+      case 'Get_Address_Success2':
+        return { ...state, isFetching: false,Address:action.payload};
+      case 'Get_Address_Error2':
+        return { ...state, isFetching: false };
+
       case 'Wish_List_Request':
         return { ...state, isFetching: true };
       case 'Wish_List_Success':
@@ -199,6 +217,27 @@ export default (state = initialstate, action) => {
       case 'Change_Pass_Success':
         return { ...state, isFetching: false};
       case 'Change_Pass_Error':
+        return { ...state, isFetching: false };
+
+      case 'Home_Data_Request':
+        return { ...state, isFetching: true };
+      case 'Home_Data_Success':
+        return { ...state, isFetching: false,Home:action.payload};
+      case 'Home_Data_Error':
+        return { ...state, isFetching: false };
+
+      case 'User_Detail_Request':
+        return { ...state, isFetching: true };
+      case 'User_Detail_Success':
+        return { ...state, isFetching: false,UserDetail:action.payload};
+      case 'User_Detail_Error':
+        return { ...state, isFetching: false };
+
+      case 'Order_Status_Request':
+        return { ...state, isFetching: true };
+      case 'Order_Status_Success':
+        return { ...state, isFetching: false};
+      case 'Order_Status_Error':
         return { ...state, isFetching: false };
 
     default:

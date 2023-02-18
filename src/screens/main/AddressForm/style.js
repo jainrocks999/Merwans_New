@@ -72,7 +72,7 @@ export default StyleSheet.create({
         justifyContent: 'center', 
     },
     enter:{ 
-        color: '#ED1B1A', 
+        color: '#fff', 
         fontFamily: 'Montserrat-Bold', 
         fontSize: 20 
     },
@@ -91,5 +91,12 @@ export default StyleSheet.create({
         justifyContent: 'space-between', 
         alignItems: 'center', 
         marginTop: 16 
+    },
+    view1:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: '#232323',
+        height: 40
     }
 })

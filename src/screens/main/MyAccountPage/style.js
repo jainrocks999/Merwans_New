@@ -55,7 +55,8 @@ export default StyleSheet.create({
     view2:{
         alignItems:'center',
         justifyContent:'center',
-        marginTop:-44
+        marginTop:-44,
+        paddingHorizontal:10
     }
 
 })

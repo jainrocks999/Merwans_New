@@ -1,5 +1,5 @@
 import { View, Text, TextInput, TouchableOpacity, ImageBackground, ScrollView,StatusBar } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState,useEffect } from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
@@ -11,6 +11,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Loader from "../../../components/Loader";
 import Eye from "../../../assets/Svg/eye.svg";
 import Geocoder from 'react-native-geocoding';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
+import Forward from '../../../assets/Svg/forward1.svg';
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const loginValidationSchema = yup.object().shape({
@@ -26,6 +29,17 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
   const isFetching = useSelector(state => state.isFetching)
   const [visible,setVisible]=useState(true)
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
 
   const validateUser = (values) => {
     if(isNaN(values.value)){
@@ -46,7 +60,10 @@ const LoginScreen = () => {
         navigation: navigation
       });
     }
-    
+    dispatch({
+      type: 'Home_Data_Request',
+      url: 'home/mobileview',
+  });
   }
 
   const showVisible = () => {
@@ -68,7 +85,6 @@ const LoginScreen = () => {
   Geocoder.from("Indore,kushwash nagar")
   .then(json => {
     var location = json.results[0].geometry.location;
-    console.log(location);
   })
   .catch(error => console.warn(error));
 
@@ -136,6 +152,16 @@ const LoginScreen = () => {
                 <View style={{ padding: 12 }}>
                   <View style={styles.cont}>
                   <Logo height={100} width={100}/>
+                  {/* <TouchableOpacity
+                  
+                   style={{flexDirection:'row',justifyContent:'center',}}>
+                  <Text style={{fontSize:16,marginRight:5,color:'#ED1B1A',fontFamily:'Montserrat-SemiBold'}}>Skip</Text>
+                  <View style={{flexDirection:'row',marginTop:3}}>
+                  <Forward width ={10} height={16}/>
+                  <Forward width ={10} height={16}/>
+                  </View>
+                  </TouchableOpacity> */}
+
                   </View>
                   <View style={styles.headerCont}>
                     <Text style={styles.login}>Login</Text>
@@ -187,12 +213,25 @@ const LoginScreen = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={styles.row}>
+                  <View style={[styles.row,{marginTop:40}]}>
                     <TouchableOpacity
                        onPress={() => handleSubmit()}
-                      // onPress={() => navigation.navigate('Main')}
                       style={styles.log}>
                       <Text style={styles.text}>Log In</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={[styles.row,{marginTop:20}]}>
+                  <Text style={{fontFamily:'Montserrat-SemiBold',color:'#000'}}>OR</Text>
+                  </View>
+                  <View style={[styles.row,{marginTop:10}]}>
+                    <TouchableOpacity
+                       onPress={()=>navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Main" }],
+                    })}
+                      style={{borderBottomColor:'#ED1B1A',borderBottomWidth:2}}
+                      >
+                      <Text style={styles.text4}>Skip to continue</Text>
                     </TouchableOpacity>
                   </View>
 

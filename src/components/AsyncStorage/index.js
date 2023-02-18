@@ -5,5 +5,7 @@ export default{
     email:'email',
     telephone:'telephone',
     location:'location',
-    store_id:'store_id'
+    store_id:'store_id',
+    lat:'lat',
+    long:'long'
 }

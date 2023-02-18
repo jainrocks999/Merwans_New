@@ -1,5 +1,5 @@
 import { View, Text, StatusBar, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
-import React from 'react';
+import React,{useEffect} from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
 import Back from "../../../assets/Svg/back.svg";
@@ -7,6 +7,8 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useSelector,useDispatch } from "react-redux";
 import Loader from "../../../components/Loader";
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 const loginValidationSchema = yup.object().shape({
     email: yup.string().required('Please enter your email address'),
   });
@@ -15,6 +17,17 @@ const ForgotScreen = () => {
     const navigation = useNavigation()
     const dispatch=useDispatch()
     const isFetching=useSelector(state=>state.isFetching)
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
     const validateUser = (values) => {
         dispatch({
           type: 'Reset_Pass_Request',

@@ -1,15 +1,28 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity,StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from "./style";
 import Back from "../../../assets/Svg/back.svg";
 import Check from '../../../assets/Svg/check1.svg';
 import { useSelector } from 'react-redux';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
 const OrderDetail = () => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.OrderDetail)
-    console.log('this is selecor', selector.date_added);
+
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
+
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
@@ -38,7 +51,7 @@ const OrderDetail = () => {
                     </TouchableOpacity>
                     <View style={{ alignItems: 'center', 
         justifyContent: 'center', }}>
-                        <Text style={{color: '#ED1B1A', 
+                        <Text style={{color: '#fff', 
         fontFamily: 'Montserrat-Bold', 
         fontSize: 20 }}>Order Detail</Text>
                     </View>

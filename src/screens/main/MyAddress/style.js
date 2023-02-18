@@ -6,7 +6,7 @@ export default StyleSheet.create({
         justifyContent:'center',
     },
     my:{
-        color:'#ED1B1A',
+        color:'#fff',
         fontFamily:'Montserrat-Bold',
         fontSize:20
     },

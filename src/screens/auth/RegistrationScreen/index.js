@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, TouchableOpacity, ImageBackground, ScrollView, StatusBar } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
 import Logo from "../../../assets/Logo/logo.svg";
@@ -16,6 +16,9 @@ import HTMLView from "react-native-htmlview";
 import Multi from "../../../assets/Svg/multi.svg";
 import Toast from "react-native-simple-toast";
 import CheckBox from '@react-native-community/checkbox';
+import { showMessage } from "react-native-flash-message";
+import NetInfo from "@react-native-community/netinfo";
+import Forward from "../../../assets/Svg/forward1.svg";
 const loginValidationSchema = yup.object().shape({
   fname: yup
     .string()
@@ -60,7 +63,17 @@ const RegistrationScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [policy,setPolicy]=useState(false)
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  console.log('this is policy valu',policy);
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+      showMessage({
+        message:'Please connect to your internet',
+        type:'danger',
+      });
+      }
+    });
+  },[])
 
   const validateUser = (values) => {
     if(toggleCheckBox){
@@ -74,6 +87,10 @@ const RegistrationScreen = () => {
       password: values.password,
       navigation: navigation
     });
+    dispatch({
+      type: 'Home_Data_Request',
+      url: 'home/mobileview',
+  });
   }
   else{
     Toast.show('Please accept Privacy Policy');
@@ -140,6 +157,7 @@ const RegistrationScreen = () => {
                 <View style={{ padding: 12 }}>
                   <View style={styles.container}>
                     <Logo height={100} width={100} />
+                    
                   </View>
                   <View style={styles.header}>
                     <Text style={styles.register}>Registration</Text>
@@ -197,6 +215,7 @@ const RegistrationScreen = () => {
                           onChangeText={handleChange('email')}
                           onBlur={handleBlur('email')}
                           value={values.email}
+                          keyboardType='email-address'
                         />
                       </View>
                     </View>
@@ -281,14 +300,30 @@ const RegistrationScreen = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={styles.bView}>
+                  <View style={[styles.bView,{marginTop:30}]}>
                     <TouchableOpacity
                       onPress={() => handleSubmit()}
                       style={styles.touch}>
                       <Text style={styles.sign}>Sign Up</Text>
                     </TouchableOpacity>
                   </View>
+                  <View style={[styles.bView,{marginTop:20}]}>
+                  <Text style={{fontFamily:'Montserrat-SemiBold',color:'#000'}}>OR</Text>
+                  </View>
+                  <View style={[styles.bView,{marginTop:10}]}>
+                    <TouchableOpacity
+                     onPress={()=>navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Main" }],
+                      })}
+                      // style={styles.touch}
+                      style={{borderBottomWidth:2,borderColor:'#ED1B1A',}}
+                      >
+                      <Text style={styles.sign1}>Skip to continue</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
+                
               </KeyboardAwareScrollView>
             </ScrollView>
             <Dialog
@@ -312,6 +347,7 @@ const RegistrationScreen = () => {
               <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{marginBottom: 30}}>
                   <HTMLView
+                  // addLineBreaks
                     value={selector1
                       .trim()
                       .replace(new RegExp('<p>', 'g'), '<span>')}

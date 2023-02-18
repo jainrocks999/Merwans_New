@@ -65,7 +65,7 @@ export default StyleSheet.create({
     row:{ 
         justifyContent: 'center', 
         alignItems: 'center', 
-        marginTop: 40 
+        // marginTop: 40 
     },
     log:{
         width: 180,
@@ -78,6 +78,11 @@ export default StyleSheet.create({
     text:{ 
         fontSize: 18, 
         color: '#FFFFFF', 
+        fontFamily: 'Montserrat-bold', 
+    },
+    text4:{ 
+        fontSize: 18, 
+        color: '#ED1B1A', 
         fontFamily: 'Montserrat-bold', 
     },
     bottom:{ 

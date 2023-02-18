@@ -101,13 +101,13 @@ export default StyleSheet.create({
         borderColor: '#dae1ed'
     },
     view1: {
-        borderColor: '#0FAF33',
-        borderWidth: 1,
-        height: 16,
-        width: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 4
+        borderColor:'#0FAF33',
+        borderWidth:1,
+        height:16,
+        width:16,
+        alignItems:'center',
+        justifyContent:'center',
+        borderRadius:4
     },
     border: {
         height: 8,
@@ -129,7 +129,7 @@ export default StyleSheet.create({
         fontFamily: "Montserrat-SemiBold",
         fontSize: 15,
         color: '#232323',
-        marginTop: 4
+        marginLeft: 5
     },
     title1: {
         fontFamily: "Montserrat-SemiBold",
@@ -375,12 +375,13 @@ export default StyleSheet.create({
     url: {
         width: '100%',
         borderRadius: 10,
-        height: 217
+        // height: 217
+        height:160
     },
     bests: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 20
+        marginTop: 10
     },
     pname: {
         flexDirection: 'row',
@@ -487,6 +488,11 @@ export default StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    bests1:{ 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        marginTop: 0 
+    },
 
 })

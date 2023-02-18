@@ -17,7 +17,7 @@ export default StyleSheet.create({
         fontFamily:'Montserrat-Regular',
         color:'#353535',
         marginLeft:10,
-        marginBottom:5
+        // marginBottom:5
     },
     view:{
         flexDirection:'row',
@@ -253,7 +253,7 @@ export default StyleSheet.create({
         alignItems: 'center' 
     },
     cake:{ 
-        marginLeft: 20, 
+        // marginLeft: 10, 
         fontSize: 20, 
         fontFamily: 'Montserrat-Bold', 
         color: '#ED1B1A' 
@@ -330,12 +330,13 @@ export default StyleSheet.create({
     url:{ 
         width: '100%', 
         borderRadius: 10,
-        height:217 
+        // height:217 
+        height:160
     },
     bests:{ 
         flexDirection: 'row', 
         alignItems: 'center', 
-        marginTop: 20 
+        marginTop: 10 
     },
     bests1:{ 
         flexDirection: 'row', 
@@ -422,16 +423,16 @@ export default StyleSheet.create({
         right: 0 
     },
     mod:{
-        backgroundColor: '#FFF',
-        width: '86%',
-        alignSelf: 'center',
-        elevation: 5,
-        borderRadius: 20
+        // backgroundColor: '#FFF',
+        // width: '86%',
+        // alignSelf: 'center',
+        // elevation: 5,
+        // borderRadius: 20
     },
     men:{
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         marginTop: 20
     },
     space:{ 

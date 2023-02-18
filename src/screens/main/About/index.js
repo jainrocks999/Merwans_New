@@ -1,55 +1,51 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity,StatusBar,ScrollView } from 'react-native';
+import React,{useEffect} from 'react';
+import { View, Text,ImageBackground, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector} from 'react-redux';
 import styles from "./style";
 import Loader from "../../../components/Loader";
 import Back from "../../../assets/Svg/back.svg";
 import HTMLView from 'react-native-htmlview';
+import NetInfo from "@react-native-community/netinfo";
+import { showMessage } from "react-native-flash-message";
 
-
-
-const About = ({route}) => {
+const About = ({ route }) => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.About)
     const isFetching = useSelector(state => state.isFetching)
-    console.log('this is abbout dta',selector);
-    const regex = /<br|\n|\r\s*\\?>/g;
+    useEffect(() => {
+        NetInfo.addEventListener(state => {
+          if(!state.isConnected){
+          showMessage({
+            message:'Please connect to your internet',
+            type:'danger',
+          });
+          }
+        });
+      },[])
     return (
         <View style={{ flex: 1 }}>
-            {isFetching?<Loader/>:null}
-            <ImageBackground 
-            style={{ flex: 1, }} 
-            source={require('../../../assets/Icon/bg.png')}>
-               <View style={{ }}>
-                     <View style={{
-                    flexDirection:'row',
-                    justifyContent:'space-between',
-                    alignItems:'center',
-                    backgroundColor:'#232323',
-                    height:40
-                     }}>
-                    <TouchableOpacity style={{
-        paddingHorizontal:10,
-        paddingVertical:8,
-        paddingRight:30}}
-                        onPress={() => navigation.goBack()}>
-                        <Back />
-                    </TouchableOpacity>
-                    <View style={{ alignItems: 'center', 
-        justifyContent: 'center', }}>
-                        <Text style={{color: '#ED1B1A', 
-        fontFamily: 'Montserrat-Bold', 
-        fontSize: 20 }}>About Us</Text>
+            {isFetching ? <Loader /> : null}
+            <ImageBackground
+                style={{ flex: 1, }}
+                source={require('../../../assets/Icon/bg.png')}>
+                <View>
+                    <View style={styles.header}>
+                        <TouchableOpacity style={styles.touch}
+                            onPress={() => navigation.goBack()}>
+                            <Back />
+                        </TouchableOpacity>
+                        <View style={styles.icon}>
+                            <Text style={styles.about}>About Us</Text>
+                        </View>
+                        <View style={{ width: 40 }} />
                     </View>
-                    <View style={{width:40}}/>
-                </View>
-                    
-                    <ScrollView style={{marginTop:10,paddingHorizontal:10}}>
-                    <HTMLView
-                    //    value={selector.trim().replace(regex, '  ')}
-                       value={`<div>${selector.trim().replace(regex, '')}</div>`}
-                    />
+                    <ScrollView
+                        style={styles.scroll}>
+                        <HTMLView
+                            addLineBreaks={false}
+                            value={selector.replace(/\s*(<br \/> | <br>)\s*/gi, '<br\>')}
+                        />
                     </ScrollView>
                 </View>
             </ImageBackground>
