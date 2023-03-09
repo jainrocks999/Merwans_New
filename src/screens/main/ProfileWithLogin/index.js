@@ -29,16 +29,16 @@ const Profile = () => {
   const [email, setEmail] = useState('')
   const [customer_id,set_customeer_id]=useState('')
 
-  useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+  // useEffect(() => {
+  //   NetInfo.addEventListener(state => {
+  //     if(!state.isConnected){
+  //     showMessage({
+  //       message:'Please connect to your internet',
+  //       type:'danger',
+  //     });
+  //     }
+  //   });
+  // },[])
 
   useEffect(async () => {
     const fname = await AsyncStorage.getItem(Storage.firstname)

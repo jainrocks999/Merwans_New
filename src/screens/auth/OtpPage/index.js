@@ -13,16 +13,16 @@ const Otp = ({route}) => {
     const [code,setCode]=useState('')
 
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
     const verifyOtp=()=>{
         if(code==''){
             Toast.show('Please enter otp')

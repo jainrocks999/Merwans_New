@@ -23,8 +23,8 @@ Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const loginValidationSchema = yup.object().shape({
     address1: yup.string().required('Please enter your address1'),
-    fName: yup.string().required('Please enter your first name'),
-    lName: yup.string().required('Please enter your last name'),
+    // fName: yup.string().required('Please enter your first name'),
+    // lName: yup.string().required('Please enter your last name'),
     address2: yup.string(),
     city: yup.string().required('Please enter your city'),
     post: yup.string()
@@ -50,16 +50,16 @@ const AddressForm = ({ route }) => {
     const [state, setState] = useState(route.params.zone_id)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
     useEffect(() => {
         if (route.params.type == 'Home') {
          manageHome()
@@ -127,8 +127,8 @@ const AddressForm = ({ route }) => {
                 data.append('country_id', '99');
                 data.append('zone_id', state);
                 data.append('landmark', values.land)
-                data.append('firstname', values.fName)
-                data.append('lastname', values.lName)
+                // data.append('firstname', values.fName)
+                // data.append('lastname', values.lName)
                 data.append('default', toggleCheckBox == true ? 1 : 0)
                 const response = await axios({
                     method: 'POST',
@@ -139,6 +139,7 @@ const AddressForm = ({ route }) => {
                     },
                     url: 'https://merwans.co.in/index.php?route=api/apiorder/addressUpdate',
                 });
+                console.log('this is user response',response.data);
                 if (response.data.status == true) {
                     Geocoder.from(values.address1)
                         .then(json => {
@@ -179,8 +180,8 @@ const AddressForm = ({ route }) => {
                 city: route.params.city,
                 post: route.params.postcode,
                 land: route.params.landmark,
-                fName:route.params.firstname,
-                lName:route.params.lastname
+                // fName:route.params.firstname,
+                // lName:route.params.lastname
             }}
             onSubmit={values => validateUser(values)}
             validateOnMount={true}
@@ -247,52 +248,8 @@ const AddressForm = ({ route }) => {
                                     keyboardShouldPersistTaps="handled"
                                     contentContainerStyle={{ flex: 1 }}>
                                     <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-                                        <View style={{ height: 20 }}>
-                                        </View>
-                                        <View >
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>First Name</Text>
-                                                <Text style={styles.str}>*</Text>
-                                            </View>
-
-                                            <View style={styles.view}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="First Name"
-                                                    placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('fName')}
-                                                    onBlur={handleBlur('fName')}
-                                                    value={values.fName}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={styles.error}>
-                                            {errors.fName && touched.fName && (
-                                                <Text style={styles.warn}>{errors.fName}</Text>
-                                            )}
-                                        </View>
-                                        <View style={{ marginTop: 15 }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>Last Name</Text>
-                                                <Text style={styles.str}>*</Text>
-                                            </View>
-
-                                            <View style={styles.view}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="Last Name"
-                                                    placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('lName')}
-                                                    onBlur={handleBlur('lName')}
-                                                    value={values.lName}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={styles.error}>
-                                            {errors.lName && touched.lName && (
-                                                <Text style={styles.warn}>{errors.lName}</Text>
-                                            )}
-                                        </View>
+                                       
+                                      
                                         <View style={{marginTop:15}}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Location</Text>

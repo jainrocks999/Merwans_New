@@ -47,17 +47,16 @@ const Drawer=()=>{
         <View>
           <View 
           // activeOpacity={0.8}  onPress={onClickFunction} 
-          style={[styles.cmn]}>
+          style={[styles.cmn,{marginTop:5,}]}>
                 <TouchableOpacity 
-                activeOpacity={0.8} onPress={()=>manageData(item.category_id)}
-                >
+                activeOpacity={0.8} onPress={()=>manageData(item.category_id)}>
                 <Text style={[styles.home,{textTransform:'uppercase'}]}>{(item.name)}</Text>
                 </TouchableOpacity>
                 {visible? handleSubCategory(item):<View/>}
                 <TouchableOpacity 
                activeOpacity={0.8}  onPress={onClickFunction} 
                 style={{paddingHorizontal:6,paddingVertical:5}}>
-               { layoutHeight==0?<Plus/>:<Minus/>}
+               { layoutHeight==0?<View style={{borderWidth:1,borderColor:'#6A6A6A',borderRadius:10,padding:1}}><Plus/></View>:<View style={{borderWidth:1,borderColor:'#6A6A6A',borderRadius:10,padding:1}}><Minus/></View>}
                 </TouchableOpacity>
               </View>
           <View
@@ -118,7 +117,7 @@ const Drawer=()=>{
           <TouchableOpacity 
           onPress={() => manageHome()}
           >
-             <Text style={[styles.home,{marginBottom:4,textTransform:'uppercase'}]}>Home</Text>
+             <Text style={[styles.home,{marginBottom:2,textTransform:'uppercase'}]}>Home</Text>
           </TouchableOpacity>
            <View>
            {selector.map((item, key) => (
@@ -131,7 +130,7 @@ const Drawer=()=>{
             />
           ))}
            </View>
-            <Text style={[styles.home, { marginTop: 3 ,textTransform:'uppercase'}]}>Contact Us</Text>
+            <Text style={[styles.home, { marginTop: 8 ,textTransform:'uppercase'}]}>Contact Us</Text>
         </View>
      
       </View>

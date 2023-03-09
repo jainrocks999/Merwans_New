@@ -40,16 +40,16 @@ const EditProfile = ({ route }) => {
   const isFetching = useSelector(state => state.isFetching)
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+  // useEffect(() => {
+  //   NetInfo.addEventListener(state => {
+  //     if(!state.isConnected){
+  //     showMessage({
+  //       message:'Please connect to your internet',
+  //       type:'danger',
+  //     });
+  //     }
+  //   });
+  // },[])
 
   const validateUser = async (values) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)

@@ -192,7 +192,7 @@ export default StyleSheet.create({
     home:{
         color:'#6A6A6A',
         fontFamily:'Montserrat-Medium',
-        fontSize:13
+        fontSize:14
     },
     cmn:{
         flexDirection:'row',
@@ -218,7 +218,7 @@ export default StyleSheet.create({
     item:{
         color:'#6A6A6A',
         fontFamily:'Montserrat-Regular',
-        fontSize:12
+        fontSize:13
     },
     round2:{
         backgroundColor:'#D9D9D9',
@@ -237,7 +237,7 @@ export default StyleSheet.create({
     margin:{
         flexDirection:'row',
         alignItems:'center',
-        marginTop:3
+        marginTop:6
     },
     card:
     {

@@ -58,16 +58,16 @@ const CategoryList = () => {
   const dispatch = useDispatch()
   const inputRef = React.useRef()
 
-  useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+  // useEffect(() => {
+  //   NetInfo.addEventListener(state => {
+  //     if(!state.isConnected){
+  //     showMessage({
+  //       message:'Please connect to your internet',
+  //       type:'danger',
+  //     });
+  //     }
+  //   });
+  // },[])
 
   const productDetail = async (id) => {
     setOpenPanel(true)
@@ -656,13 +656,20 @@ const CategoryList = () => {
                 }
                 </View>:null}
                 <View style={styles.pay}>
-                  <TouchableOpacity
+                 { product.products.quantity>0? <TouchableOpacity
                     onPress={() => addItemToCart()}
                     style={styles.items}>
-                     <Text style={styles.rs}>
+                       <Text style={styles.rs}>
                         {`Add item ₹${gram == 'checked'?parseInt(product.products.price).toFixed(2):
-                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
-                  </TouchableOpacity>
+                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}
+                        </Text>
+                  </TouchableOpacity>:
+                  <TouchableOpacity
+                    onPress={() => addItemToCart()}
+                    disabled
+                    style={styles.items}>
+                     <Text style={styles.rs}>{'Product out of stock'}</Text>
+                  </TouchableOpacity>}
                 </View>
               </ImageBackground>
            

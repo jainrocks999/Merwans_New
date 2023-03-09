@@ -29,16 +29,16 @@ const Payment = () => {
     const isFetching1 = useSelector(state => state.isFetching)
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
 
     useEffect(() => {
         firstCall()

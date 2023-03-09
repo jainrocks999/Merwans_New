@@ -238,6 +238,7 @@ export default StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         marginTop:3
-    }
+    },
+    
 
 })

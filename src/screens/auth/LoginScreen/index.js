@@ -30,16 +30,16 @@ const LoginScreen = () => {
   const isFetching = useSelector(state => state.isFetching)
   const [visible,setVisible]=useState(true)
 
-  useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+  // useEffect(() => {
+  //   NetInfo.addEventListener(state => {
+  //     if(!state.isConnected){
+  //     showMessage({
+  //       message:'Please connect to your internet',
+  //       type:'danger',
+  //     });
+  //     }
+  //   });
+  // },[])
 
   const validateUser = (values) => {
     if(isNaN(values.value)){

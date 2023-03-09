@@ -27,16 +27,16 @@ function WebViewPage ({route,}){
  const navigation=useNavigation()
  const dispatch=useDispatch()
 
- useEffect(() => {
-  NetInfo.addEventListener(state => {
-    if(!state.isConnected){
-    showMessage({
-      message:'Please connect to your internet',
-      type:'danger',
-    });
-    }
-  });
-},[])
+//  useEffect(() => {
+//   NetInfo.addEventListener(state => {
+//     if(!state.isConnected){
+//     showMessage({
+//       message:'Please connect to your internet',
+//       type:'danger',
+//     });
+//     }
+//   });
+// },[])
 
  let params = {
     enc_val:route.params.data.encRequest,
@@ -77,6 +77,7 @@ function WebViewPage ({route,}){
  }, []);
 
   const onNavigationStateChange = async(navState) => {
+    console.log('this is navstat',navState);
    if (navState.url === params.redirect_url || navState.url === params.cancel_url) {
     //  webViewRef.current.injectJavaScript(pucJavaScript);
     //  webViewRef.current.stopLoading();
@@ -113,10 +114,10 @@ function WebViewPage ({route,}){
  }
  const _onMessage = async(event) => {
    var getData = event.nativeEvent.data;
-   
+   console.log('this is geet data',getData);
     if(getData != null){
 
-      // navigation.navigate('Status')
+      // navigation.navigate('Home')
       
     }
   }

@@ -10,16 +10,16 @@ import { showMessage } from "react-native-flash-message";
 const Status=({route})=>{
 const navigation=useNavigation()
 const dispatch=useDispatch()
-useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+// useEffect(() => {
+//     NetInfo.addEventListener(state => {
+//       if(!state.isConnected){
+//       showMessage({
+//         message:'Please connect to your internet',
+//         type:'danger',
+//       });
+//       }
+//     });
+//   },[])
 
 useEffect(()=>{
     firstCall()

@@ -44,14 +44,15 @@ const CategoryList = () => {
   const [text,setText]=useState('')
 
   useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
+    AsyncStorage.setItem("pageKey","")
+    // NetInfo.addEventListener(state => {
+    //   if(!state.isConnected){
+    //   showMessage({
+    //     message:'Please connect to your internet',
+    //     type:'danger',
+    //   });
+    //   }
+    // });
   },[])
 
   const searchFilterFunction = async (text) => {
@@ -92,12 +93,14 @@ const CategoryList = () => {
 
   const productDetail = async (id) => {
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
     if(customer_id){
     setOpenPanel(true)
     try {
       setFetching(true)
       const data = new FormData();
       data.append('product_id', id);
+      data.append('store_id', store_id)
       const response = await axios({
         method: 'POST',
         data,
@@ -118,6 +121,7 @@ const CategoryList = () => {
     }
   }
   else{
+    // AsyncStorage.setItem("pageKey","SecondSearch")
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
@@ -326,7 +330,7 @@ const CategoryList = () => {
                         starSize={12}
                         fullStar={<Blank />}
                         emptyStar={<Full />} />
-                      <Text style={styles.review}>{'142 Reviews'}</Text>
+                      {/* <Text style={styles.review}>{'142 Reviews'}</Text> */}
                     </View>
                     <View style={styles.views}>
                       <Text style={styles.price}>{item.price}</Text>
@@ -665,13 +669,20 @@ const CategoryList = () => {
                 }
                 </View>:null}
                 <View style={styles.pay}>
-                  <TouchableOpacity
+                 {product.products.quantity>0? <TouchableOpacity
                     onPress={() => addItemToCart()}
                     style={styles.items}>
                      <Text style={styles.rs}>
                         {`Add item ₹${gram == 'checked'?parseInt(product.products.price).toFixed(2):
-                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}</Text>
+                        (parseInt(product.options[0].product_option_value[1].price)+parseInt(product.products.price)).toFixed(2)}`}
+                        </Text>
                   </TouchableOpacity>
+                  :<TouchableOpacity
+                    onPress={() => addItemToCart()}
+                    disabled
+                    style={styles.items}>
+                     <Text style={styles.rs}>{'Product out of stock'}</Text>
+                  </TouchableOpacity>}
                 </View>
               </ImageBackground>
               {/* <View style={{ height: 100 }} /> */}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image,PermissionsAndroid, Platform } from 'react-native';
+import { View, Text, Image,PermissionsAndroid, Platform,Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SvgUri } from 'react-native-svg';
 import Logo from "../../../assets/Logo/logo.svg";
@@ -90,21 +90,38 @@ async function requestLocationPermission()
   }
 }
 
-useEffect(() => {
-  NetInfo.addEventListener(state => {
-    if(!state.isConnected){
-    showMessage({
-      message:'Please connect to your internet',
-      type:'danger',
-    });
-    }
-  });
-},[])
+// useEffect(() => {
+//   NetInfo.addEventListener(state => {
+//     if(state.isConnected){
+//       // Alert.alert('Please connect to your internet')
+//       Alert.alert(
+//         'Alert Title',
+//         'My Alert Msg',
+//         [
+//           {
+//             text: ' ',
+//           },
+//         ],
+//         {
+//           cancelable: true,
+//           onDismiss: () =>
+//             Alert.alert(
+//               'This alert was dismissed by tapping outside of the alert dialog.',
+//             ),
+//         },
+//       );
+//     // showMessage({
+//     //   message:'Please connect to your internet',
+//     //   type:'danger',
+//     // });
+//     }
+//   });
+// },[])
 
     return (
         <View style={{ flex: 1 }}>
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                <Logo height={150} width={150}/>
+                <Logo height={200} width={200}/>
             </View>
         </View>
     )

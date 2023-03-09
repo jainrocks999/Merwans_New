@@ -36,16 +36,16 @@ const HomeScreen = ({ route }) => {
     const [state, setState] = useState(0)
     const [location, setLocation] = useState('Select Store')
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
 
     useEffect(async () => {
         const data = await AsyncStorage.getItem(Storage.location)
@@ -59,7 +59,7 @@ const HomeScreen = ({ route }) => {
     }, [])
     useEffect(async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        const address_id = await AsyncStorage.getItem("Address_id")
+        const pageKey = await AsyncStorage.getItem("pageKey")
         dispatch({
             type: 'Menu_List_Request',
             url: 'apiproduct/menuSubmenuList',
@@ -79,6 +79,7 @@ const HomeScreen = ({ route }) => {
             url: 'apiorder/addressList',
             customer_id: customer_id,
         });
+        navigation.navigate(pageKey)
     }, [])
     const handleLocation = async () => {
         const store_id = await AsyncStorage.getItem(Storage.store_id)
@@ -221,7 +222,7 @@ const HomeScreen = ({ route }) => {
                         indicatorActiveColor={'#ED1B1A'}
                         indicatorInActiveColor={'#737373'}
                         loop={false}
-                        autoscroll={false}
+                        autoscroll={true}
                         onPress={(item) => manageBanner(item)}
                     />
                 </View> : null}
@@ -245,7 +246,7 @@ const HomeScreen = ({ route }) => {
                         />
                     </View>
                 </ImageBackground> : null}
-                {selector1.category == true ? <View style={{ backgroundColor: '#E2E2E2' }}>
+                {selector1.category == true ? <View style={{  }}>
                     <View style={styles.sub}>
                         <Image source={require('../../../assets/Icon/dot.png')} />
                     </View>
@@ -253,11 +254,11 @@ const HomeScreen = ({ route }) => {
                         <Text style={styles.ready}>Ready To Deliver</Text>
                     </View>
 
-                    <View style={{ height: 340 }} />
+                    <View style={{ height: 370 }} />
                     <View>
                         <Image source={require('../../../assets/Icon/badam.png')} />
                     </View>
-                    <View style={{ paddingHorizontal: 12, marginTop: -425 }}>
+                    <View style={{ paddingHorizontal: 12, marginTop: -449 }}>
                         <View style={styles.row}>
                             <TouchableOpacity
                                 onPress={() => manageList(selector1.deliverCategory[0].category_id)}
@@ -265,6 +266,7 @@ const HomeScreen = ({ route }) => {
                                 <Image
                                     style={styles.image}
                                     source={selector1.deliverCategory[0].image ? { uri: selector1.deliverCategory[0].image } : require('../../../assets/Logo/rtd1.png')} />
+                                    <Text style={{alignSelf:'flex-start',fontFamily:'Montserrat-SemiBold',marginTop:6,color:'#000000'}}>{selector1.deliverCategory[0].name}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => manageList(selector1.deliverCategory[1].category_id)}
@@ -272,6 +274,7 @@ const HomeScreen = ({ route }) => {
                                 <Image
                                     style={styles.image}
                                     source={selector1.deliverCategory[1].image ? { uri: selector1.deliverCategory[1].image } : require('../../../assets/Logo/rtd1.png')} />
+                         <Text style={{alignSelf:'flex-start',fontFamily:'Montserrat-SemiBold',marginTop:6,color:'#000000'}}>{selector1.deliverCategory[1].name}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.row, { marginTop: 12 }]}>
@@ -281,6 +284,7 @@ const HomeScreen = ({ route }) => {
                                 <Image
                                     style={styles.image}
                                     source={selector1.deliverCategory[2].image ? { uri: selector1.deliverCategory[2].image } : require('../../../assets/Logo/rtd1.png')} />
+                             <Text style={{alignSelf:'flex-start',fontFamily:'Montserrat-SemiBold',marginTop:6,color:'#000000'}}>{selector1.deliverCategory[2].name}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => manageList(selector1.deliverCategory[3].category_id)}
@@ -289,11 +293,12 @@ const HomeScreen = ({ route }) => {
                                     style={styles.image}
                                     source={selector1.deliverCategory[3].image ? { uri: selector1.deliverCategory[3].image } : require('../../../assets/Logo/rtd1.png')}
                                 />
+                                 <Text style={{alignSelf:'flex-start',fontFamily:'Montserrat-SemiBold',marginTop:6,color:'#000000'}}>{selector1.deliverCategory[3].name}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View> : null}
-                <View style={{ backgroundColor: '#fff', marginTop: selector1.category == true ? 73 : 0 }}>
+                <View style={{ backgroundColor: '#fff', marginTop: selector1.category == true ? 40 : 0 }}>
                     {selector1.specialCategory == true && selector1.specialCategoryData[0].products? <View style={styles.cont}>
                         <Text style={styles.cat}>{selector1.specialCategoryData[0].name}</Text>
                         <TouchableOpacity
@@ -340,6 +345,7 @@ const HomeScreen = ({ route }) => {
                                 data={selector1.trendingProducts}
                                 ref={flatListRef}
                                 horizontal={true}
+                                showsHorizontalScrollIndicator={false}
                                 renderItem={({ item }) => {
                                     return (
                                         <TouchableOpacity

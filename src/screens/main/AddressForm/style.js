@@ -19,7 +19,7 @@ export default StyleSheet.create({
         borderWidth:2,
         height:40,
         marginTop:3,
-        paddingHorizontal:5,
+        paddingHorizontal:10,
         borderColor:'#FB8019',
         borderRadius:2,
         justifyContent:'center'

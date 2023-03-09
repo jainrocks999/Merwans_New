@@ -29,16 +29,16 @@ const ForgotScreen=({route})=>{
     const dispatch=useDispatch()
     const isFetching=useSelector(state=>state.isFetching)
 
-    useEffect(() => {
-      NetInfo.addEventListener(state => {
-        if(!state.isConnected){
-        showMessage({
-          message:'Please connect to your internet',
-          type:'danger',
-        });
-        }
-      });
-    },[])
+    // useEffect(() => {
+    //   NetInfo.addEventListener(state => {
+    //     if(!state.isConnected){
+    //     showMessage({
+    //       message:'Please connect to your internet',
+    //       type:'danger',
+    //     });
+    //     }
+    //   });
+    // },[])
 
     const validateUser =(values) => {
       dispatch({

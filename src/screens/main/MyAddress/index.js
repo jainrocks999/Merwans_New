@@ -22,16 +22,16 @@ const MyAddress = ({route}) => {
     const [fetching,setFetching]=useState(false)
     const type=route.params
 
-    useEffect(() => {
-      NetInfo.addEventListener(state => {
-        if(!state.isConnected){
-        showMessage({
-          message:'Please connect to your internet',
-          type:'danger',
-        });
-        }
-      });
-    },[])
+    // useEffect(() => {
+    //   NetInfo.addEventListener(state => {
+    //     if(!state.isConnected){
+    //     showMessage({
+    //       message:'Please connect to your internet',
+    //       type:'danger',
+    //     });
+    //     }
+    //   });
+    // },[])
   
     const dispatch = useDispatch()
     useEffect(() => {
@@ -150,7 +150,7 @@ const MyAddress = ({route}) => {
                     <View style={{width:40}}/>
                 </View>
                 <View style={{ paddingHorizontal: 6, marginTop: 14 }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ChangeAddress')}
+                    <TouchableOpacity onPress={() => navigation.navigate('AddressForm',{from:'address'})}
                         style={{ alignSelf: 'flex-start' }}>
                         <Text style={styles.add}>+  Add Address</Text>
                     </TouchableOpacity>

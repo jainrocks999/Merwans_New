@@ -26,7 +26,7 @@ const Payment = ({ route }) => {
     const [dunzo, setDunzo] = useState('checked')
     const [pick, setPick] = useState('unchecked')
     const [mcpg, setMcpg] = useState('checked')
-    const [online, setOnline] = useState('unchecked')
+    const [online, setOnline] = useState('checked')
     const [cash, setCash] = useState('unchecked')
     const inputRef = React.useRef()
     const [isFetching, setFetching] = useState(false)
@@ -37,21 +37,21 @@ const Payment = ({ route }) => {
     const detail=useSelector(state=>state.UserDetail)
     const address = useSelector(state => state.Address)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
-    const [toggleCheckBox1, setToggleCheckBox1] = useState(false);
-    const [toggleCheckBox2, setToggleCheckBox2] = useState(false);    
-
+    const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
+    const [toggleCheckBox2, setToggleCheckBox2] = useState(true);    
+console.log('this is route data',route.params);
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
 
     useEffect(() => {
         firstCall()
@@ -61,10 +61,7 @@ const Payment = ({ route }) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const store_id=await AsyncStorage.getItem(Storage.store_id)
         const total=data.totals[2].text
-        if(toggleCheckBox==false){
-           Toast.show('Please select I wish to subscribe to the Merwans Confectioners Pvt. Ltd. newsletter.')
-        }
-        else if(toggleCheckBox1==false){
+        if(toggleCheckBox1==false){
             Toast.show('Please select Privacy Policy')
         }
         else if(toggleCheckBox2==false){
@@ -74,7 +71,7 @@ const Payment = ({ route }) => {
         try {
             setFetching(true)
             const data = new FormData();
-            data.append('outlet_id', '40');
+            data.append('outlet_id',store_id);
             data.append('customer', '');
             data.append('customer_id', customer_id);
             data.append('firstname', detail.firstname);
@@ -83,17 +80,17 @@ const Payment = ({ route }) => {
             data.append('telephone', detail.telephone);
             data.append('payment_method', 'CCAvenue MCPG </br> <img src= "https://www.ccavenue.com/images_shoppingcart/ccavenue_pay_options.gif" width="80%" />');
             data.append('payment_code', 'ccavenuepay');
-            data.append('payment_firstname', '');
-            data.append('payment_lastname', '');
-            data.append('payment_address_id', '');
-            data.append('payment_address_1', '');
-            data.append('payment_address_2', '');
-            data.append('payment_city', '');
-            data.append('payment_postcode', '');
-            data.append('payment_country_id', '');
-            data.append('payment_country', '');
-            data.append('payment_zone_id', '');
-            data.append('payment_zone', '');
+            data.append('payment_firstname', detail.firstname);
+            data.append('payment_lastname', detail.lastname);
+            data.append('payment_address_id', detail.email);
+            data.append('payment_address_1', address.address_1);
+            data.append('payment_address_2', address.address_2);
+            data.append('payment_city', address.city );
+            data.append('payment_postcode', address.postcode);
+            data.append('payment_country_id', address.country_id);
+            data.append('payment_country', address.country);
+            data.append('payment_zone_id', address.zone_id);
+            data.append('payment_zone', address.zone);
             data.append('payment_latitude', '0.000000000000');
             data.append('payment_longitude', '0.000000000000');
             data.append('shipping_firstname', address.firstname);
@@ -418,7 +415,7 @@ const Payment = ({ route }) => {
                                             />
                                     }
                                 </View>
-                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ${selector.shipping_methods.dunzo.quote.dunzo.text}`}</Text>
+                                <Text style={styles.dunzo}>{`${selector.shipping_methods.dunzo.quote.dunzo.title} - ₹${parseInt(route.params.dunzo.price?route.params.dunzo.price:0).toFixed(2)}`}</Text>
                             </View>
                             <View style={styles.pick}>
                                 <Delivery />
@@ -522,11 +519,12 @@ const Payment = ({ route }) => {
                                                 color='#ED1B1A'
                                             />
                                     }
+                                    {/* <View style={{width:40,marginTop:10,marginBottom:20}}/> */}
                                 </View>
                                 <Text style={styles.cc}>{'CCAvenue MCPG'}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={[{ marginLeft: -7, marginTop: -7 }]}>
+                            <View style={{ flexDirection: 'row'}}>
+                                {/* <View style={[{ marginLeft: -7, marginTop: -7 }]}>
                                     {online == 'checked' ? <RadioButton
                                         value="first"
                                         status={online}
@@ -547,7 +545,7 @@ const Payment = ({ route }) => {
                                                 color='#ED1B1A'
                                             />
                                     }
-                                </View>
+                                </View> */}
                                 <View
                                     style={{ width: '90%', marginLeft: 3 }}>
                                     <Option width={'100%'} />

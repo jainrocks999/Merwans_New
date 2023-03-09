@@ -64,16 +64,16 @@ const RegistrationScreen = () => {
   const [policy,setPolicy]=useState(false)
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
-  useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
-  },[])
+  // useEffect(() => {
+  //   NetInfo.addEventListener(state => {
+  //     if(!state.isConnected){
+  //     showMessage({
+  //       message:'Please connect to your internet',
+  //       type:'danger',
+  //     });
+  //     }
+  //   });
+  // },[])
 
   const validateUser = (values) => {
     if(toggleCheckBox){

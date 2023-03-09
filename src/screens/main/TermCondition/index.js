@@ -15,16 +15,16 @@ const Term = ({ route }) => {
     const isFetching = useSelector(state => state.isFetching)
     const regex = /<br|\n|\r\s*\\?>/g;
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
     
     return (
         <View style={{ flex: 1 }}>

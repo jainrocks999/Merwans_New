@@ -91,7 +91,7 @@ function* logout(action) {
       yield put({
         type: 'User_Logout_Success',
       });
-      Toast.show(response.message);
+      // Toast.show(response.message);
       action.navigation.navigate('Login');
       AsyncStorage.setItem(Storage.customer_id,'');
       AsyncStorage.setItem(Storage.firstname,'')
@@ -968,7 +968,7 @@ function* orderStatus(action) {
         type: 'Order_Status_Success',
         payload:response
       });
-    if(response.status=='Pending'){
+    if(response.status=='Pending'||response.status=='Canceled'||response.status=='Failed'){
       action.navigation.navigate('Home',{
           amount:response.total
       })

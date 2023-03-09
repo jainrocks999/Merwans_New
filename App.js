@@ -1,11 +1,13 @@
-import React,{Fragment} from 'react';
-import { View, Text,SafeAreaView ,LogBox,StatusBar,YellowBox,Image} from 'react-native';
+import React,{Fragment,useEffect,useState} from 'react';
+import { View, Text,SafeAreaView ,LogBox,Alert} from 'react-native';
 import Navigation from './src/navigation/index';
 import { Provider } from 'react-redux';
 import Store from './src/Redux/Store';
 import { NativeBaseProvider, Box ,} from "native-base";
 import {enableLatestRenderer} from 'react-native-maps';
 import FlashMessage from 'react-native-flash-message';
+import NetInfo from "@react-native-community/netinfo";
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
 enableLatestRenderer();
 const App = () => {
@@ -14,6 +16,18 @@ const App = () => {
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
   LogBox.ignoreAllLogs();
   LogBox.ignoreLogs(['Require cycle: node_modules/']);
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if(!state.isConnected){
+         setIsModalVisible(true)
+      }
+      else if(state.isConnected){
+        setIsModalVisible(false)
+      }
+    });
+  },[])
    return (
     <Fragment>
     <SafeAreaView style={{backgroundColor:Platform.OS=='ios'?'#232323':'#fff'}}/> 
@@ -40,6 +54,25 @@ const App = () => {
         <Navigation/>
         </Provider>
         </NativeBaseProvider>
+        <Dialog
+          visible={isModalVisible}
+          dialogStyle={{
+            backgroundColor: '#FFF',
+            width: '86%',
+            alignSelf: 'center',
+            elevation: 5,
+            borderRadius: 10
+          }}
+          // onTouchOutside={() => setIsModalVisible(false)}
+          // onHardwareBackPress={() => setIsModalVisible(false)}
+          >
+          <DialogContent>
+           <View style={{alignItems:'center',justifyContent:'center',height:80,marginTop:20}}>
+        
+             <Text style={{fontSize:16,fontFamily:'Montserrat-SemiBold'}}>Please connect to your internet</Text>
+           </View>
+          </DialogContent>
+        </Dialog>
     </SafeAreaView>
     </Fragment>
       // <SafeAreaView style={{flex:1}}>

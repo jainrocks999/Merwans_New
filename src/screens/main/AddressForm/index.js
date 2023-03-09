@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ImageBackground, TouchableOpacity, TextInput, ScrollView, StatusBar,Platform } from "react-native";
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, ScrollView, StatusBar, Platform } from "react-native";
 import styles from './style';
 import Multi from "../../../assets/Svg/multip.svg";
 import { useNavigation } from "@react-navigation/native";
@@ -18,24 +18,25 @@ import CheckBox from '@react-native-community/checkbox';
 import Geocoder from 'react-native-geocoding';
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const loginValidationSchema = yup.object().shape({
-    address1: yup.string().required('Please enter your address1'),
-    fName: yup.string().required('Please enter your first name'),
-    lName: yup.string().required('Please enter your last name'),
+    // address1: yup.string().required('Please enter your address1'),
+    // fName: yup.string().required('Please enter your first name'),
+    // lName: yup.string().required('Please enter your last name'),
     address2: yup.string(),
     city: yup.string().required('Please enter your city'),
-    post: yup.string()
-        .min(6, ({ }) => 'Post code must be minimum 6 digit').
-        max(6, ({ }) => 'Post code must be maximum 6 digit').
-        required('Please enter your post code')
-        .matches(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, 'Please enter valid post code'),
+    // post: yup.string()
+    //     .min(6, ({ }) => 'Post code must be minimum 6 digit').
+    //     max(6, ({ }) => 'Post code must be maximum 6 digit').
+    //     required('Please enter your post code')
+    //     .matches(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, 'Please enter valid post code'),
     land: yup.string()
 });
 
-const AddressForm = ({route}) => {
+const AddressForm = ({ route }) => {
 
     const [home, setHome] = useState(true)
     const [work, setWork] = useState(false)
@@ -48,17 +49,9 @@ const AddressForm = ({route}) => {
     const City = useSelector(state => state.City)
     const [state, setState] = useState('1493')
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
+    const [address1, setAddress1] = useState('')
+    const [post, setPost] = useState('')
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
     const manageHome = () => {
         setWork(false)
         setHotel(false)
@@ -97,9 +90,16 @@ const AddressForm = ({route}) => {
 
     const validateUser = async (values) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        if (state == '' || state == 0) {
-            Toast.show('Please select state')
+        if(address1==''){
+                Toast.show('Please enter location')
         }
+        else if (post == '' || post == 0) {
+            Toast.show('Please enter post code')
+        }
+        else if (state == '' || state == 0) {
+                Toast.show('Please select state')
+        }
+       
         else {
             try {
                 setFetching(true)
@@ -108,14 +108,14 @@ const AddressForm = ({route}) => {
                 data.append('customer_id', customer_id);
                 data.append('type', type)
                 data.append('company', 'Merwans');
-                data.append('address_1', values.address1);
+                data.append('address_1', address1);
                 data.append('address_2', values.address2);
                 data.append('city', values.city);
-                data.append('postcode', values.post);
+                data.append('postcode', post);
                 data.append('country_id', '99');
                 data.append('zone_id', state);
-                data.append('landmark', values.land)
-                data.append('firstname', values.fName)
+                // data.append('landmark', values.land)
+                // data.append('firstname', values.fName)
                 data.append('lastname', values.lName)
                 data.append('default', toggleCheckBox == true ? 1 : 0)
                 const response = await axios({
@@ -141,24 +141,24 @@ const AddressForm = ({route}) => {
                             });
                         })
                         .catch(error => console.warn(error));
-                     if(route.params.from=='cart'){
+                    if (route.params.from == 'cart') {
                         dispatch({
                             type: 'Get_Address_Request',
                             url: 'apiorder/addressById',
                             customer_id: customer_id,
-                            address_id:0
+                            address_id: 0
                         });
                         navigation.navigate('Payment')
-                     }
-                     else{
-                    dispatch({
-                        type: 'Address_List_Request',
-                        url: 'apiorder/addressList',
-                        customer_id: customer_id,
-                        from: 'addressForm',
-                        navigation: navigation
-                    });
-                }
+                    }
+                    else {
+                        dispatch({
+                            type: 'Address_List_Request',
+                            url: 'apiorder/addressList',
+                            customer_id: customer_id,
+                            from: 'addressForm',
+                            navigation: navigation
+                        });
+                    }
                     setFetching(false)
                 }
                 else {
@@ -172,13 +172,13 @@ const AddressForm = ({route}) => {
     return (
         <Formik
             initialValues={{
-                address1: route.params.address,
+                // address1: route.params.address,
                 address2: '',
                 city: '',
-                post: '',
+                // post: '',
                 land: '',
-                fName:'',
-                lName:''
+                // fName:'',
+                // lName:''
             }}
             onSubmit={values => validateUser(values)}
             validateOnMount={true}
@@ -239,75 +239,68 @@ const AddressForm = ({route}) => {
                                     keyboardShouldPersistTaps="handled"
                                     contentContainerStyle={{ flex: 1 }}>
                                     <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-                                        <View style={{ height: 20 }}>
-                                        </View>
-                                        <View >
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>First Name</Text>
-                                                <Text style={styles.str}>*</Text>
-                                            </View>
 
-                                            <View style={styles.view}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="First Name"
-                                                    placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('fName')}
-                                                    onBlur={handleBlur('fName')}
-                                                    value={values.fName}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={styles.error}>
-                                            {errors.fName && touched.fName && (
-                                                <Text style={styles.warn}>{errors.fName}</Text>
-                                            )}
-                                        </View>
-                                        <View style={{ marginTop: 15 }}>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                <Text style={styles.heading}>Last Name</Text>
-                                                <Text style={styles.str}>*</Text>
-                                            </View>
-
-                                            <View style={styles.view}>
-                                                <TextInput
-                                                    style={styles.input}
-                                                    placeholder="Last Name"
-                                                    placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('lName')}
-                                                    onBlur={handleBlur('lName')}
-                                                    value={values.lName}
-                                                />
-                                            </View>
-                                        </View>
-                                        <View style={styles.error}>
-                                            {errors.lName && touched.lName && (
-                                                <Text style={styles.warn}>{errors.lName}</Text>
-                                            )}
-                                        </View>
                                         <View style={{ marginTop: 15 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Location</Text>
                                                 <Text style={styles.str}>*</Text>
                                             </View>
-                                            <View style={styles.view}>
-                                                <TextInput
+                                            <View style={{ justifyContent: 'center' }}>
+                                                <GooglePlacesAutocomplete
+                                                    placeholder='Location'
+                                                    fetchDetails={true}
+                                                    onPress={(data, details) => {
+                                                        for (let i = 0; i < details.address_components.length; i++) {
+                                                            if (details.address_components[i].types[0] === "postal_code") {
+                                                                setAddress1(data.description)
+                                                                setPost(details.address_components[i].long_name)
+                                                            }
+                                                        }
+                                                    }}
+                                                    query={{
+                                                        key: 'AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw',
+                                                        language: 'en',
+                                                    }}
+                                                    textInputProps={{
+                                                        placeholderTextColor: '#000000',
+                                                        // returnKeyType: "Location"
+                                                    }}
+                                                    styles={{
+                                                        container: {
+                                                            borderWidth: 2,
+                                                            borderColor: '#FB8019',
+                                                            borderRadius: 2,
+                                                            justifyContent: 'center',
+
+                                                        },
+                                                        textInput: {
+                                                            backgroundColor: '#FAFAFA',
+                                                            height: 28,
+                                                            marginTop: 3,
+                                                            color: '#000000',
+                                                            fontFamily: 'Montserrat-Medium',
+                                                            fontSize: 12,
+                                                        },
+
+                                                    }}
+                                                />
+                                                {/* <TextInput
                                                     style={styles.input}
                                                     placeholder="Location"
                                                     placeholderTextColor={'#000000'}
                                                     onChangeText={handleChange('address1')}
                                                     onBlur={handleBlur('address1')}
                                                     value={values.address1}
-                                                />
+                                                /> */}
                                             </View>
                                         </View>
-                                        <View style={styles.error}>
+                                        {/* <View style={styles.error}>
                                             {errors.address1 && touched.address1 && (
                                                 <Text style={styles.warn}>{errors.address1}</Text>
                                             )}
-                                        </View>
+                                        </View> */}
 
-                                        <View style={{ marginTop: 10 }}>
+                                        <View style={{ marginTop: 16 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Flat No./Building Name</Text>
                                             </View>
@@ -354,18 +347,17 @@ const AddressForm = ({route}) => {
                                                     style={styles.input}
                                                     placeholder="Post Code"
                                                     placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('post')}
-                                                    onBlur={handleBlur('post')}
-                                                    value={values.post}
+                                                    onChangeText={(val) => setPost(val)}
+                                                    value={post}
                                                 />
                                             </View>
                                         </View>
-                                        <View style={styles.error}>
+                                        {/* <View style={styles.error}>
                                             {errors.post && touched.post && (
                                                 <Text style={styles.warn}>{errors.post}</Text>
                                             )}
-                                        </View>
-                                        <View style={{ marginTop: 10 }}>
+                                        </View> */}
+                                        <View style={{ marginTop: 16 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Region / State</Text>
                                                 <Text style={styles.str}>*</Text>
@@ -397,7 +389,7 @@ const AddressForm = ({route}) => {
                                                     useNativeAndroidPickerStyle={false}
                                                     placeholder={{ label: 'Select state', value: '' }}
                                                     Icon={() => (
-                                                        <View  style={{ marginTop:Platform.OS=='ios'? 5:12, marginRight: 4 }}>
+                                                        <View style={{ marginTop: Platform.OS == 'ios' ? 5 : 12, marginRight: 4 }}>
                                                             <Down />
                                                         </View>
                                                     )}
@@ -431,7 +423,7 @@ const AddressForm = ({route}) => {
                                                 onTintColor='#ED1B1A'
                                                 onCheckColor='#ED1B1A'
                                                 boxType='square'
-                                                style={{ height:Platform.OS=='android'?30:17, width:Platform.OS=='android'?30:17}}
+                                                style={{ height: Platform.OS == 'android' ? 30 : 17, width: Platform.OS == 'android' ? 30 : 17 }}
                                             />
                                             <Text style={[styles.as1, { marginLeft: 10 }]}>Set as default address</Text>
                                         </View>

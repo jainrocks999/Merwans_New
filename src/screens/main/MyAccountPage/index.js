@@ -19,16 +19,16 @@ const MyAccountPage = () => {
     const [telephone, setTelephone] = useState('')
     const detail=useSelector(state=>state.UserDetail)
     const dispatch=useDispatch()
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
 
     useEffect(async () => {
         const fname = await AsyncStorage.getItem(Storage.firstname)

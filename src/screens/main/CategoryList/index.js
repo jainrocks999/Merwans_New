@@ -69,26 +69,29 @@ const CategoryList = () => {
   const [text, setText] = useState('')
   const inputRef = React.useRef()
   const length = selector.length
-
+console.log('tis is protduct item',product.products);
   useEffect(() => {
-    NetInfo.addEventListener(state => {
-      if(!state.isConnected){
-      showMessage({
-        message:'Please connect to your internet',
-        type:'danger',
-      });
-      }
-    });
+    AsyncStorage.setItem("pageKey","")
+    // NetInfo.addEventListener(state => {
+    //   if(!state.isConnected){
+    //   showMessage({
+    //     message:'Please connect to your internet',
+    //     type:'danger',
+    //   });
+    //   }
+    // });
   },[])
 
   const productDetail = async (id) => {
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    const store_id=await AsyncStorage.getItem(Storage.store_id)
     if(customer_id){
     setOpenPanel(true)
     try {
       setFetching(true)
       const data = new FormData();
       data.append('product_id', id);
+      data.append('store_id', store_id);
       const response = await axios({
         method: 'POST',
         data,
@@ -109,9 +112,11 @@ const CategoryList = () => {
     }
   }
   else{
+    AsyncStorage.setItem("pageKey","CategoryList")
     navigation.reset({
       index: 0,
       routes: [{ name: "Login" }],
+
   })
   }
   };
@@ -275,7 +280,7 @@ const CategoryList = () => {
     return (
       <View>
         <View
-          style={[styles.cmn]}>
+          style={[styles.cmn,{marginTop:5,}]}>
           <TouchableOpacity
             activeOpacity={0.8} onPress={() => manageData(item.category_id)}
           >
@@ -285,7 +290,7 @@ const CategoryList = () => {
           <TouchableOpacity
             activeOpacity={0.8} onPress={onClickFunction}
             style={{ paddingHorizontal: 6, paddingVertical: 5 }}>
-            {layoutHeight == 0 ? <Plus2 /> : <Minus />}
+            {layoutHeight == 0 ? <View style={{borderWidth:1,borderColor:'#6A6A6A',borderRadius:10,padding:1}}><Plus2/></View>:<View style={{borderWidth:1,borderColor:'#6A6A6A',borderRadius:10,padding:1}}><Minus/></View>}
           </TouchableOpacity>
         </View>
         <View
@@ -812,13 +817,20 @@ const CategoryList = () => {
                   </View> : null}
                   <View style={styles.pay}>
 
-                    <TouchableOpacity
+                  {product.products.quantity>0?<TouchableOpacity
                       onPress={() => addItemToCart()}
                       style={styles.items}>
-                      <Text style={styles.rs}>
+                        <Text style={styles.rs}>
                         {`Add item ₹${gram == 'checked' ? parseInt(product.products.price).toFixed(2) :
-                          (parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}</Text>
-                    </TouchableOpacity>
+                          (parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}
+                          </Text>
+                    </TouchableOpacity>:
+                    <TouchableOpacity
+                      onPress={() => addItemToCart()}
+                      disabled
+                      style={styles.items}>
+                      <Text style={styles.rs}>{'Product out of stock'}</Text>
+                    </TouchableOpacity>}
                   </View>
                 </ImageBackground>
                 {/* here */}
@@ -864,7 +876,7 @@ const CategoryList = () => {
                 <View />
               </View>
 
-              <View style={{ paddingVertical: 30, paddingHorizontal: 25 }}>
+              <View style={{ paddingVertical: 10, paddingHorizontal: 25 }}>
                 <View>
                   {selector1.map((item, key) => (
                     <ExpandableComponent

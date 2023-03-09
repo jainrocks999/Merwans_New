@@ -18,16 +18,16 @@ const MyOrders = ({route}) => {
     const isFetching = useSelector(state => state.isFetching)
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        NetInfo.addEventListener(state => {
-          if(!state.isConnected){
-          showMessage({
-            message:'Please connect to your internet',
-            type:'danger',
-          });
-          }
-        });
-      },[])
+    // useEffect(() => {
+    //     NetInfo.addEventListener(state => {
+    //       if(!state.isConnected){
+    //       showMessage({
+    //         message:'Please connect to your internet',
+    //         type:'danger',
+    //       });
+    //       }
+    //     });
+    //   },[])
 
     const orderDetail = async (id) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)

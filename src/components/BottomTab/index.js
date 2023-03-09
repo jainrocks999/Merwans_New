@@ -102,17 +102,17 @@ const BottomTab = ({home,search,cart,profile}) => {
         </View>
         <Text style={styles.text}>{'Cart'}</Text>
         {/* <View> */}
-       {data1 && data1.products? <View style={{
+       {data1 && data1.products?data1.products.length>0? <View style={{
           position:'absolute',
           right:-5,top:0,
           backgroundColor:'#fff',
-          borderRadius:8,padding:2,
+          borderRadius:8,padding:0,
           width:16,height:16,
           alignItems:'center',
           justifyContent:'center'
           }}>
-        <Text style={{fontSize:10, color: '#ED1B1A', }}>{data1.products.length}</Text>
-        </View>:null}
+        <Text style={{fontSize:10, color: '#ED1B1A',marginBottom:1 }}>{data1.products.length}</Text>
+        </View>:null:null}
         {/* </View> */}
       </View>
     );
