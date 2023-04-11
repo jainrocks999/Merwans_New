@@ -149,6 +149,7 @@ export default StyleSheet.create({
         includeFontPadding: false, 
         padding: 0, 
         margin: 0 ,
+        color:'black'
 
     },
     btn:{

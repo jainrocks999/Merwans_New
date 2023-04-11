@@ -22,8 +22,8 @@ import { showMessage } from "react-native-flash-message";
 const Profile = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const isFetching = useSelector(state => state.isFetching)
-  const detail=useSelector(state=>state.UserDetail)
+  const isFetching = useSelector(state => state.Auth.isFetching)
+  const detail=useSelector(state=>state.Auth.UserDetail)
   const [fname, setFname] = useState('')
   const [lname, setLname] = useState('')
   const [email, setEmail] = useState('')

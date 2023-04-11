@@ -27,7 +27,7 @@ const loginValidationSchema = yup.object().shape({
 const ForgotScreen=({route})=>{
     const navigation=useNavigation()
     const dispatch=useDispatch()
-    const isFetching=useSelector(state=>state.isFetching)
+    const isFetching=useSelector(state=>state.Auth.isFetching)
 
     // useEffect(() => {
     //   NetInfo.addEventListener(state => {

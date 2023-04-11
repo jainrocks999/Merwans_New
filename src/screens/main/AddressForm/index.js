@@ -46,7 +46,7 @@ const AddressForm = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [isFetching, setFetching] = useState(false)
-    const City = useSelector(state => state.City)
+    const City = useSelector(state => state.Auth.City)
     const [state, setState] = useState('1493')
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [address1, setAddress1] = useState('')
@@ -245,18 +245,24 @@ const AddressForm = ({ route }) => {
                                                 <Text style={styles.heading}>Location</Text>
                                                 <Text style={styles.str}>*</Text>
                                             </View>
-                                            <View style={{ justifyContent: 'center' }}>
+                                            <ScrollView keyboardShouldPersistTaps='handled' style={{ flex: 1 }}>
                                                 <GooglePlacesAutocomplete
                                                     placeholder='Location'
                                                     fetchDetails={true}
+                                                    keepResultsAfterBlur={true} 
+                                                    keyboardShouldPersistTaps={"handled"}
                                                     onPress={(data, details) => {
+                                                        setAddress1(data.description)
                                                         for (let i = 0; i < details.address_components.length; i++) {
                                                             if (details.address_components[i].types[0] === "postal_code") {
-                                                                setAddress1(data.description)
                                                                 setPost(details.address_components[i].long_name)
                                                             }
                                                         }
                                                     }}
+                                                    listViewDisplayed={false}
+                                                    // onPress={(data, details = null) => {
+                                                    //     console.log(data, details);
+                                                    //   }}
                                                     query={{
                                                         key: 'AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw',
                                                         language: 'en',
@@ -281,6 +287,7 @@ const AddressForm = ({ route }) => {
                                                             fontFamily: 'Montserrat-Medium',
                                                             fontSize: 12,
                                                         },
+                                                        description : {color : 'black'}
 
                                                     }}
                                                 />
@@ -292,7 +299,7 @@ const AddressForm = ({ route }) => {
                                                     onBlur={handleBlur('address1')}
                                                     value={values.address1}
                                                 /> */}
-                                            </View>
+                                            </ScrollView>
                                         </View>
                                         {/* <View style={styles.error}>
                                             {errors.address1 && touched.address1 && (

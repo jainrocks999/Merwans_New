@@ -47,9 +47,9 @@ const CategoryList = () => {
   const [gram, setGram] = useState('checked')
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
-  const isFetching = useSelector(state => state.isFetching)
+  const isFetching = useSelector(state => state.Auth.isFetching)
   const [isFetching1, setFetching] = useState(false)
-  const selector = useSelector(state => state.wishlist)
+  const selector = useSelector(state => state.Auth.wishlist)
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState(selector);
   const [masterDataSource, setMasterDataSource] = useState(selector);
@@ -246,6 +246,7 @@ const CategoryList = () => {
                 margin: 0,
                 fontSize: 13,
                 width: '90%',
+                color:'black'
               }}
               returnKeyType="done"
             />

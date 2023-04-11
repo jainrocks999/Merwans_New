@@ -22,12 +22,14 @@ Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const Payment = () => {
     const navigation = useNavigation()
-    const [instruction, setInstruction] = useState(false)
+    const [instruction, setInstruction] = useState('')
     const [isFetching, setFetching] = useState(false)
     const [data, setData] = useState('')
-    const selector = useSelector(state => state.Address)
-    const isFetching1 = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.Auth.Address)
+    console.log('this is selecort',selector);
+    const isFetching1 = useSelector(state => state.Auth.isFetching)
     const dispatch = useDispatch()
+   
 
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
@@ -91,6 +93,13 @@ const Payment = () => {
             customer_id: customer_id,
             address_id: 0
         });
+        useEffect(() => {
+            dispatch({
+                type: 'City_List_Request',
+                url: 'apiorder/getStates',
+                country_id: '99',
+            });
+        }, [])
     }
 
     const updateCart = async (item) => {
@@ -174,15 +183,16 @@ const Payment = () => {
     }
     const manageAddress1 = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        Geolocation.getCurrentPosition((pos) => {
-            const crd = pos.coords;
-            Geocoder.from(crd.latitude,crd.longitude)
-            .then(json => {
-                var location = json.results[0].formatted_address
-                navigation.navigate('AddressForm', { from: 'cart',address:location })
-            })
-            .catch(error => console.warn(error));
-          })
+       
+        // Geolocation.getCurrentPosition((pos) => {
+        //     const crd = pos.coords;
+        //     Geocoder.from(crd.latitude,crd.longitude)
+        //     .then(json => {
+        //         var location = json.results[0].formatted_address
+                navigation.navigate('AddressForm', { from: 'cart'})
+        //     })
+        //     .catch(error => console.log(error));
+        //   })
        
         // dispatch({
         //   type: 'Address_List_Request',
@@ -195,7 +205,7 @@ const Payment = () => {
     }
     const manageDunzo = async () => {
         const store_id = await AsyncStorage.getItem(Storage.store_id)
-
+console.log('sdfgsfgashggfgndgsgbndgsf',store_id);
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         Geocoder.from(`${selector.address_1} ${selector.address_2} ${selector.city}`)
             .then(async (json) => {
@@ -208,6 +218,7 @@ const Payment = () => {
                         data1.append('customer_id', customer_id);
                         data1.append('latitude', location.lat);
                         data1.append('longitude', location.lng);
+                        data1.append('add_instruction',instruction)
                         const response = await axios({
                             method: 'POST',
                             data: data1,
@@ -217,20 +228,24 @@ const Payment = () => {
                             },
                             url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
                         });
-                        if (response.data) {
+                        if (response.data.status==true) {
                             navigation.navigate('Quick', {
                                 data: data,
                                 dunzo: response.data,
                                 lat: location.lat,
                                 long: location.lng
                             })
+                            console.log('responsesadfgdagsdfhsgg',response.data);
                             setFetching(false)
                         }
                         else {
+                            Toast.show(response.data.message)
                             setFetching(false)
+                            console.log('responsesadfgdagsdfhsgg',response.data);
                         }
                     } catch (error) {
                         setFetching(false)
+                        console.log('responsesadfgdagsdfhsggerr',error);
                     }
                 }
                 else {
@@ -354,6 +369,8 @@ const Payment = () => {
                                 placeholder='Add Instructions'
                                 placeholderTextColor={'#000000'}
                                 multiline={true}
+                                value={instruction}
+                                onChangeText={(val)=>setInstruction(val)}
                             />
                                 : <Text style={styles.add}>Add Instructions</Text>}
                         </TouchableOpacity>
@@ -450,9 +467,9 @@ const Payment = () => {
                             marginTop: '80%',
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ textAlign: 'center', fontSize: 18 }}>Your cart is Empty! </Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18,color:'black' }}>Your cart is Empty! </Text>
                             <View>
-                                <Text onPress={() => navigation.navigate('Home')} style={{ fontSize: 18 }}>Continue Shopping</Text>
+                                <Text onPress={() => navigation.navigate('Home')} style={{ fontSize: 18,color:'black' }}>Continue Shopping</Text>
                                 <View style={{ borderWidth: .6 }} />
                             </View>
                         </View>

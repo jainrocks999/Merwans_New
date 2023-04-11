@@ -27,7 +27,7 @@ const LoginScreen = () => {
   const navigation = useNavigation()
   const next = useRef(null);
   const dispatch = useDispatch();
-  const isFetching = useSelector(state => state.isFetching)
+  const isFetching = useSelector(state => state.Auth.isFetching)
   const [visible,setVisible]=useState(true)
 
   // useEffect(() => {

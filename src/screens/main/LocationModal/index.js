@@ -18,7 +18,7 @@ import { showMessage } from "react-native-flash-message";
 
 const Modal = ({route}) => {
     const navigation = useNavigation()
-    const selector=useSelector(state=>state.AddressData)
+    const selector=useSelector(state=>state.Auth.AddressData)
     const [fetching,setFetching]=useState(false)
     const dispatch=useDispatch()
     useEffect(async()=>{

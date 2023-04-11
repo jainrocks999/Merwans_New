@@ -10,14 +10,15 @@ import Storage from "../../../components/AsyncStorage";
 import { useSelector,useDispatch } from "react-redux";
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
-
+import Loader from '../../../components/Loader'
 const MyAccountPage = () => {
     const navigation = useNavigation()
     const [fname, setFname] = useState('')
     const [lname, setLname] = useState('')
     const [email, setEmail] = useState('')
     const [telephone, setTelephone] = useState('')
-    const detail=useSelector(state=>state.UserDetail)
+    const detail=useSelector(state=>state.Auth.UserDetail)
+    const isFetching=useSelector(state=>state.Auth.isFetching)
     const dispatch=useDispatch()
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
@@ -47,8 +48,20 @@ const MyAccountPage = () => {
         });
     }, [])
 
+    const manageOrder = async () => {
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        dispatch({
+          type: 'Order_List_Request',
+          url: 'apiorder',
+          customer_id: customer_id,
+          route:'Account',
+          navigation: navigation
+        });
+      }
+
     return (
         <View style={{ flex: 1 }}>
+            {isFetching?<Loader/>:null}
             <ImageBackground style={{ padding: 8 }}
                 source={require('../../../assets/Icon/bg1.png')}>
                 <TouchableOpacity style={styles.arrow}
@@ -70,7 +83,9 @@ const MyAccountPage = () => {
                 </View>
                 <View style={styles.view}>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('MyOrders',{page:'Account'})}
+                        onPress={() => manageOrder()
+                            // navigation.navigate('MyOrders',{page:'Account'})
+                        }
                         style={styles.button}>
                         <List />
                         <Text

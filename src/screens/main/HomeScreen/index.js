@@ -26,9 +26,10 @@ import { showMessage } from "react-native-flash-message";
 const HomeScreen = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
-    const selector = useSelector(state => state.Store)
-    const selector1 = useSelector(state => state.Home)
-    const isFetching = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.Auth.Store)
+    const selector1 = useSelector(state => state.Auth.Home)
+    console.log('this is selector',selector1);
+    const isFetching = useSelector(state => state.Auth.isFetching)
     const BannerWidth = Dimensions.get('window').width;
     const BannerWidth1 = Dimensions.get('window').width / 3;
     const BannerHeight = 240;

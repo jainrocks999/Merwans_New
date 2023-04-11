@@ -2,7 +2,7 @@ import { View, Text, StatusBar, TextInput, TouchableOpacity, ImageBackground } f
 import React,{useEffect} from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
-import Back from "../../../assets/Svg/back.svg";
+import Back from "../../../assets/Svg/back1.svg";
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useSelector,useDispatch } from "react-redux";
@@ -16,7 +16,7 @@ const loginValidationSchema = yup.object().shape({
 const ForgotScreen = () => {
     const navigation = useNavigation()
     const dispatch=useDispatch()
-    const isFetching=useSelector(state=>state.isFetching)
+    const isFetching=useSelector(state=>state.Auth.isFetching)
 
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {

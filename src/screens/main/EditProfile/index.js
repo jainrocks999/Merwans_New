@@ -37,7 +37,7 @@ const loginValidationSchema = yup.object().shape({
 
 const EditProfile = ({ route }) => {
   const navigation = useNavigation()
-  const isFetching = useSelector(state => state.isFetching)
+  const isFetching = useSelector(state => state.Auth.isFetching)
   const dispatch = useDispatch()
 
   // useEffect(() => {

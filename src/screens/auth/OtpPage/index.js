@@ -2,7 +2,7 @@ import { View, Text, Image, Platform, TouchableOpacity, ImageBackground } from '
 import React,{useState,useEffect} from 'react';
 import styles from './style';
 import { useNavigation } from "@react-navigation/native";
-import Back from "../../../assets/Svg/back.svg";
+import Back from "../../../assets/Svg/back1.svg";
 import OtpInputs from "react-native-otp-inputs";
 import Toast from "react-native-simple-toast";
 import NetInfo from "@react-native-community/netinfo";
@@ -23,6 +23,7 @@ const Otp = ({route}) => {
     //       }
     //     });
     //   },[])
+    console.log(route.params.otp);
     const verifyOtp=()=>{
         if(code==''){
             Toast.show('Please enter otp')

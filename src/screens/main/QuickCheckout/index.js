@@ -32,10 +32,10 @@ const Payment = ({ route }) => {
     const [isFetching, setFetching] = useState(false)
     const [state, setState] = useState(0)
     const [data, setData] = useState()
-    const selector = useSelector(state => state.Shipping)
-    const selector1 = useSelector(state => state.Time)
-    const detail=useSelector(state=>state.UserDetail)
-    const address = useSelector(state => state.Address)
+    const selector = useSelector(state => state.Auth.Shipping)
+    const selector1 = useSelector(state => state.Auth.Time)
+    const detail=useSelector(state=>state.Auth.UserDetail)
+    const address = useSelector(state => state.Auth.Address)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
     const [toggleCheckBox2, setToggleCheckBox2] = useState(true);    
@@ -170,7 +170,7 @@ console.log('this is route data',route.params);
         } catch (error) {
             setFetching(false)
         }
-    }
+      }
     }
 
     const firstCall = async () => {

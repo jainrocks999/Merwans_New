@@ -31,8 +31,8 @@ const CategoryList = () => {
   const [msg, setMsg] = useState('unchecked')
   const [kg, setKg] = useState('unchecked');
   const [gram, setGram] = useState('checked')
-  const selector = useSelector(state => state.CategoryList)
-  const isFetching1 = useSelector(state => state.isFetching)
+  const selector = useSelector(state => state.List.CategoryList)
+  const isFetching1 = useSelector(state => state.List.isFetching)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)

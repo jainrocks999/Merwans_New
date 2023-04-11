@@ -46,7 +46,7 @@ const AddressForm = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [isFetching, setFetching] = useState(false)
-    const City = useSelector(state => state.City)
+    const City = useSelector(state => state.Auth.City)
     const [state, setState] = useState(route.params.zone_id)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
 

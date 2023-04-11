@@ -9,7 +9,7 @@ export default StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         borderRadius:1,
-        // marginTop:-10
+        marginTop:10
     },
     cont:{ 
        flexDirection: 'row', 
@@ -19,8 +19,8 @@ export default StyleSheet.create({
     },
     view1:{
        flexDirection: 'row', 
-       alignItems: 'center', 
-       justifyContent:'center'
+    //    alignItems: 'center', 
+    //    justifyContent:'center'
     },
     square:{
         height: 6,

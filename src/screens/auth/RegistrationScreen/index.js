@@ -58,8 +58,8 @@ const RegistrationScreen = () => {
   const dispatch = useDispatch()
   const [visible, setVisible] = useState(true)
   const [visible1, setVisible1] = useState(true)
-  const isFetching = useSelector(state => state.isFetching)
-  const selector1 = useSelector(state => state.Policy1)
+  const isFetching = useSelector(state => state.Auth.isFetching)
+  const selector1 = useSelector(state => state.List.Policy1)
   const [showModal, setShowModal] = useState(false);
   const [policy,setPolicy]=useState(false)
   const [toggleCheckBox, setToggleCheckBox] = useState(false);

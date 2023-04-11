@@ -14,15 +14,13 @@ const Stack = createNativeStackNavigator();
 function MyDrawer() {
   return (
     <Drawer.Navigator
-    // drawerStyle={{width:'100%'}}
     screenOptions={{headerShown:false}}
-    drawerContent={() => <DrawerContent/>}>
+    drawerContent={() => <DrawerContent/>}
+    >
         <Drawer.Screen name="Home" component={HomeScreen} />
-        {/* <Drawer.Screen name="Payment" component={PaymentPage}/> */}
         <Stack.Group screenOptions={{ headerShown:false }}>
         <Drawer.Screen name="ProfileWithLogin" component={ProfileWithLogin}/>
         </Stack.Group>
-        {/* <Drawer.Screen name="Quick" component={QuickCheckout}/> */}
         <Drawer.Screen name="SecondSearch" component={SecondSearch}/>
     </Drawer.Navigator>
   );

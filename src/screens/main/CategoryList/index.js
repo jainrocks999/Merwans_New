@@ -52,9 +52,9 @@ const CategoryList = () => {
   const [msg, setMsg] = useState('unchecked')
   const [kg, setKg] = useState('unchecked');
   const [gram, setGram] = useState('checked')
-  const selector = useSelector(state => state.CategoryList)
-  const category = useSelector(state => state.Category)
-  const selector1 = useSelector(state => state.MenuList)
+  const selector = useSelector(state => state.List.CategoryList)
+  const category = useSelector(state => state.Auth.Category)
+  const selector1 = useSelector(state => state.Auth.MenuList)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)
@@ -399,6 +399,7 @@ console.log('tis is protduct item',product.products);
                   margin: 0,
                   fontSize: 13,
                   width: '90%',
+                  color:'black'
                 }}
                 returnKeyType="done"
               />

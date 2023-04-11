@@ -39,6 +39,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from '../components/DrawerContent';
 import WebView from "../screens/main/WebView";
 import Status from "../screens/main/Status";
+import Contact from "../screens/main/Contactus";
 
 const Drawer1= createDrawerNavigator();
  function Pay(){
@@ -102,7 +103,7 @@ function Navigate() {
         {/* <Stack.Screen name="Quick" component={Check}/> */}
         </Stack.Group>
         {/* <Stack.Screen name="ProfileWithoutLogin" component={ProfileWithoutLogin}/> */}
-        <Stack.Screen name="ProfileWithLogin" component={ProfileWithLogin}/>
+        {/* <Stack.Screen name="ProfileWithLogin" component={ProfileWithLogin}/> */}
         <Stack.Screen name="MyAccountPage" component={MyAccountPage}/>
         <Stack.Screen name="EditProfile" component={EditProfile}/>
         <Stack.Screen name="MyOrders" component={MyOrders}/>
@@ -132,6 +133,7 @@ function Navigate() {
         <Stack.Screen name={"EditAddress"} component={EditAddress}/>
         <Stack.Screen name={"WebView"} component={WebView}/>
         <Stack.Screen name="Status" component={Status} />
+        <Stack.Screen name="Contact" component={Contact}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

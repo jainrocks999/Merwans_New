@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image,PermissionsAndroid, Platform,Alert } from 'react-native';
+import { Dimensions,View, Text, Image,PermissionsAndroid, Platform,Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SvgUri } from 'react-native-svg';
 import Logo from "../../../assets/Logo/logo.svg";
@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { showMessage } from "react-native-flash-message";
 import NetInfo from "@react-native-community/netinfo";
-
+const windowWidth = Dimensions.get('window').width;
 const Splash = () => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -66,6 +66,10 @@ const Splash = () => {
             type: 'Home_Data_Request',
             url: 'home/mobileview',
         });
+        dispatch({
+          type: 'Menu_List_Request',
+          url: 'apiproduct/menuSubmenuList',
+      });
          requestLocationPermission()
     },[])
 
@@ -121,7 +125,7 @@ async function requestLocationPermission()
     return (
         <View style={{ flex: 1 }}>
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                <Logo height={200} width={200}/>
+                <Logo height={350} width={windowWidth}/>
             </View>
         </View>
     )

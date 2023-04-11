@@ -11,8 +11,8 @@ import { showMessage } from "react-native-flash-message";
 
 const About = ({ route }) => {
     const navigation = useNavigation()
-    const selector = useSelector(state => state.About)
-    const isFetching = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.Auth.About)
+    const isFetching = useSelector(state => state.Auth.isFetching)
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
     //       if(!state.isConnected){

@@ -8,8 +8,8 @@ import Back from "../../../assets/Svg/back.svg";
 
 const Favorite = ({route}) => {
     const navigation = useNavigation()
-    const selector = useSelector(state => state.AddressList)
-    const isFetching = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.Auth.AddressList)
+    const isFetching = useSelector(state => state.Auth.isFetching)
     
     return (
         <View style={{ flex: 1 }}>

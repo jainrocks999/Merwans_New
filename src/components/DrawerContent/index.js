@@ -12,8 +12,9 @@ import Storage from "../../components/AsyncStorage";
 const Drawer=()=>{
     const [visible, setVisible] = useState(false)
     const navigation=useNavigation()
-    const selector=useSelector(state=>state.MenuList)
-    const isFetching=useSelector(state=>state.isFetching)
+    const selector=useSelector(state=>state.Auth.MenuList)
+    console.log('this is selector res',selector);
+    const isFetching=useSelector(state=>state.Auth.isFetching)
     const [listDataSource, setListDataSource] = useState(selector);
     const [multiSelect, setMultiSelect] = useState(false);
     const dispatch=useDispatch()
@@ -100,6 +101,10 @@ const Drawer=()=>{
       navigation.dispatch(DrawerActions.closeDrawer())
       navigation.navigate('Home')
     }
+    const manageContact=()=>{
+      navigation.dispatch(DrawerActions.closeDrawer())
+      navigation.navigate('Contact')
+    }
    
     return(
         <View style={{backgroundColor:'#FFF',width:'100%',alignSelf:'center'}}>
@@ -130,7 +135,9 @@ const Drawer=()=>{
             />
           ))}
            </View>
+           <TouchableOpacity onPress={()=>manageContact()}>
             <Text style={[styles.home, { marginTop: 8 ,textTransform:'uppercase'}]}>Contact Us</Text>
+            </TouchableOpacity>
         </View>
      
       </View>

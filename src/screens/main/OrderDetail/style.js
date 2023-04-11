@@ -9,6 +9,7 @@ export default StyleSheet.create({
     },
     view1: {
         flexDirection: 'row',
+        // width:'100%'
         // alignItems: 'center',
        
     },
@@ -165,5 +166,21 @@ export default StyleSheet.create({
         fontSize: 13,
         marginLeft: 5,
         marginTop:0
+    },
+    main:{
+        backgroundColor: '#ED1B1A',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 5,
+        paddingVertical: 2,
+        borderRadius: 5,
+       
+        alignSelf:'flex-end'
+    },
+    recover:{ 
+        color: '#ffffff', 
+        fontFamily: 'Montserrat-Medium', 
+        fontSize: 13, 
+        marginLeft: 4 
     }
 })

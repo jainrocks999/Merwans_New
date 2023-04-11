@@ -17,8 +17,8 @@ import { showMessage } from "react-native-flash-message";
 
 const MyAddress = ({route}) => {
     const navigation = useNavigation()
-    const selector = useSelector(state => state.AddressList)
-    const isFetching = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.Auth.AddressList)
+    const isFetching = useSelector(state => state.Auth.isFetching)
     const [fetching,setFetching]=useState(false)
     const type=route.params
 

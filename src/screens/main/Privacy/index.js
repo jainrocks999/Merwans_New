@@ -11,8 +11,8 @@ import { showMessage } from "react-native-flash-message";
 
 const Privacy = ({ route }) => {
     const navigation = useNavigation()
-    const selector = useSelector(state => state.Policy)
-    const isFetching = useSelector(state => state.isFetching)
+    const selector = useSelector(state => state.List.Policy)
+    const isFetching = useSelector(state => state.List.isFetching)
     const regex = /<br|\n|\r\s*\\?>/g;
 
     // useEffect(() => {

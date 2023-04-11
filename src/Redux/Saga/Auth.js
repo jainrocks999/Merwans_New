@@ -838,13 +838,13 @@ function* resetPass(action) {
         otp:response.otp
       })
     } else {
-    
+    Toast.show(response.message)
       yield put({
         type: 'Reset_Pass_Error',
       });
     }
   } catch (error) {
-   
+   console.log(error,"this is error message");
     if (error.message == 'Network Error') {
     }
     yield put({
