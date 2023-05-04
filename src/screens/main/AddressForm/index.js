@@ -80,13 +80,7 @@ const AddressForm = ({ route }) => {
         setHome(false)
         setType('Other')
     }
-    useEffect(() => {
-        dispatch({
-            type: 'City_List_Request',
-            url: 'apiorder/getStates',
-            country_id: '99',
-        });
-    }, [])
+   
 
     const validateUser = async (values) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)

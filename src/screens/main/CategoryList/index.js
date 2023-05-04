@@ -124,6 +124,7 @@ console.log('tis is protduct item',product.products);
   const addItemToCart = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     const store_id = await AsyncStorage.getItem(Storage.store_id)
+    console.log('this is ouut let id',store_id);
     if (product.options.length > 1) {
       dispatch({
         type: 'Add_Item_Request',
@@ -439,7 +440,7 @@ console.log('tis is protduct item',product.products);
           <View style={{ paddingHorizontal: 10 }}>
             {category.subcatname || catname.subcatname ? <View style={styles.row1}>
               <Text style={styles.cakes}>{catname ? catname.catname : category.catname}</Text>
-              {category.subcatname == undefined && catname.subcatname == undefined ? null : <Text style={styles.black}>{` /  ${catname ? catname.subcatname : category.subcatname}`}</Text>}
+              {category.subcatname == undefined || catname.subcatname == undefined ? null : <Text style={styles.black}>{` /  ${catname ? catname.subcatname : category.subcatname}`}</Text>}
             </View> : <View />}
             <View>
               <FlatList

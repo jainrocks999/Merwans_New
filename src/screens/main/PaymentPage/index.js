@@ -26,11 +26,8 @@ const Payment = () => {
     const [isFetching, setFetching] = useState(false)
     const [data, setData] = useState('')
     const selector = useSelector(state => state.Auth.Address)
-    console.log('this is selecort',selector);
     const isFetching1 = useSelector(state => state.Auth.isFetching)
     const dispatch = useDispatch()
-   
-
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
     //       if(!state.isConnected){
@@ -205,7 +202,6 @@ const Payment = () => {
     }
     const manageDunzo = async () => {
         const store_id = await AsyncStorage.getItem(Storage.store_id)
-console.log('sdfgsfgashggfgndgsgbndgsf',store_id);
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         Geocoder.from(`${selector.address_1} ${selector.address_2} ${selector.city}`)
             .then(async (json) => {
@@ -213,12 +209,12 @@ console.log('sdfgsfgashggfgndgsgbndgsf',store_id);
                 if (location && store_id) {
                     try {
                         setFetching(true)
+                        console.log('this is loacation',location);
                         const data1 = new FormData();
                         data1.append('store_id', store_id);
                         data1.append('customer_id', customer_id);
-                        data1.append('latitude', location.lat);
-                        data1.append('longitude', location.lng);
-                        data1.append('add_instruction',instruction)
+                        data1.append('latitude',location.lat);
+                        data1.append('longitude',location.lng);
                         const response = await axios({
                             method: 'POST',
                             data: data1,
@@ -228,24 +224,23 @@ console.log('sdfgsfgashggfgndgsgbndgsf',store_id);
                             },
                             url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
                         });
-                        if (response.data.status==true) {
+                        console.log('this is dunzo response',response.data);
+                        if (response.data) {
                             navigation.navigate('Quick', {
                                 data: data,
                                 dunzo: response.data,
                                 lat: location.lat,
-                                long: location.lng
+                                long: location.lng,
+                                instruction:instruction
                             })
-                            console.log('responsesadfgdagsdfhsgg',response.data);
                             setFetching(false)
                         }
                         else {
                             Toast.show(response.data.message)
                             setFetching(false)
-                            console.log('responsesadfgdagsdfhsgg',response.data);
                         }
                     } catch (error) {
                         setFetching(false)
-                        console.log('responsesadfgdagsdfhsggerr',error);
                     }
                 }
                 else {
@@ -434,7 +429,7 @@ console.log('sdfgsfgashggfgndgsgbndgsf',store_id);
                             <View style={{ marginLeft: 8, width: '92%' }}>
                                 <View style={styles.view1}>
 
-                                    <Text style={styles.home}>{`Delivery at ${selector.type}`}</Text>
+                                    <Text style={styles.home}>{`Delivery at`}</Text>
                                     <TouchableOpacity
                                         onPress={() => manageAddress()}
                                         style={styles.btn1}>

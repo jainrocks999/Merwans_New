@@ -8,7 +8,7 @@ export default StyleSheet.create({
         justifyContent:'center'
     },
     otp: {
-        backgroundColor: '#FFFFFF',
+        // backgroundColor: '#FFFFFF',
         shadowColor: '#FFFFFF',
         shadowOpacity: 0.25,
         shadowRadius: 4,

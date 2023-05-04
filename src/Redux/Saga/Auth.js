@@ -309,10 +309,13 @@ function* categoryList(action) {
 }
 
 function* getMenu(action) {
+  console.log('this is working fine',action.store_id);
   try {
-    const response = yield call(Api.fetchDataByGET, action.url);
-   
-    if (response) {
+    const data = new FormData();
+    data.append('store_id',action.store_id);
+    const response = yield call(Api.fetchDataByPOST, action.url, data);
+   console.log('thhis is rresponse',response);
+    if (response.status) {
       yield put({
         type: 'Menu_List_Success',
         payload: response.data,
@@ -437,8 +440,9 @@ function* addItemToCart(action) {
     data.append('text_value',action.text_value)
     data.append('quantity','1')
     data.append('api_token','')
+    data.append('outlet_id',action.outlet_id)
     const response = yield call(Api.fetchDataByPOST, action.url, data);
-   
+     console.log('thisis redux rresponse',response);
     if (response.status == true) {
       yield put({
         type: 'Add_Item_Success',
@@ -474,6 +478,7 @@ function* addItemToCart1(action) {
     data.append('text_value',action.text_value)
     data.append('quantity','1')
     data.append('api_token','')
+    data.append('outlet_id',action.outlet_id)
     const response = yield call(Api.fetchDataByPOST, action.url, data);
   
     if (response.status == true) {
@@ -502,7 +507,7 @@ function* addItemToCart1(action) {
 function* shipping(action) {
   try {
     const data = new FormData();
-    data.append('api_token','');
+    data.append('api_token','123456');
     const response = yield call(Api.fetchDataByPOST, action.url, data);
   
     if (response.status == true) {

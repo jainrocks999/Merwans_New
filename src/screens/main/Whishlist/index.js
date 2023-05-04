@@ -318,7 +318,7 @@ const CategoryList = () => {
                       style={styles.round}>
                       <Stars
                         disabled={true}
-                        default={3}
+                        default={item.rating}
                         spacing={3}
                         count={5}
                         starSize={12}

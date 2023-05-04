@@ -316,6 +316,14 @@ export default StyleSheet.create({
         color: "#fff",
         fontFamily: 'Montserrat-Bold',
         fontSize: 16
-    }
+    },
+    inst:{
+        paddingHorizontal: 10,
+        marginTop: 15,
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 10,
+        elevation: 5,
+        borderRadius: 5
+    },
 
 })

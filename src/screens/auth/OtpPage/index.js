@@ -60,7 +60,7 @@ const Otp = ({route}) => {
                             <OtpInputs
                                 handleChange={code => setCode(code)}
                                 numberOfInputs={4}
-                                // defaultValue={this.state.otp}
+                                defaultValue={''}
                                 autofillFromClipboard={true}
                                 keyboardType={'numeric'}
                                 style={styles.all}

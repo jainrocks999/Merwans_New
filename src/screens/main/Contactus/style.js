@@ -48,7 +48,7 @@ export default StyleSheet.create({
         includeFontPadding:false,padding: 0,margin:0
     },
     touch:{
-        backgroundColor: '#F5F5F5', 
+        // backgroundColor: '#F5F5F5', 
         height: 70, 
         marginTop: 8, 
         borderRadius: 0, 

@@ -30,7 +30,7 @@ export default StyleSheet.create({
     title:{
         color: '#333333', 
         fontFamily: 'Montserrat-Regular', 
-        fontSize: 15
+        // fontSize: 15
     },
     rView:{
         flexDirection: 'row', 
@@ -112,7 +112,7 @@ export default StyleSheet.create({
     main:{
         backgroundColor: '#ED1B1A',
         flexDirection: 'row',
-        alignContent: 'center',
+        alignItems: 'center',
         paddingHorizontal: 5,
         paddingVertical: 2,
         borderRadius: 5

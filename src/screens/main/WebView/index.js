@@ -27,17 +27,6 @@ function WebViewPage ({route,}){
  const navigation=useNavigation()
  const dispatch=useDispatch()
 
-//  useEffect(() => {
-//   NetInfo.addEventListener(state => {
-//     if(!state.isConnected){
-//     showMessage({
-//       message:'Please connect to your internet',
-//       type:'danger',
-//     });
-//     }
-//   });
-// },[])
-
  let params = {
     enc_val:route.params.data.encRequest,
     access_code:route.params.data.access_code,
@@ -78,10 +67,7 @@ function WebViewPage ({route,}){
 
   const onNavigationStateChange = async(navState) => {
     console.log('this is navstat',navState);
-   if (navState.url === params.redirect_url || navState.url === params.cancel_url) {
-    //  webViewRef.current.injectJavaScript(pucJavaScript);
-    //  webViewRef.current.stopLoading();
-    //  
+   if (navState.url === params.redirect_url || navState.url === params.cancel_url) {  
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
     dispatch({
       type: 'Order_Status_Request',
@@ -90,35 +76,12 @@ function WebViewPage ({route,}){
       order_id: route.params.order_id,
       navigation: navigation
     });
-  //   try {
-  //     const data1 = new FormData();
-  //     data1.append('customer_id', customer_id);
-  //     data1.append('order_id',route.params.order_id)
-  //     const responsedata = await axios({
-  //         method: 'POST',
-  //         data:data1,
-  //         headers: {
-  //             'content-type': 'multipart/form-data',
-  //             Accept: 'multipart/form-data',
-  //         },
-  //         url: 'https://merwans.co.in/index.php?route=api/apiorder/orderStatus',
-  //     });
-
-  //     if (responsedata.data) {
-  //        
-  //         navigation.navigate('Status1')
-  //     }
-  // } catch (error) {
-  // }
    }
  }
  const _onMessage = async(event) => {
    var getData = event.nativeEvent.data;
    console.log('this is geet data',getData);
     if(getData != null){
-
-      // navigation.navigate('Home')
-      
     }
   }
    const pucJavaScript = `
@@ -135,9 +98,6 @@ function WebViewPage ({route,}){
   `<html> <head><meta name='viewport' content='width=device-width, initial-scale=1.0'></head> <body onload='document.f.submit();'> <form id='f' name='f' action="${web_url}" method="post"
   id="ccavenuepay_standard_checkout" name="redirect">
   <input type="hidden" name="encRequest" id="encRequest" value="${params.enc_val}\" \/><input type="hidden" name="access_code" id="access_code" value="${accces}"/></form>`
-      //  `<html> <head><meta name='viewport' content='width=device-width, initial-scale=1.0'></head> <body onload='document.f.submit();'> <form id='f' name='f' method='post' action='${web_url}'>` +
-      //      `<input type='hidden' name='encRequest' value='${params.enc_val}'/>` +
-      //      `<input  type='hidden' name='access_code' value='${accces}' />`;
    return html ;
  }
  const INJECTEDJAVASCRIPT = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'width=device-width, initial-scale=1, maximum-scale=0.99, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '

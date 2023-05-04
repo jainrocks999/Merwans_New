@@ -21,7 +21,7 @@ const MyAddress = ({route}) => {
     const isFetching = useSelector(state => state.Auth.isFetching)
     const [fetching,setFetching]=useState(false)
     const type=route.params
-
+console.log(selector);
     // useEffect(() => {
     //   NetInfo.addEventListener(state => {
     //     if(!state.isConnected){

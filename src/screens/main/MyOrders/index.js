@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { View, Text, Image, ImageBackground, FlatList, TouchableOpacity, StatusBar, BackHandler } from 'react-native';
 import styles from './style'
 import { useNavigation } from '@react-navigation/native';
@@ -11,11 +11,14 @@ import Storage from "../../../components/AsyncStorage";
 import Loader from "../../../components/Loader";
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
+import axios from "axios"
+import Toast     from "react-native-simple-toast";
 
 const MyOrders = ({ route }) => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.Auth.OrderList)
     const isFetching = useSelector(state => state.Auth.isFetching)
+    const [fetching,setFetching]=useState()
     const dispatch = useDispatch()
 
     const orderDetail = async (id) => {
@@ -49,10 +52,40 @@ const MyOrders = ({ route }) => {
             navigation.goBack()
         }
     }
+
+   const manageReOrder=async(order_id)=>{
+       const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    try {
+        setFetching(true)
+        const data1 = new FormData();
+        data1.append('orderId', order_id);
+        data1.append('customerId', customer_id);
+        
+        const response = await axios({
+            method: 'POST',
+            data: data1,
+            headers: {
+                'content-type': 'multipart/form-data',
+                Accept: 'multipart/form-data',
+            },
+            url: 'https://merwans.co.in/index.php?route=api/apiorder/reOrder',
+        });
+        console.log('this is response',response.data);
+        if (response.data.status==true) {
+            setFetching(false)
+            Toast.show(response.data.message)
+        }
+        else {      
+            setFetching(false)
+        }
+    } catch (error) {
+        setFetching(false)
+    }
+    }
     
     return (
         <View style={{ flex: 1 }}>
-            {isFetching ? <Loader /> : null}
+            {isFetching || fetching ? <Loader /> : null}
             <ImageBackground style={{ flex: 1 }}
                 source={require('../../../assets/Icon/bg.png')}>
                 <View style={{
@@ -122,7 +155,8 @@ const MyOrders = ({ route }) => {
                                                             source={{ uri: item.image }} />
                                                     </View>
                                                     <View style={{ marginTop: -1, marginLeft: 5, width: '65%', }}>
-                                                        <Text style={[styles.title,]}>{item.name}</Text>
+                                                        <Text style={[styles.title,{fontSize:14}]}>{item.name}</Text>
+                                                        <Text style={[styles.title,{fontSize:12}]}>{`Quantity  ${item.quantity}`}</Text>
                                                     </View>
                                                 </View>
                                                 <View style={[styles.rView]}>
@@ -141,12 +175,12 @@ const MyOrders = ({ route }) => {
                                         <View>
                                             <Text style={styles.rupay}>{item.date_added}</Text>
                                         </View>
-                                        {/* <TouchableOpacity
-                                            onPress={() => handleReorder()}
+                                        <TouchableOpacity
+                                            onPress={() => manageReOrder(item.order_id)}
                                             style={styles.main}>
                                             <Recorder />
                                             <Text style={styles.recover}>Reorder</Text>
-                                        </TouchableOpacity> */}
+                                        </TouchableOpacity>
                                     </View>
                                     <View style={{ height: 5 }} />
                                 </View>
@@ -161,34 +195,3 @@ const MyOrders = ({ route }) => {
 }
 export default MyOrders;
 
-const data = [
-    { image: require('../../../assets/Logo/cake1.png'), image1: require('../../../assets/Logo/test.png'), title: 'Pineapple Cake', title1: 'Hazelnut Truffle [1 Pc]', price: 290.00 },
-    { image: require('../../../assets/Logo/cake1.png'), image1: require('../../../assets/Logo/test.png'), title: 'Pineapple Cake', title1: 'Hazelnut Truffle [1 Pc]', price: 290.00 },
-
-]
-const pdata = [
-    {
-        "order_product_id": "182735",
-        "order_id": "2442",
-        "product_id": "303",
-        "name": "Test Product",
-        "model": "Chocolate Square",
-        "quantity": "1",
-        "price": "1.0000",
-        "total": "1.0000",
-        "tax": "0.0000",
-        "reward": "0"
-    },
-    {
-        "order_product_id": "182735",
-        "order_id": "2442",
-        "product_id": "303",
-        "name": "Test Product",
-        "model": "Chocolate Square",
-        "quantity": "1",
-        "price": "1.0000",
-        "total": "1.0000",
-        "tax": "0.0000",
-        "reward": "0"
-    }
-]

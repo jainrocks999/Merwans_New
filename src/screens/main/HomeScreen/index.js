@@ -61,9 +61,11 @@ const HomeScreen = ({ route }) => {
     useEffect(async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const pageKey = await AsyncStorage.getItem("pageKey")
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
         dispatch({
             type: 'Menu_List_Request',
             url: 'apiproduct/menuSubmenuList',
+            store_id:store_id
         });
         dispatch({
             type: 'User_Detail_Request',
@@ -76,6 +78,11 @@ const HomeScreen = ({ route }) => {
             address_id: 0
         });
         dispatch({
+            type: 'City_List_Request',
+            url: 'apiorder/getStates',
+            country_id: '99',
+        });
+        dispatch({
             type: 'Address_List_Req',
             url: 'apiorder/addressList',
             customer_id: customer_id,
@@ -83,9 +90,11 @@ const HomeScreen = ({ route }) => {
         navigation.navigate(pageKey)
     }, [])
     const handleLocation = async () => {
+       
         const store_id = await AsyncStorage.getItem(Storage.store_id)
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        if (state == 0) {
+        console.log('this is order id',state);
+        if (state == 0 ||state ==  null) {
             Toast.show('Please select store')
         }
         else {
@@ -93,8 +102,19 @@ const HomeScreen = ({ route }) => {
                 if (state == selector[index].label) {
                     if (selector[index].store_id == store_id) {
                         AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
-                    } else {
+                        dispatch({
+                            type: 'Menu_List_Request',
+                            url: 'apiproduct/menuSubmenuList',
+                            store_id:selector[index].store_id
+                        });
+                    }
+                     else {
                         AsyncStorage.setItem(Storage.store_id, selector[index].store_id)
+                        dispatch({
+                            type: 'Menu_List_Request',
+                            url: 'apiproduct/menuSubmenuList',
+                            store_id:selector[index].store_id
+                        });
                         try {
                             const data = new FormData();
                             data.append('customer_id', customer_id)
@@ -139,6 +159,7 @@ const HomeScreen = ({ route }) => {
         const store_id = await AsyncStorage.getItem(Storage.store_id)
         AsyncStorage.setItem("category_id", id)
         AsyncStorage.setItem("product_id", '')
+        
         dispatch({
             type: 'Category_List_Request',
             url: 'apiproduct',

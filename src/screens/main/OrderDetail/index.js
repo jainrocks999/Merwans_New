@@ -15,6 +15,7 @@ import Loader from '../../../components/Loader'
 const OrderDetail = () => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.Auth.OrderDetail)
+    console.log('this total',selector);
     const isFetching=useSelector(state=>state.Auth.isFetching)
     const dispatch=useDispatch()
     // useEffect(() => {
@@ -105,7 +106,8 @@ const OrderDetail = () => {
                                                 <Image style={{ width: 38, height: 31, }} source={{ uri: item.image }} />
                                             </View>
                                             <View style={{ marginLeft: 5, marginTop: -1, width: '65%' }}>
-                                                <Text style={styles.title}>{`${item.name}`}</Text>
+                                                <Text style={[styles.title,{fontSize:14}]}>{`${item.name}`}</Text>
+                                                <Text style={[styles.title,{fontSize:12}]}>{`Quantity  ${item.quantity}`}</Text>
                                             </View>
                                         </View>
                                         <View style={[styles.rView,]}>
@@ -114,21 +116,39 @@ const OrderDetail = () => {
                                         </View>
 
                                     </View>
-                                    <TouchableOpacity
+                                    <View style={{marginTop:5,marginBottom:10}}/>
+                                    {/* <TouchableOpacity
                                         onPress={() => handleReorder(item.pid)}
                                         style={[styles.main,{marginTop:5,marginBottom:10}]}>
                                         <Recorder />
                                         <Text style={styles.recover}>Reorder</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                 </View>
                             )}
                         />
 
 
 
-                        {/* <Text style={styles.sum}>Bill Summary</Text> */}
-
+                        {selector.totals.length>0?<Text style={styles.sum}>Bill Summary</Text>:null}
+                         <FlatList
+                         data={selector.totals}
+                         renderItem={({item})=>(
+                            <View style={styles.views}>
+                            <Text style={styles.iTotal}>{item.title}</Text>
+                            <View>
+                                <Text style={[styles.total, { marginRight: 1 }]}>{item.text}</Text>
+                            </View>
+                        </View>
+                         )}
+                         />
+                        
                         {/* <View style={styles.views}>
+                            <Text style={styles.iTotal}>Item Total</Text>
+                            <View>
+                                <Text style={[styles.total, { marginRight: 1 }]}>{selector.products[0].title}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.views}>
                             <Text style={styles.iTotal}>Item Total</Text>
                             <View>
                                 <Text style={[styles.total, { marginRight: 1 }]}>{selector.products[0].total}</Text>
@@ -136,17 +156,24 @@ const OrderDetail = () => {
                         </View> */}
 
                         {/* <View style={styles.via}>
-                            <Text style={styles.paid}>Paid Via Cash</Text>
+                            <Text style={styles.paid}>{`Paid Via CCAvenue`}</Text>
                             <View>
-                                <Text style={[styles.sel, { marginRight: 1 }]}>{`Total  ${selector.products[0].total}`}</Text>
+                                <Text style={[styles.sel, { marginRight: 1 }]}>{`Total  ₹${selector.orderTotal}`}</Text>
                             </View>
                         </View> */}
-                        <View style={styles.checkv}>
-                            <View style={styles.check}>
-                                <Check />
-                                <Text style={styles.orders}>{`Order Delivered on ${selector.date_added} by ${selector.shipping_method}.`}</Text>
-                            </View>
+                       <Text style={styles.sum}>Order History</Text>
+                        <FlatList 
+                        data={selector.histories}
+                        renderItem={({item})=>(
+                            <View style={[styles.checkv,{borderBottomWidth:.5,borderColor:'grey'}]}>
+                            
+                                <Text style={[styles.orders,{width:'90%'}]}>{item.date_added}</Text>
+                                <Text style={[styles.orders,{width:'90%'}]}>{item.status}</Text>
+                                <Text style={[styles.orders,{width:'90%',marginBottom:item.comment?14:0}]}>{item.comment}</Text>
                         </View>
+                        )}
+                        />
+                       
                     </View>
 
                 </View>

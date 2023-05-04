@@ -147,7 +147,7 @@ const Contact = () => {
                                     flexDirection: 'row',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    paddingHorizontal: 10
+                                    paddingHorizontal: 10,
                                 }}>
                                 <Text style={{ color: 'white', fontSize: 15, fontFamily: 'Montserrat-SemiBold' }}>Mumbai</Text>
                                 {open ? <Minus width={25} height={25} /> : <Plus width={25} height={25} />}

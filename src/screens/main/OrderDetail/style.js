@@ -21,7 +21,6 @@ export default StyleSheet.create({
     title: {
         color: '#333333',
         fontFamily: 'Montserrat-Regular',
-        fontSize: 14
     },
     rView: {
         flexDirection: 'row',
@@ -149,7 +148,7 @@ export default StyleSheet.create({
     sel: {
         color: '#333333',
         fontFamily: 'Montserrat-SemiBold',
-        fontSize: 14
+        fontSize: 14,
     },
     checkv: {
         paddingHorizontal: 8,
@@ -164,7 +163,7 @@ export default StyleSheet.create({
         color: '#333333',
         fontFamily: 'Montserrat-SemiBold',
         fontSize: 13,
-        marginLeft: 5,
+        // marginLeft: 5,
         marginTop:0
     },
     main:{
