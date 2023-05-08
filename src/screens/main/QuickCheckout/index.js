@@ -31,6 +31,7 @@ const Payment = ({ route }) => {
     const inputRef = React.useRef()
     const [isFetching, setFetching] = useState(false)
     const [state, setState] = useState(0)
+    console.log('this is state',state);
     const [data, setData] = useState()
     const selector = useSelector(state => state.Auth.Shipping)
     const selector1 = useSelector(state => state.Auth.Time)
@@ -69,6 +70,9 @@ const Payment = ({ route }) => {
         }
         else if (toggleCheckBox2 == false) {
             Toast.show('Please select Term & Conditions')
+        }
+        else if(pick == 'checked'&&state==0||state==null||state==''){
+            Toast.show('Please select Pickup Time')
         }
         else {
             try {
@@ -132,6 +136,7 @@ const Payment = ({ route }) => {
                 data.append('delivery_country', '');
                 data.append('shippingPrice', shippingPrice);
                 data.append('subTotal', subTotal);
+                data.append('pickup_time',state)
 
 
                 const response = await axios({

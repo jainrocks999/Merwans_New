@@ -120,8 +120,8 @@ const AddressForm = ({ route }) => {
                 data.append('customer_id', customer_id);
                 data.append('type', type)
                 data.append('company', 'Merwans');
-                data.append('address_1', values.address1);
-                data.append('address_2', values.address2);
+                data.append('address_1', values.address2);
+                data.append('address_2', values.address1);
                 data.append('city', values.city);
                 data.append('postcode', values.post);
                 data.append('country_id', '99');
@@ -175,8 +175,8 @@ const AddressForm = ({ route }) => {
     return (
         <Formik
             initialValues={{
-                address1: route.params.address_1,
-                address2: route.params.address_2,
+                address1: route.params.address_2,
+                address2: route.params.address_1,
                 city: route.params.city,
                 post: route.params.postcode,
                 land: route.params.landmark,

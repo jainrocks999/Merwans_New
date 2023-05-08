@@ -102,15 +102,15 @@ const AddressForm = ({ route }) => {
                 data.append('customer_id', customer_id);
                 data.append('type', type)
                 data.append('company', 'Merwans');
-                data.append('address_1', address1);
-                data.append('address_2', values.address2);
+                data.append('address_1', values.address2);
+                data.append('address_2', address1);
                 data.append('city', values.city);
                 data.append('postcode', post);
                 data.append('country_id', '99');
                 data.append('zone_id', state);
                 // data.append('landmark', values.land)
                 // data.append('firstname', values.fName)
-                data.append('lastname', values.lName)
+                // data.append('lastname', values.lName)
                 data.append('default', toggleCheckBox == true ? 1 : 0)
                 const response = await axios({
                     method: 'POST',
