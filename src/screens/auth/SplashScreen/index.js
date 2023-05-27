@@ -150,7 +150,7 @@ if (Platform.OS=='android') {
     return (
         <View style={{ flex: 1 }}>
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                <Logo height={350} width={windowWidth}/>
+                <Logo height={400} width={windowWidth}/>
             </View>
             <Modal
                 isVisible={isModalVisible}

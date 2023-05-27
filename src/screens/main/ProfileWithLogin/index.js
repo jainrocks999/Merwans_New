@@ -123,8 +123,8 @@ const Profile = () => {
           <View style={{ paddingHorizontal: 5, marginTop: 10 }}>
            {customer_id? <View style={styles.view}>
               <View style={{ width: '75%' }}>
-                <Text style={styles.name}>{`${detail.firstname} ${detail.lastname}`}</Text>
-                <Text style={[styles.email, { marginTop: 4 }]}>{detail.email}</Text>
+                <Text style={styles.name}>{`${detail?.firstname} ${detail?.lastname}`}</Text>
+                <Text style={[styles.email, { marginTop: 4 }]}>{detail?.email}</Text>
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate('MyAccountPage')}

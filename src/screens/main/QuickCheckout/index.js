@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, ImageBackground, TextInput, FlatList, TouchableOpacity, StatusBar, Platform } from "react-native";
+import React, { useState, useEffect ,useF} from 'react';
+import { View, Text, Image, ScrollView, ImageBackground,BackHandler, TextInput, FlatList, TouchableOpacity, StatusBar, Platform } from "react-native";
 import BottomTab from "../../../components/BottomTab";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions,useIsFocused } from "@react-navigation/native";
 import styles from "./style";
 import Header from "../../../components/Header";
 import { RadioButton } from 'react-native-paper';
@@ -24,14 +24,13 @@ import { showMessage } from "react-native-flash-message";
 const Payment = ({ route }) => {
     const navigation = useNavigation()
     const [dunzo, setDunzo] = useState('checked')
-    const [pick, setPick] = useState(route.params.dunzo.message == 'Not serviceable' ? "checked" : 'unchecked')
+    const [pick, setPick] = useState(route.params.dunzo.message == 'Not serviceable' ||route.params.dunzo.message == 'Selected Location is out of Delivery Area, proceed with Store Pickup' ? "checked" : 'unchecked')
     const [mcpg, setMcpg] = useState('checked')
     const [online, setOnline] = useState('checked')
     const [cash, setCash] = useState('unchecked')
     const inputRef = React.useRef()
     const [isFetching, setFetching] = useState(false)
     const [state, setState] = useState(0)
-    console.log('this is state',state);
     const [data, setData] = useState()
     const selector = useSelector(state => state.Auth.Shipping)
     const selector1 = useSelector(state => state.Auth.Time)
@@ -41,22 +40,19 @@ const Payment = ({ route }) => {
     const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
     const [toggleCheckBox2, setToggleCheckBox2] = useState(true);
     const dispatch = useDispatch()
-    console.log(JSON.stringify(selector));
-    //  console.log(selector.shipping_methods,'narendra');
-    // useEffect(() => {
-    //     NetInfo.addEventListener(state => {
-    //       if(!state.isConnected){
-    //       showMessage({
-    //         message:'Please connect to your internet',
-    //         type:'danger',
-    //       });
-    //       }
-    //     });
-    //   },[])
-
+    const [qty,setQty]=useState()
+    const isFocused = useIsFocused();
     useEffect(() => {
+        if(isFocused){
         firstCall()
-    }, [0])
+        }
+    }, [isFocused])
+
+    const handleBackButtonClick=()=> {
+        // setData()
+        navigation.goBack();
+        return true;
+      }
 
     const confirmOrder = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -64,14 +60,13 @@ const Payment = ({ route }) => {
         const total = data.totals[2].text
         const subTotal = data.totals[0].text
         const shippingPrice = data.totals[1].text
-        console.log('this is testng data', data);
         if (toggleCheckBox1 == false) {
             Toast.show('Please select Privacy Policy')
         }
         else if (toggleCheckBox2 == false) {
             Toast.show('Please select Term & Conditions')
         }
-        else if(pick == 'checked'&&state==0||state==null||state==''){
+        else if(pick == 'checked' && state==0){
             Toast.show('Please select Pickup Time')
         }
         else {
@@ -164,7 +159,6 @@ const Payment = ({ route }) => {
                             },
                             url: 'https://merwans.co.in/index.php?route=api/apiorder/addInstruction',
                         });
-                        console.log('this is instauuctii', responsedata1.data, response.data.order_id);
                         if (responsedata1.data.status == true) {
                             // setFetching(false)
 
@@ -217,12 +211,11 @@ const Payment = ({ route }) => {
     const firstCall = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         try {
-            console.log('this is working');
             setFetching(true)
             const data = new FormData();
             data.append('api_token', '');
             data.append('customer_id', customer_id);
-            data.append('shipping_code', route.params.dunzo.message == 'Not serviceable' ? selector.shipping_methods.pickup.quote.pickup.code : selector.shipping_methods.dunzo.quote.dunzo.code)
+            data.append('shipping_code', route.params.dunzo.message == 'Not serviceable' || route.params.dunzo.message == 'Selected Location is out of Delivery Area, proceed with Store Pickup' ? selector.shipping_methods.pickup.quote.pickup.code : selector.shipping_methods.dunzo.quote.dunzo.code)
             data.append('shipping_cost', route.params.dunzo.status == false ? 0 : route.params.dunzo.price)
             const response = await axios({
                 method: 'POST',
@@ -233,9 +226,8 @@ const Payment = ({ route }) => {
                 },
                 url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
             });
-            console.log('this is working 6', response);
+            console.log('this is dunxo response',response.data);
             if (response.data) {
-                console.log('this is working 6', response.data);
                 setData(response.data)
                 setFetching(false)
             }
@@ -404,6 +396,45 @@ const Payment = ({ route }) => {
         }
     }
 
+    const updateCartInput = async (item,val) => {
+        setQty(val)
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+       if(val==''){
+        setQty(0)
+       }
+       else{
+        try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('cart_id', item.cart_id);
+            data.append('quantity', parseInt(val));
+            data.append('shipping_code', dunzo == 'checked' ? selector.shipping_methods.dunzo.quote.dunzo.code : selector.shipping_methods.pickup.quote.pickup.code)
+            data.append('shipping_cost', dunzo == 'checked' ? route.params.dunzo.price : 0)
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
+            });
+
+            if (response.data) {
+                setData(response.data)
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }
+    }
+
     const Policy = () => {
         dispatch({
             type: 'Privacy_Policy_Request',
@@ -434,7 +465,7 @@ const Payment = ({ route }) => {
                     {data && data.products.length > 0 ? <View style={{ paddingHorizontal: 5 }}>
                         <View style={[styles.ship, { marginTop: 15 }]}>
                             <Text style={styles.shipp}>Shipping Method</Text>
-                            {route.params.dunzo.message == 'Not serviceable' ? <View style={{ height: 14 }} /> : <View style={styles.checkV}>
+                            {route.params.dunzo.message == 'Not serviceable' ||route.params.dunzo.message == 'Selected Location is out of Delivery Area, proceed with Store Pickup' ? <View style={{ height: 14 }} /> : <View style={styles.checkV}>
                                 <Fast />
                                 <View style={[{ marginLeft: 6 }]}>
                                     {dunzo == 'checked' ? <RadioButton
@@ -656,14 +687,19 @@ const Payment = ({ route }) => {
                                         renderItem={({ item, index }) => (
                                             <View style={{ borderBottomWidth: data.products.length - 1 == index ? 0 : .5, borderColor: '#dae1ed', }}>
                                                 <View style={styles.border}>
-                                                    <View style={[styles.color, { width: '80%' }]}>
+                                                    <View style={[styles.color, { width: '75.5%' }]}>
                                                         <View style={{ height: 38, alignItems: 'center', justifyContent: 'center' }}>
+                                                            {item.p_type==1?<View
+                                                                style={[styles.flex,{borderColor: '#0FAF33',}]}>
+                                                                <View style={[styles.line,{ backgroundColor: '#0FAF33',}]} />
+                                                            </View>:
                                                             <View
-                                                                style={styles.flex}>
-                                                                <View style={styles.line} />
-                                                            </View>
+                                                            style={[styles.flex,{borderColor: '#ED1B1A',}]}>
+                                                            <View style={[styles.line,{ backgroundColor: '#ED1B1A',}]} />
                                                         </View>
-                                                        <View style={{ width: '90%' }}>
+                                                            }
+                                                        </View>
+                                                        <View style={{ width: '85%' }}>
                                                             <View style={{ flexDirection: 'row' }}>
                                                                 <View style={{ marginLeft: 12 }}>
                                                                     <Image
@@ -695,7 +731,15 @@ const Payment = ({ route }) => {
                                                                 onPress={() => updateCart(item)}>
                                                                 <Image source={require('../../../assets/Icon/minus.png')} />
                                                             </TouchableOpacity>
-                                                            <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text>
+                                                            <TextInput
+                                                                defaultValue={item.quantity}
+                                                                // value={qty==0?'':qty?qty:item.quantity}
+                                                                onChangeText={(val)=>updateCartInput(item,val)}
+                                                                style={{textAlign:'center',minWidth:20,fontSize: 11, color: '#ED1717',height:40}}
+                                                                maxLength={3}
+                                                                keyboardType='number-pad'
+                                                                />
+                                                            {/* <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text> */}
                                                             <TouchableOpacity
                                                                 style={styles.uri}
                                                                 onPress={() => updateCart1(item)}>

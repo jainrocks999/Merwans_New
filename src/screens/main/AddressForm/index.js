@@ -27,7 +27,7 @@ const loginValidationSchema = yup.object().shape({
     // fName: yup.string().required('Please enter your first name'),
     // lName: yup.string().required('Please enter your last name'),
     address2: yup.string(),
-    city: yup.string().required('Please enter your city'),
+    city: yup.string(),
     // post: yup.string()
     //     .min(6, ({ }) => 'Post code must be minimum 6 digit').
     //     max(6, ({ }) => 'Post code must be maximum 6 digit').
@@ -47,10 +47,12 @@ const AddressForm = ({ route }) => {
     const dispatch = useDispatch()
     const [isFetching, setFetching] = useState(false)
     const City = useSelector(state => state.Auth.City)
+    const Fetching=useSelector(state=>state.Auth.isFetching)
     const [state, setState] = useState('1493')
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const [address1, setAddress1] = useState('')
     const [post, setPost] = useState('')
+
 
     const manageHome = () => {
         setWork(false)
@@ -92,6 +94,9 @@ const AddressForm = ({ route }) => {
         }
         else if (state == '' || state == 0) {
                 Toast.show('Please select state')
+        }
+        else if(values.city==''){
+            Toast.show('Please enter city name')
         }
        
         else {
@@ -186,7 +191,7 @@ const AddressForm = ({ route }) => {
                 errors,
             }) => (
                 <View style={{ flex: 1 }}>
-                    {isFetching ? <Loader /> : null}
+                    {isFetching ||Fetching? <Loader /> : null}
                     <ImageBackground
                         style={{ flex: 1 }}
                         source={require('../../../assets/Icon/bg.png')}>
@@ -285,22 +290,8 @@ const AddressForm = ({ route }) => {
 
                                                     }}
                                                 />
-                                                {/* <TextInput
-                                                    style={styles.input}
-                                                    placeholder="Location"
-                                                    placeholderTextColor={'#000000'}
-                                                    onChangeText={handleChange('address1')}
-                                                    onBlur={handleBlur('address1')}
-                                                    value={values.address1}
-                                                /> */}
                                             </ScrollView>
                                         </View>
-                                        {/* <View style={styles.error}>
-                                            {errors.address1 && touched.address1 && (
-                                                <Text style={styles.warn}>{errors.address1}</Text>
-                                            )}
-                                        </View> */}
-
                                         <View style={{ marginTop: 16 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Flat No./Building Name</Text>

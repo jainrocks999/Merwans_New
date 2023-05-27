@@ -15,7 +15,7 @@ export default StyleSheet.create({
     },
     square: {
         height: 6,
-        width: 6, backgroundColor: '#0FAF33',
+        width: 6,
         borderRadius: 8
     },
     title: {
@@ -41,7 +41,7 @@ export default StyleSheet.create({
         borderRadius: 5
     },
     view: {
-        borderColor: '#0FAF33',
+       
         borderWidth: 1,
         height: 10,
         width: 10,

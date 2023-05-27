@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
     view:{
-        borderColor:'#0FAF33',
+       
         borderWidth:1,
         height:12,
         width:12,
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     },
     square:{
         height: 6,
-        width: 6, backgroundColor: '#0FAF33',
+        width: 6, 
         borderRadius: 6
     },
     title:{

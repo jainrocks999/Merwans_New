@@ -6,7 +6,7 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
     flex: {
-        borderColor: '#0FAF33',
+        
         borderWidth: 1,
         height: 10,
         width: 10,
@@ -18,7 +18,7 @@ export default StyleSheet.create({
     cont: {
         borderWidth: 1,
         height: 22,
-        width: 60,
+        width: 80,
         borderColor: '#ED1717',
         flexDirection: 'row',
         alignItems: 'center',
@@ -214,7 +214,7 @@ export default StyleSheet.create({
     line: {
         height: 6,
         width: 6,
-        backgroundColor: '#0FAF33',
+       
         borderRadius: 8
     },
     data: {

@@ -49,7 +49,7 @@ export default StyleSheet.create({
         justifyContent: 'space-between',
     },
     sq:{
-        borderColor: '#0FAF33',
+       
         borderWidth: 1,
         height: 10,
         width: 10,
@@ -61,7 +61,7 @@ export default StyleSheet.create({
     dot:{
         height: 6,
         width: 6, 
-        backgroundColor: '#0FAF33',
+       
         borderRadius: 8
     },
     name:{ 
@@ -77,7 +77,7 @@ export default StyleSheet.create({
     view:{
         borderWidth: 1,
         height: 22,
-        width: 60,
+        width: 80,
         // marginTop: 10,
         borderColor: '#ED1717',
         flexDirection: 'row',

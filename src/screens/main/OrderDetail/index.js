@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import styles from "./style";
 import Back from "../../../assets/Svg/back.svg";
 import Check from '../../../assets/Svg/check1.svg';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
 import Recorder from "../../../assets/Svg/recorder.svg";
@@ -15,9 +15,9 @@ import Loader from '../../../components/Loader'
 const OrderDetail = () => {
     const navigation = useNavigation()
     const selector = useSelector(state => state.Auth.OrderDetail)
-    console.log('this total',selector);
-    const isFetching=useSelector(state=>state.Auth.isFetching)
-    const dispatch=useDispatch()
+    console.log('this total', selector);
+    const isFetching = useSelector(state => state.Auth.isFetching)
+    const dispatch = useDispatch()
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
     //       if(!state.isConnected){
@@ -28,22 +28,22 @@ const OrderDetail = () => {
     //       }
     //     });
     //   },[])
-    const handleReorder = async(pid) => {
+    const handleReorder = async (pid) => {
         console.log(pid);
-        const customer_id=await AsyncStorage.getItem(Storage.customer_id)
-        const store_id=await AsyncStorage.getItem(Storage.store_id)
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id = await AsyncStorage.getItem(Storage.store_id)
         dispatch({
             type: 'Add_Item_Request1',
             url: 'apiorder/add_to_cart',
             customer_id: customer_id,
             product_id: pid,
-            outlet_id:store_id,
+            outlet_id: store_id,
             navigation: navigation
-          });
+        });
     }
     return (
         <View style={{ flex: 1 }}>
-            {isFetching?<Loader/>:null}
+            {isFetching ? <Loader /> : null}
             <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
                 {/* <View style={{ padding: 8 }}>
                     <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}>
@@ -95,19 +95,24 @@ const OrderDetail = () => {
                         <FlatList
                             data={selector.products}
                             renderItem={({ item }) => (
-                                <View style={{borderBottomWidth:.5,borderColor:'grey'}}>
+                                <View style={{ borderBottomWidth: .5, borderColor: 'grey' }}>
                                     <View style={[styles.cont, { paddingHorizontal: 8, marginTop: 12 }]}>
                                         <View style={styles.view1}>
-                                            <View
-                                                style={styles.view}>
-                                                <View style={styles.square} />
-                                            </View>
+                                            {item.p_type == 1 ? <View
+                                                style={[styles.view, { borderColor: '#0FAF33', }]}>
+                                                <View style={[styles.square, { backgroundColor: '#0FAF33', }]} />
+                                            </View> :
+                                                <View
+                                                    style={[styles.view, { borderColor: '#ED1B1A', }]}>
+                                                    <View style={[styles.square, { backgroundColor: '#ED1B1A', }]} />
+                                                </View>
+                                            }
                                             <View style={{ marginLeft: 6 }}>
                                                 <Image style={{ width: 38, height: 31, }} source={{ uri: item.image }} />
                                             </View>
                                             <View style={{ marginLeft: 5, marginTop: -1, width: '65%' }}>
-                                                <Text style={[styles.title,{fontSize:14}]}>{`${item.name}`}</Text>
-                                                <Text style={[styles.title,{fontSize:12}]}>{`Quantity  ${item.quantity}`}</Text>
+                                                <Text style={[styles.title, { fontSize: 14 }]}>{`${item.name}`}</Text>
+                                                <Text style={[styles.title, { fontSize: 12 }]}>{`Quantity  ${item.quantity}`}</Text>
                                             </View>
                                         </View>
                                         <View style={[styles.rView,]}>
@@ -116,7 +121,7 @@ const OrderDetail = () => {
                                         </View>
 
                                     </View>
-                                    <View style={{marginTop:5,marginBottom:10}}/>
+                                    <View style={{ marginTop: 5, marginBottom: 10 }} />
                                     {/* <TouchableOpacity
                                         onPress={() => handleReorder(item.pid)}
                                         style={[styles.main,{marginTop:5,marginBottom:10}]}>
@@ -129,19 +134,19 @@ const OrderDetail = () => {
 
 
 
-                        {selector.totals.length>0?<Text style={styles.sum}>Bill Summary</Text>:null}
-                         <FlatList
-                         data={selector.totals}
-                         renderItem={({item})=>(
-                            <View style={styles.views}>
-                            <Text style={styles.iTotal}>{item.title}</Text>
-                            <View>
-                                <Text style={[styles.total, { marginRight: 1 }]}>{item.text}</Text>
-                            </View>
-                        </View>
-                         )}
-                         />
-                        
+                        {selector.totals.length > 0 ? <Text style={styles.sum}>Bill Summary</Text> : null}
+                        <FlatList
+                            data={selector.totals}
+                            renderItem={({ item }) => (
+                                <View style={styles.views}>
+                                    <Text style={styles.iTotal}>{item.title}</Text>
+                                    <View>
+                                        <Text style={[styles.total, { marginRight: 1 }]}>{item.text}</Text>
+                                    </View>
+                                </View>
+                            )}
+                        />
+
                         {/* <View style={styles.views}>
                             <Text style={styles.iTotal}>Item Total</Text>
                             <View>
@@ -161,19 +166,19 @@ const OrderDetail = () => {
                                 <Text style={[styles.sel, { marginRight: 1 }]}>{`Total  ₹${selector.orderTotal}`}</Text>
                             </View>
                         </View> */}
-                       <Text style={styles.sum}>Order History</Text>
-                        <FlatList 
-                        data={selector.histories}
-                        renderItem={({item})=>(
-                            <View style={[styles.checkv,{borderBottomWidth:.5,borderColor:'grey'}]}>
-                            
-                                <Text style={[styles.orders,{width:'90%'}]}>{item.date_added}</Text>
-                                <Text style={[styles.orders,{width:'90%'}]}>{item.status}</Text>
-                                <Text style={[styles.orders,{width:'90%',marginBottom:item.comment?14:0}]}>{item.comment}</Text>
-                        </View>
-                        )}
+                        <Text style={styles.sum}>Order History</Text>
+                        <FlatList
+                            data={selector.histories}
+                            renderItem={({ item }) => (
+                                <View style={[styles.checkv, { borderBottomWidth: .5, borderColor: 'grey' }]}>
+
+                                    <Text style={[styles.orders, { width: '90%' }]}>{item.date_added}</Text>
+                                    <Text style={[styles.orders, { width: '90%' }]}>{item.status}</Text>
+                                    <Text style={[styles.orders, { width: '90%', marginBottom: item.comment ? 14 : 0 }]}>{item.comment}</Text>
+                                </View>
+                            )}
                         />
-                       
+
                     </View>
 
                 </View>

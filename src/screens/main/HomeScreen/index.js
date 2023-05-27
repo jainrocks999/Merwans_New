@@ -98,6 +98,9 @@ const HomeScreen = ({ route }) => {
             Toast.show('Please select store')
         }
         else {
+            setVisible(false)
+            setLocation(state)
+            AsyncStorage.setItem(Storage.location, state)
             for (let index = 0; index < selector.length; index++) {
                 if (state == selector[index].label) {
                     if (selector[index].store_id == store_id) {
@@ -133,9 +136,7 @@ const HomeScreen = ({ route }) => {
                     }
                 }
             }
-            setVisible(false)
-            setLocation(state)
-            AsyncStorage.setItem(Storage.location, state)
+           
 
         }
     }
@@ -144,6 +145,7 @@ const HomeScreen = ({ route }) => {
         const store_id = await AsyncStorage.getItem(Storage.store_id)
         AsyncStorage.setItem("category_id", id)
         AsyncStorage.setItem("product_id", product_id)
+        console.log('botyhbbv',id,product_id);
         dispatch({
             type: 'Category_List_Request',
             url: 'apiproduct',
@@ -386,12 +388,12 @@ const HomeScreen = ({ route }) => {
                             <View style={styles.arrow}>
                                 <TouchableOpacity
                                     onPress={() => backPress()}>
-                                    <Arrow1 />
+                                    <Arrow1 height={25} width={25}/>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() => nextPress()}
                                     style={{ marginLeft: 12 }}>
-                                    <Arrow2 />
+                                    <Arrow2 height={25} width={25}/>
                                 </TouchableOpacity>
                             </View>
                         </View>

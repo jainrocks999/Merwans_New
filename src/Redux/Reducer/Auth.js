@@ -18,7 +18,7 @@ initialstate = {
   Term:'',
   Home:'',
   UserDetail:'',
-
+  isFetching:false,
 };
 export default (state = initialstate, action) => {
   switch (action.type) {

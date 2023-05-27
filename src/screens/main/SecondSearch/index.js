@@ -33,6 +33,7 @@ const CategoryList = () => {
   const [gram, setGram] = useState('checked')
   const selector = useSelector(state => state.List.CategoryList)
   const isFetching1 = useSelector(state => state.List.isFetching)
+  const Fetching=useSelector(state=>state.Auth.isFetching)
   const width = Dimensions.get('window').width;
   const [product, setProduct] = useState('')
   const [isFetching, setFetching] = useState(false)
@@ -57,11 +58,13 @@ const CategoryList = () => {
 
   const searchFilterFunction = async (text) => {
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
+    const store_id=await AsyncStorage.getItem(Storage.store_id)
     try {
       // setSearch(text)
       const data = new FormData();
       data.append('search', text);
       data.append('customer_id', customer_id);
+      data.append('store_id', store_id);
       const response = await axios({
         method: 'POST',
         data,
@@ -130,6 +133,7 @@ const CategoryList = () => {
   };
   
   const addItemToCart = async () => {
+    setOpenPanel(false)
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     const store_id = await AsyncStorage.getItem(Storage.store_id)
     if(product.options.length>1){
@@ -172,7 +176,7 @@ const CategoryList = () => {
       navigation: navigation
     });
   }
-    setOpenPanel(false)
+   
   }
 
   const managePref = () => {
@@ -250,7 +254,7 @@ const CategoryList = () => {
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
-      {isFetching || isFetching1 ? <Loader /> : null}
+      {isFetching || isFetching1 ||Fetching ? <Loader /> : null}
       <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
         <View style={styles.container}>
           <TouchableOpacity 
@@ -309,10 +313,15 @@ const CategoryList = () => {
                   style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
                   <View style={{ width: '56%', marginTop: 20 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                      <View
-                        style={styles.view1}>
-                        <View style={styles.border} />
-                      </View>
+                    {item.p_type==1?<View
+                        style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                        <View style={[styles.border,{backgroundColor: '#0FAF33'}]} />
+                      </View>:
+                      item.p_type==2 ||  item.p_type==3?<View
+                      style={[styles.view1,{ borderColor:'#ED1B1A',}]}>
+                      <View style={[styles.border,{backgroundColor: '#ED1B1A'}]} />
+                    </View>:null
+                      }
                       {/* <View style={styles.tag}>
                         <Text style={styles.best}>{'Best Seller'}</Text>
                       </View> */}
@@ -343,12 +352,12 @@ const CategoryList = () => {
                     {item.favourite==false?<TouchableOpacity 
                     onPress={()=>addWish(item.product_id)} 
                     style={styles.image}>
-                      <Heart />
+                      <Heart height={14} width={14}/>
                     </TouchableOpacity>:
                     <TouchableOpacity 
                     onPress={()=>addWish(item.product_id)} 
                     style={styles.image}>
-                      <HeartF />
+                      <HeartF height={14} width={14}/>
                       {/* <Image 
                       style={{height:10,width:10,tintColor:'grey'}}  
                       source={require('../../../assets/Icon/heart.png')}/> */}
@@ -358,10 +367,10 @@ const CategoryList = () => {
                   </View>
 
                   <View style={styles.img}>
-                    <Image style={{ height: 122, width: 122, borderRadius: 15 }}
+                    <Image style={{ height: 122, width: 122, borderRadius: 15,opacity:item.quantity>0 && item.p_status==1?1:0.2 }}
                       source={{ uri: item.thumb }} />
                     <View style={styles.iview}>
-                      <TouchableOpacity
+                      {item.quantity>0 && item.p_status==1?<TouchableOpacity
                         delayPressIn={0}
                         activeOpacity={1}
                         onPress={() => productDetail(item.product_id)}
@@ -371,7 +380,16 @@ const CategoryList = () => {
                         <View style={{}}>
                           <Plus />
                         </View>
-                      </TouchableOpacity>
+                      </TouchableOpacity>:
+                      <TouchableOpacity
+                      disabled
+                      delayPressIn={0}
+                      activeOpacity={1}
+                      onPress={() => productDetail(item.product_id)}
+                      style={styles.addCont1}>
+                     <Text style={styles.add1}>Out of stock</Text>
+                    </TouchableOpacity>
+                      }
                     </View>
                     {/* <View style={styles.cus}>
                       <Text style={styles.custo}>Customise</Text>
@@ -418,12 +436,18 @@ const CategoryList = () => {
                   <Image style={styles.url}
                     source={{ uri: product.products.thumb }} />
                 </View>
+                <Text style={styles.desclamer}>Disclaimer Notice :-   ACTUAL PRODUCT  MAY VARY FROM SHOWN IMAGES</Text>
                 <View style={[styles.bests,{justifyContent:'space-between'}]}>
                   <View style={styles.bests1}>
+                  {product.products.p_type==1?<View
+                    style={[styles.view1,{borderColor:'#0FAF33',}]}>
+                    <View style={[styles.border,{backgroundColor: '#0FAF33'}]} />
+                  </View>:
                   <View
-                    style={styles.view1}>
-                    <View style={styles.border} />
-                  </View>
+                  style={[styles.view1,{borderColor:'#ED1717',}]}>
+                  <View style={[styles.border,{backgroundColor: '#ED1717'}]} />
+                </View>
+                  }
                   {/* <View style={styles.tag}>
                     <Text style={styles.best}>{'Best Seller'}</Text>
                   </View> */}
@@ -555,8 +579,8 @@ const CategoryList = () => {
                       style={styles.pref}>
                       <View style={{ flexDirection: 'row' }}>
                         <View
-                          style={styles.view1}>
-                          <View style={styles.border} />
+                         style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                         <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
                         </View>
                         <Text
                           style={styles.egg}>Eggless </Text>

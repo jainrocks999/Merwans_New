@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { View, Text, Image, ImageBackground, TouchableOpacity, TextInput, ScrollView, StatusBar, Platform } from "react-native";
 import styles from './style';
 import Home from "../../../components/Home";
@@ -19,19 +19,21 @@ import CheckBox from '@react-native-community/checkbox';
 import Geocoder from 'react-native-geocoding';
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const loginValidationSchema = yup.object().shape({
-    address1: yup.string().required('Please enter your address1'),
+    // address1: yup.string().required('Please enter your address1'),
     // fName: yup.string().required('Please enter your first name'),
     // lName: yup.string().required('Please enter your last name'),
     address2: yup.string(),
-    city: yup.string().required('Please enter your city'),
-    post: yup.string()
-        .min(6, ({ }) => 'Post code must be minimum 6 digit').
-        max(6, ({ }) => 'Post code must be maximum 6 digit').
-        required('Please enter your post code')
-        .matches(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, 'Please enter valid post code'),
+    city: yup.string(),
+    // post: yup.string()
+    //     .min(6, ({ }) => 'Post code must be minimum 6 digit').
+    //     max(6, ({ }) => 'Post code must be maximum 6 digit').
+    //     required('Please enter your post code')
+    //     .matches(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/, 'Please enter valid post code'),
     land: yup.string()
 });
 
@@ -49,29 +51,25 @@ const AddressForm = ({ route }) => {
     const City = useSelector(state => state.Auth.City)
     const [state, setState] = useState(route.params.zone_id)
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
-
-    // useEffect(() => {
-    //     NetInfo.addEventListener(state => {
-    //       if(!state.isConnected){
-    //       showMessage({
-    //         message:'Please connect to your internet',
-    //         type:'danger',
-    //       });
-    //       }
-    //     });
-    //   },[])
+    const [address1,setAddress1]=useState(route.params.address_2)
+    const ref = useRef();
+    const [post, setPost] = useState(route.params.postcode)
+  
+    useEffect(() => {
+      ref.current?.setAddressText(address1);
+    }, []);
     useEffect(() => {
         if (route.params.type == 'Home') {
-         manageHome()
+            manageHome()
         }
         else if (route.params.type == 'Work') {
-         manageWork()
+            manageWork()
         }
         else if (route.params.type == 'Hotel') {
-         manageHotel()
+            manageHotel()
         }
         else if (route.params.type == 'Other') {
-        manageOther()
+            manageOther()
         }
     }, [])
     const manageHome = () => {
@@ -108,22 +106,31 @@ const AddressForm = ({ route }) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const first = await AsyncStorage.getItem(Storage.firstname)
         const last = await AsyncStorage.getItem(Storage.lastname)
-        if (state == '' || state == 0) {
+        if(address1==''){
+            Toast.show('Please enter location')
+        }
+        else if (post == '' || post == 0) {
+            Toast.show('Please enter post code')
+        }
+        else if (state == '' || state == 0) {
             Toast.show('Please select state')
+        }
+        else if (values.city =='') {
+            Toast.show('Please enter city name')
         }
         else {
             try {
                 setFetching(true)
                 const data = new FormData();
                 data.append('api_token', '');
-                data.append('address_id',route.params.address_id);
+                data.append('address_id', route.params.address_id);
                 data.append('customer_id', customer_id);
                 data.append('type', type)
                 data.append('company', 'Merwans');
                 data.append('address_1', values.address2);
-                data.append('address_2', values.address1);
+                data.append('address_2', address1);
                 data.append('city', values.city);
-                data.append('postcode', values.post);
+                data.append('postcode', post);
                 data.append('country_id', '99');
                 data.append('zone_id', state);
                 data.append('landmark', values.land)
@@ -139,7 +146,7 @@ const AddressForm = ({ route }) => {
                     },
                     url: 'https://merwans.co.in/index.php?route=api/apiorder/addressUpdate',
                 });
-                console.log('this is user response',response.data);
+                console.log('this is user response', response.data);
                 if (response.data.status == true) {
                     Geocoder.from(values.address1)
                         .then(json => {
@@ -175,10 +182,10 @@ const AddressForm = ({ route }) => {
     return (
         <Formik
             initialValues={{
-                address1: route.params.address_2,
+                // address1: route.params.address_2,
                 address2: route.params.address_1,
                 city: route.params.city,
-                post: route.params.postcode,
+                // post: route.params.postcode,
                 land: route.params.landmark,
                 // fName:route.params.firstname,
                 // lName:route.params.lastname
@@ -248,14 +255,14 @@ const AddressForm = ({ route }) => {
                                     keyboardShouldPersistTaps="handled"
                                     contentContainerStyle={{ flex: 1 }}>
                                     <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
-                                       
-                                      
-                                        <View style={{marginTop:15}}>
+
+
+                                        <View style={{ marginTop: 15 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Location</Text>
                                                 <Text style={styles.str}>*</Text>
                                             </View>
-                                            <View style={styles.view}>
+                                            {/* <View style={styles.view}>
                                                 <TextInput
                                                     style={styles.input}
                                                     placeholder="Location"
@@ -264,13 +271,65 @@ const AddressForm = ({ route }) => {
                                                     onBlur={handleBlur('address1')}
                                                     value={values.address1}
                                                 />
-                                            </View>
+                                            </View> */}
+                                            <ScrollView keyboardShouldPersistTaps='handled' style={{ flex: 1 }}>
+                                                <GooglePlacesAutocomplete
+                                                 ref={ref}
+                                                 textInputProps={{
+                                                   InputComp: TextInput,
+                                                   style: {borderWidth: 2, borderColor: 'red'},
+                                                   onChangeText: (value) => {
+                                                     // Always called with an empty string no matter what
+                                                     setAddress1(value);
+                                                   },
+                                                 }}
+                                                    placeholder='Location'
+                                                    fetchDetails={true}
+                                                    keepResultsAfterBlur={true}
+                                                    keyboardShouldPersistTaps={"handled"}
+                                                    onPress={(data, details) => {
+                                                        setAddress1(data.description)
+                                                        for (let i = 0; i < details.address_components.length; i++) {
+                                                            if (details.address_components[i].types[0] === "postal_code") {
+                                                                setPost(details.address_components[i].long_name)
+                                                            }
+                                                        }
+                                                    }}
+                                                    listViewDisplayed={false}
+                                                    query={{
+                                                        key: 'AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw',
+                                                        language: 'en',
+                                                    }}
+                                                    textInputProps={{
+                                                        placeholderTextColor: '#000000',
+                                                    }}
+                                                    styles={{
+                                                        container: {
+                                                            borderWidth: 2,
+                                                            borderColor: '#FB8019',
+                                                            borderRadius: 2,
+                                                            justifyContent: 'center',
+
+                                                        },
+                                                        textInput: {
+                                                            backgroundColor: '#FAFAFA',
+                                                            height: 28,
+                                                            marginTop: 3,
+                                                            color: '#000000',
+                                                            fontFamily: 'Montserrat-Medium',
+                                                            fontSize: 12,
+                                                        },
+                                                        description: { color: 'black' }
+
+                                                    }}
+                                                />
+                                            </ScrollView>
                                         </View>
-                                        <View style={styles.error}>
+                                        {/* <View style={styles.error}>
                                             {errors.address1 && touched.address1 && (
                                                 <Text style={styles.warn}>{errors.address1}</Text>
                                             )}
-                                        </View>
+                                        </View> */}
 
                                         <View style={{ marginTop: 10 }}>
                                             <View style={{ flexDirection: 'row' }}>
@@ -315,21 +374,28 @@ const AddressForm = ({ route }) => {
                                                 <Text style={styles.str}>*</Text>
                                             </View>
                                             <View style={styles.view}>
-                                                <TextInput
+                                                {/* <TextInput
                                                     style={styles.input}
                                                     placeholder="Post Code"
                                                     placeholderTextColor={'#000000'}
                                                     onChangeText={handleChange('post')}
                                                     onBlur={handleBlur('post')}
                                                     value={values.post}
+                                                /> */}
+                                                 <TextInput
+                                                    style={styles.input}
+                                                    placeholder="Post Code"
+                                                    placeholderTextColor={'#000000'}
+                                                    onChangeText={(val) => setPost(val)}
+                                                    value={post}
                                                 />
                                             </View>
                                         </View>
-                                        <View style={styles.error}>
+                                        {/* <View style={styles.error}>
                                             {errors.post && touched.post && (
                                                 <Text style={styles.warn}>{errors.post}</Text>
                                             )}
-                                        </View>
+                                        </View> */}
                                         <View style={{ marginTop: 10 }}>
                                             <View style={{ flexDirection: 'row' }}>
                                                 <Text style={styles.heading}>Region / State</Text>
@@ -396,7 +462,7 @@ const AddressForm = ({ route }) => {
                                                 onTintColor='#ED1B1A'
                                                 onCheckColor='#ED1B1A'
                                                 boxType='square'
-                                                style={{ height:Platform.OS=='android'?30:17, width:Platform.OS=='android'?30:17}}
+                                                style={{ height: Platform.OS == 'android' ? 30 : 17, width: Platform.OS == 'android' ? 30 : 17 }}
                                             />
                                             <Text style={[styles.as1, { marginLeft: 10 }]}>Set as default address</Text>
                                         </View>

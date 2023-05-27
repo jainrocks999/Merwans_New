@@ -123,7 +123,7 @@ function* editProfile(action) {
     data.append('email',action.email)
     data.append('customer_id',action.customer_id)
     const response = yield call(Api.fetchDataByPOST, action.url, data);
-    
+    console.log('this iss user respone',response);
     if (response.status == true) {
       yield put({
         type: 'Edit_Profile_Success',
@@ -137,7 +137,7 @@ function* editProfile(action) {
      
       action.navigation.push('MyAccountPage')
     } else {
-      // Toast.show(response.message);
+      Toast.show(response.message);
       yield put({
         type: 'Edit_Profile_Error',
       });
@@ -650,6 +650,8 @@ function* wishlist(action) {
   try {
     const data = new FormData();
     data.append('customer_id',action.customer_id);
+    data.append('store_id',action.store_id);
+    // store_id
     const response = yield call(Api.fetchDataByPOST, action.url, data);
     if (response.status == true) {
       yield put({
@@ -833,15 +835,18 @@ function* resetPass(action) {
     const data = new FormData();
     data.append('email',action.email)
     const response = yield call(Api.fetchDataByPOST, action.url, data);
+    console.log('this is response',response);
     if (response.status == true) {
       yield put({
         type: 'Reset_Pass_Success',
       });
       Toast.show(response.message)
-      action.navigation.navigate('Otp',{
-        customer_id:response.customer_id,
-        otp:response.otp
-      })
+      action.navigation.navigate('Login'
+      // ,{
+      //   customer_id:response.customer_id,
+      //   otp:response.otp
+      // }
+      )
     } else {
     Toast.show(response.message)
       yield put({

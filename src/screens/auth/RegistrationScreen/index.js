@@ -48,7 +48,7 @@ const loginValidationSchema = yup.object().shape({
       is: val => (val && val.length > 0 ? true : false),
       then: yup
         .string()
-        .oneOf([yup.ref('password')], 'Both pin need to be the same'),
+        .oneOf([yup.ref('password')], 'Both passwords needs to be same'),
     })
     .required('Please enter confirm password'),
 });

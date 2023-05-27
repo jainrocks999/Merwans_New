@@ -103,6 +103,12 @@ export default StyleSheet.create({
         color:'#ED1717',
         marginLeft:10
     },
+    add1:{
+        fontFamily:'Montserrat-SemiBold',
+        fontSize:12,
+        color:'#ED1717',
+        // marginLeft:10
+    },
     main:{
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -194,12 +200,29 @@ export default StyleSheet.create({
         paddingHorizontal:10,
         alignItems:'center'
     },
+    addCont1:{
+        borderWidth:1,
+        borderColor:'#ED1717',
+        // width:'70%',
+        paddingVertical:5,
+        borderRadius:5,
+        backgroundColor:'#fff',
+        alignItems:'center',
+        alignSelf:'center',
+        paddingHorizontal:4
+    },
     search:{
         fontSize:12,
         fontFamily:'Montserrat-Regular',
         color:'#353535',
         marginLeft:10,
         marginBottom:0
+    },
+    desclamer:{
+        fontFamily:"Montserrat-Regular",
+        fontSize:13,
+        color:'#ED1B1A',
+        marginTop:8
     },
     view:{
         flexDirection:'row',
@@ -208,7 +231,6 @@ export default StyleSheet.create({
         paddingVertical:8
     },
     view1:{
-        borderColor:'#0FAF33',
         borderWidth:1,
         height:16,
         width:16,
@@ -218,7 +240,7 @@ export default StyleSheet.create({
     },
     border:{
         height:8,
-        width:8,backgroundColor:'#0FAF33',
+        width:8,
         borderRadius:4
     },
     tag:{

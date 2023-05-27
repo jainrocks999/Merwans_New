@@ -39,11 +39,13 @@ const Header = ({ location, onPress, }) => {
 
   const manageList = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
    if(customer_id){
     dispatch({
       type: 'Wish_List_Request',
       url: 'apiproduct/wishlist',
       customer_id: customer_id,
+      store_id:store_id,
       navigation: navigation
     });
   }
@@ -122,7 +124,7 @@ const Header = ({ location, onPress, }) => {
             <Logo
               height={76} width={76} />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => navigation.navigate('MyModal', { add1, add2, add3 })}
             style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
             <Location />
@@ -142,7 +144,7 @@ const Header = ({ location, onPress, }) => {
                 }}>{'Your Location'}</Text>}
             {add1 ? null : <Image style={{ tintColor: '#fff', marginLeft: 15, marginTop: 2 }}
               source={require('../../assets/Icon/down.png')} />}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={{
           flexDirection: 'row',

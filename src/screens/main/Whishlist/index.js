@@ -50,6 +50,7 @@ const CategoryList = () => {
   const isFetching = useSelector(state => state.Auth.isFetching)
   const [isFetching1, setFetching] = useState(false)
   const selector = useSelector(state => state.Auth.wishlist)
+  console.log('this is selector data',selector);
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState(selector);
   const [masterDataSource, setMasterDataSource] = useState(selector);
@@ -168,6 +169,7 @@ const CategoryList = () => {
   };
 
   const addItemToCart = async () => {
+    setOpenPanel(false)
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     const store_id = await AsyncStorage.getItem(Storage.store_id)
     if(product.options.length>1){
@@ -210,7 +212,7 @@ const CategoryList = () => {
         navigation: navigation
       });
     }
-    setOpenPanel(false)
+    
   }
   const length = data.length
   const version = Platform.OS
@@ -302,10 +304,15 @@ const CategoryList = () => {
                   style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
                   <View style={{ width: '56%', marginTop: 20 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                     {item.p_type==1? <View
+                        style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                        <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
+                      </View>:
                       <View
-                        style={styles.view1}>
-                        <View style={styles.border} />
-                      </View>
+                      style={[styles.view1,{ borderColor:'#ED1717',}]}>
+                      <View style={[styles.border,{backgroundColor:'#ED1717'}]} />
+                    </View>
+                      }
                       {/* <View style={styles.tag}>
                         <Text style={styles.best}>{'Best Seller'}</Text>
                       </View> */}
@@ -340,9 +347,10 @@ const CategoryList = () => {
                     <View style={{ height: 15 }} />
                   </View>
                   <View style={styles.imageV}>
-                    <Image style={{ height: 122, width: 122, borderRadius: 15 }}
+                    <Image style={{ height: 122, width: 122, borderRadius: 15,opacity:item.quantity>0 && item.p_status==1?1:0.2  }}
                       source={{ uri: item.thumb }} />
                     <View style={styles.addC}>
+                      {item.quantity>0 && item.p_status==1?
                       <TouchableOpacity
                         delayPressIn={0}
                         onPress={() => productDetail(item.product_id)}
@@ -352,7 +360,16 @@ const CategoryList = () => {
                         <View style={{}}>
                           <Plus />
                         </View>
-                      </TouchableOpacity>
+                      </TouchableOpacity>:
+                       <TouchableOpacity
+                       disabled
+                       delayPressIn={0}
+                       activeOpacity={1}
+                       onPress={() => productDetail(item.product_id)}
+                       style={styles.addCont1}>
+                      <Text style={styles.add1}>Out of stock</Text>
+                     </TouchableOpacity>
+                      }
                       <View style={[styles.cusView]}>
                         <TouchableOpacity
                           onPress={() => removeWishList(item.product_id)}
@@ -411,12 +428,18 @@ const CategoryList = () => {
                   <Image style={styles.url}
                     source={{ uri: product.products.thumb }} />
                 </View>
+                <Text style={styles.desclamer}>Disclaimer Notice :-   ACTUAL PRODUCT  MAY VARY FROM SHOWN IMAGES</Text>
                 <View style={[styles.bests,{justifyContent:'space-between'}]}>
                   <View style={styles.bests1}>
-                  <View
-                    style={styles.view1}>
-                    <View style={styles.border} />
-                  </View>
+                  {product.products.p_type==1? <View
+                        style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                        <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
+                      </View>:
+                      <View
+                      style={[styles.view1,{ borderColor:'#ED1717',}]}>
+                      <View style={[styles.border,{backgroundColor:'#ED1717'}]} />
+                    </View>
+                      }
                 
                    <Text style={[styles.title,{marginLeft:5}]}>{product.products.name}</Text>
                    </View>
@@ -543,8 +566,8 @@ const CategoryList = () => {
                       style={styles.pref}>
                       <View style={{ flexDirection: 'row' }}>
                         <View
-                          style={styles.view1}>
-                          <View style={styles.border} />
+                          style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                          <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
                         </View>
                         <Text
                           style={styles.egg}>Eggless </Text>

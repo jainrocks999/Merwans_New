@@ -28,6 +28,8 @@ const Payment = () => {
     const selector = useSelector(state => state.Auth.Address)
     const isFetching1 = useSelector(state => state.Auth.isFetching)
     const dispatch = useDispatch()
+    const [qty,setQty]=useState()
+   
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
     //       if(!state.isConnected){
@@ -159,6 +161,44 @@ const Payment = () => {
             setFetching(false)
         }
     }
+
+    const updateCartInput = async (item,val) => {
+        setQty(val)
+        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+       console.log('this is val',val);
+      if(val==''){
+      setQty(0)
+      }
+      else{
+       try {
+            setFetching(true)
+            const data = new FormData();
+            data.append('api_token', '');
+            data.append('customer_id', customer_id);
+            data.append('cart_id', item.cart_id);
+            data.append('quantity', parseInt(val));
+            const response = await axios({
+                method: 'POST',
+                data,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
+            });
+            if (response.data) {
+                setData(response.data)
+                setQty('done')
+                setFetching(false)
+            }
+            else {
+                setFetching(false)
+            }
+        } catch (error) {
+            setFetching(false)
+        }
+    }
+    }
     const manageAddress = async () => {
         //    navigation.navigate('Address')
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -225,7 +265,18 @@ const Payment = () => {
                             url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
                         });
                         console.log('this is dunzo response',response.data);
-                        if (response.data) {
+                        if (response.data.status) {
+                            navigation.navigate('Quick', {
+                                data: data,
+                                dunzo: response.data,
+                                lat: location.lat,
+                                long: location.lng,
+                                instruction:instruction
+                            })
+                            setFetching(false)
+                        }
+                        else if(response.data.dunzo==false && response.data.status==false) {
+                            Toast.show(response.data.message)
                             navigation.navigate('Quick', {
                                 data: data,
                                 dunzo: response.data,
@@ -278,14 +329,19 @@ const Payment = () => {
                                     renderItem={({ item, index }) => (
                                         <View style={{ borderBottomWidth: data.products.length - 1 == index ? 0 : .5, borderColor: '#dae1ed', }}>
                                             <View style={[styles.list, { marginTop: 10 }]}>
-                                                <View style={[styles.row, { width: '80%' }]}>
+                                                <View style={[styles.row, { width: '75.5%'}]}>
                                                     <View style={{ height: 38, alignItems: 'center', justifyContent: 'center' }}>
+                                                      {item.p_type==1?  <View
+                                                            style={[styles.sq,{ borderColor: '#0FAF33',}]}>
+                                                            <View style={[styles.dot,{ backgroundColor: '#0FAF33',}]} />
+                                                        </View>:
                                                         <View
-                                                            style={styles.sq}>
-                                                            <View style={styles.dot} />
-                                                        </View>
+                                                        style={[styles.sq,{ borderColor: '#ED1717',}]}>
+                                                        <View style={[styles.dot,{ backgroundColor: '#ED1717',}]} />
                                                     </View>
-                                                    <View style={{ width: '90%' }}>
+                                                        }
+                                                    </View>
+                                                    <View style={{ width: '85%', }}>
                                                         <View style={{ flexDirection: 'row' }}>
                                                             <View style={{ marginLeft: 12 }}>
                                                                 <Image style={{ height: 38, width: 38, borderRadius: 5 }} source={{ uri: item.image }} />
@@ -309,7 +365,7 @@ const Payment = () => {
 
                                                 </View>
 
-                                                <View style={{ alignItems: 'center' }}>
+                                                <View style={{ alignItems: 'center', }}>
                                                     <View
                                                         style={styles.view}>
                                                         <TouchableOpacity
@@ -322,7 +378,16 @@ const Payment = () => {
                                                             onPress={() => updateCart(item)}>
                                                             <Image source={require('../../../assets/Icon/minus.png')} />
                                                         </TouchableOpacity>
-                                                        <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text>
+                                                        <TextInput 
+                                                        defaultValue={item.quantity}
+                                                        // value={item.quantity||0}
+                                                        // value={qty==0?'':qty=='undefined'?item.quantity:qty=='done'?item.quantity:item.quantity}
+                                                        onChangeText={(val)=>updateCartInput(item,val)}
+                                                        style={{textAlign:'center',minWidth:20,fontSize: 11, color: '#ED1717',height:40}}
+                                                        maxLength={3}
+                                                        keyboardType='number-pad'
+                                                        />
+                                                        {/* <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text> */}
                                                         <TouchableOpacity
                                                             style={{
                                                                 height: 20,

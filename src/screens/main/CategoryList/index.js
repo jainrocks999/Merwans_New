@@ -42,6 +42,7 @@ import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import BottomTab from "../../../components/BottomTab";
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
+import Modal from "react-native-modal";
 
 const CategoryList = () => {
   const [openPanel, setOpenPanel] = useState(false)
@@ -53,6 +54,7 @@ const CategoryList = () => {
   const [kg, setKg] = useState('unchecked');
   const [gram, setGram] = useState('checked')
   const selector = useSelector(state => state.List.CategoryList)
+  const Fetching=useSelector(state=>state.Auth.isFetching)
   const category = useSelector(state => state.Auth.Category)
   const selector1 = useSelector(state => state.Auth.MenuList)
   const width = Dimensions.get('window').width;
@@ -69,7 +71,6 @@ const CategoryList = () => {
   const [text, setText] = useState('')
   const inputRef = React.useRef()
   const length = selector.length
-console.log('tis is protduct item',product.products);
   useEffect(() => {
     AsyncStorage.setItem("pageKey","")
     // NetInfo.addEventListener(state => {
@@ -122,9 +123,10 @@ console.log('tis is protduct item',product.products);
   };
 
   const addItemToCart = async () => {
+    setOpenPanel(false)
+    // setFetching(true)
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     const store_id = await AsyncStorage.getItem(Storage.store_id)
-    console.log('this is ouut let id',store_id);
     if (product.options.length > 1) {
       dispatch({
         type: 'Add_Item_Request',
@@ -165,7 +167,7 @@ console.log('tis is protduct item',product.products);
         navigation: navigation
       });
     }
-    setOpenPanel(false)
+   
   }
 
   const managePref = () => {
@@ -283,7 +285,7 @@ console.log('tis is protduct item',product.products);
         <View
           style={[styles.cmn,{marginTop:5,}]}>
           <TouchableOpacity
-            activeOpacity={0.8} onPress={() => manageData(item.category_id)}
+            activeOpacity={0.2} onPress={() => manageData(item.category_id)}
           >
             <Text style={[styles.home, { textTransform: 'uppercase' }]}>{(item.name)}</Text>
           </TouchableOpacity>
@@ -303,6 +305,7 @@ console.log('tis is protduct item',product.products);
           }}>
           {item.submenus.map((item, key) => (
             <TouchableOpacity
+            activeOpacity={0.2}
               onPress={() => manageData(item.category_id)}
               style={[styles.margin, { width: '90%' }]}>
               <Text style={[styles.item, { textTransform: 'uppercase', }]}>{item.name}</Text>
@@ -331,6 +334,7 @@ console.log('tis is protduct item',product.products);
   };
 
   const manageData = async (id) => {
+    setIsModalVisible(false)
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     AsyncStorage.setItem("category_id", id)
     AsyncStorage.setItem("product_id", '')
@@ -361,16 +365,20 @@ console.log('tis is protduct item',product.products);
     } catch (error) {
       throw error;
     }
-    setIsModalVisible(false)
+   
   }
   const version = Platform.OS
   return (
     <View style={{ flex: 1, }}>
-      {isFetching ? <Loader /> : null}
+      {isFetching || Fetching  ? <Loader /> : null}
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
         <View style={styles.main}>
           <View style={styles.go}>
-            <TouchableOpacity style={{ paddingRight: 10, paddingVertical: 3 }} onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={{ paddingRight: 10, paddingVertical: 3 }} 
+            onPress={() => {
+              navigation.navigate('Home')
+              // setIsModalVisible(false)
+              }}>
               <Go />
             </TouchableOpacity>
             {click ? null : <Text style={styles.cake}>{
@@ -456,10 +464,16 @@ console.log('tis is protduct item',product.products);
                     style={[styles.view, { borderBottomWidth: index == length - 1 ? 0 : .5, }]}>
                     <View style={{ width: '56%', marginTop: 20 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        {item.p_type==1?<TouchableOpacity
+                          style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                          <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
+                        </TouchableOpacity>:
+                        
                         <TouchableOpacity
-                          style={styles.view1}>
-                          <View style={styles.border} />
+                          style={[styles.view1,{ borderColor:'#ED1B1A',}]}>
+                          <View style={[styles.border,{backgroundColor:'#ED1B1A'}]} />
                         </TouchableOpacity>
+                        }
 
                         <Text style={[styles.title]}
                         >{item.name}</Text>
@@ -486,32 +500,43 @@ console.log('tis is protduct item',product.products);
                       {item.favourite == false ? <TouchableOpacity
                         onPress={() => addWish(item.product_id)}
                         style={styles.image}>
-                        <Heart />
+                        <Heart height={14} width={14}/>
                       </TouchableOpacity> :
                         <TouchableOpacity
                           // disabled
                           onPress={() => addWish(item.product_id)}
-                          style={styles.image}>
-                          <HeartF />
+                          style={[styles.image]}>
+                          <HeartF height={14} width={14}/>
                         </TouchableOpacity>}
                       <View style={{ height: 15 }} />
                     </View>
 
                     <View style={styles.img}>
-                      <Image style={{ height: 122, width: 122, borderRadius: 15 }}
+                    <Image style={{ height: 122, width: 122, borderRadius: 15,opacity:item.quantity>0 && item.p_status==1?1:0.2 }}
                         source={{ uri: item.thumb }} />
                       <View style={styles.iview}>
+                        {item.quantity>0 && item.p_status==1?
                         <TouchableOpacity
-                          delayPressIn={0}
-                          activeOpacity={1}
-                          onPress={() => productDetail(item.product_id)}
-                          style={styles.addCont}>
-                          <View />
-                          <Text style={styles.add}>Add</Text>
-                          <View style={{}}>
-                            <Plus />
-                          </View>
-                        </TouchableOpacity>
+                        delayPressIn={0}
+                        activeOpacity={1}
+                        onPress={() => productDetail(item.product_id)}
+                        style={styles.addCont}>
+                        <View />
+                        <Text style={styles.add}>Add</Text>
+                        <View style={{}}>
+                          <Plus />
+                        </View>
+                      </TouchableOpacity>
+                        :
+                        <TouchableOpacity
+                        disabled
+                        delayPressIn={0}
+                        activeOpacity={1}
+                        onPress={() => productDetail(item.product_id)}
+                        style={styles.addCont1}>
+                       <Text style={styles.add1}>Out of stock</Text>
+                      </TouchableOpacity>
+                        }
                       </View>
                     </View>
                   </View>
@@ -523,6 +548,7 @@ console.log('tis is protduct item',product.products);
         </ScrollView>
         <View style={styles.bottom1}>
           <TouchableOpacity
+            activeOpacity={0.1}
             onPress={() => {
               setIsModalVisible(true)
             }}
@@ -543,7 +569,7 @@ console.log('tis is protduct item',product.products);
           closeOnTouchOutside={() => setOpenPanel(false)}
           noBar={true}
           onlyLarge={true}
-          showCloseButton={true}
+          showCloseButton={openPanel==true?true:false}
           closeIconStyle={{ backgroundColor: '#000' }}
           closeRootStyle={{
             backgroundColor: '#fff',
@@ -564,17 +590,22 @@ console.log('tis is protduct item',product.products);
                 <ImageBackground
                   source={require('../../../assets/Icon/bg.png')}
                   style={{ backgroundColor: '#fff', padding: 10, height: msg == 'checked' ? 600 : 700 }}>
-
                   <View style={styles.thumb}>
-                    <Image style={styles.url}
+                    <Image style={[styles.url,{opacity:1}]}
                       source={{ uri: product.products.thumb }} />
                   </View>
+                  <Text style={styles.desclamer}>Disclaimer Notice :-   ACTUAL PRODUCT  MAY VARY FROM SHOWN IMAGES</Text>
                   <View style={[styles.bests, { justifyContent: 'space-between' }]}>
                     <View style={styles.bests1}>
-                      <View
-                        style={styles.view1}>
-                        <View style={styles.border} />
-                      </View>
+                     {product.products.p_type==1? <View
+                        style={[styles.view1,{borderColor:'#0FAF33'}]}>
+                        <View style={[styles.border,{backgroundColor:'#0FAF33',}]} />
+                      </View>:
+                     <View
+                      style={[styles.view1,{borderColor:'#ED1B1A'}]}>
+                      <View style={[styles.border,{backgroundColor:'#ED1B1A',}]} />
+                    </View>
+                      }
                       <Text style={styles.title}>{product.products.name}</Text>
                     </View>
                     {/* <View style={styles.image}>
@@ -703,10 +734,10 @@ console.log('tis is protduct item',product.products);
                         <View
                           style={styles.pref}>
                           <View style={{ flexDirection: 'row' }}>
-                            <View
-                              style={styles.view1}>
-                              <View style={styles.border} />
-                            </View>
+                          <TouchableOpacity
+                          style={[styles.view1,{ borderColor:'#0FAF33',}]}>
+                          <View style={[styles.border,{backgroundColor:'#0FAF33'}]} />
+                        </TouchableOpacity>
                             <Text
                               style={styles.egg}>Eggless </Text>
                           </View>
@@ -828,7 +859,7 @@ console.log('tis is protduct item',product.products);
                           </Text>
                     </TouchableOpacity>:
                     <TouchableOpacity
-                      onPress={() => addItemToCart()}
+                      // onPress={() => addItemToCart()}
                       disabled
                       style={styles.items}>
                       <Text style={styles.rs}>{'Product out of stock'}</Text>
@@ -844,7 +875,7 @@ console.log('tis is protduct item',product.products);
         <View style={styles.bot}>
           {/* <BottomTab /> */}
         </View>
-        <Dialog
+        {/* <Dialog
           visible={isModalVisible}
           dialogStyle={{
             backgroundColor: '#FFF',
@@ -855,9 +886,19 @@ console.log('tis is protduct item',product.products);
           }}
           onTouchOutside={() => setIsModalVisible(false)}
           onHardwareBackPress={() => setIsModalVisible(false)}
-        >
-          <DialogContent>
-            <View style={styles.mod}>
+        > */}
+          {/* <DialogContent> */}
+          <Modal
+                isVisible={isModalVisible}
+                onBackdropPress={()=>setIsModalVisible(false)}
+            >
+            <View style={{
+                backgroundColor: '#FFF', 
+                width: '86%', 
+                alignSelf: 'center' ,
+                elevation: 5,
+                borderRadius: 20
+            }}>
               <View style={styles.men}>
                 <View style={{ width: '24%' }} />
                 <View style={styles.space}>
@@ -893,8 +934,9 @@ console.log('tis is protduct item',product.products);
 
               </View>
             </View>
-          </DialogContent>
-        </Dialog>
+            </Modal>
+          {/* </DialogContent> */}
+        {/* </Dialog> */}
       </ImageBackground>
       <StatusBar backgroundColor={'#fff'} barStyle="dark-content" />
       <BottomTab/>

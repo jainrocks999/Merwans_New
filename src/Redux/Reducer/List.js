@@ -1,10 +1,9 @@
 initialstate = {
-   
     CategoryList:[],
     Policy:'',
     Policy1:'',
     Term:'',
-  
+    isFetching:false,
   };
   export default (state = initialstate, action) => {
     switch (action.type) {

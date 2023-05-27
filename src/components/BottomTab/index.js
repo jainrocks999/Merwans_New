@@ -39,7 +39,6 @@ const BottomTab = ({home,search,cart,profile}) => {
 
   useEffect(()=>{
      firstCall()
-    
   })
   const firstCall=async()=>{
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)

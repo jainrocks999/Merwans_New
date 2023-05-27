@@ -105,7 +105,12 @@ const Drawer=()=>{
       navigation.dispatch(DrawerActions.closeDrawer())
       navigation.navigate('Contact')
     }
-   
+
+    
+    const manageCart=()=>{
+      navigation.dispatch(DrawerActions.closeDrawer())
+      navigation.navigate('Payment')
+    }
     return(
         <View style={{backgroundColor:'#FFF',width:'100%',alignSelf:'center'}}>
           {isFetching?<Loader/>:null}
@@ -134,7 +139,11 @@ const Drawer=()=>{
               item={item}
             />
           ))}
-           </View>
+           </View>  
+           <TouchableOpacity onPress={()=>manageCart()}>
+            <Text style={[styles.home, { marginTop: 8 ,textTransform:'uppercase'}]}>Cart</Text>
+            </TouchableOpacity>
+
            <TouchableOpacity onPress={()=>manageContact()}>
             <Text style={[styles.home, { marginTop: 8 ,textTransform:'uppercase'}]}>Contact Us</Text>
             </TouchableOpacity>

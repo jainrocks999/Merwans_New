@@ -21,7 +21,7 @@ const MyAddress = ({route}) => {
     const isFetching = useSelector(state => state.Auth.isFetching)
     const [fetching,setFetching]=useState(false)
     const type=route.params
-console.log(selector);
+console.log('this is selector datta',selector);
     // useEffect(() => {
     //   NetInfo.addEventListener(state => {
     //     if(!state.isConnected){
@@ -44,7 +44,7 @@ console.log(selector);
 
     const addAddress=async(id)=>{
         const customer_id=await AsyncStorage.getItem(Storage.customer_id)
-        if (route.params.from=='cart') {
+        // if (route.params.from=='cart') {
             dispatch({
                 type: 'Get_Address_Request1',
                 url: 'apiorder/addressById',
@@ -52,8 +52,8 @@ console.log(selector);
                 address_id:id,
                 navigation:navigation
               });
-        } else {  
-        }
+        // } else {  
+        // }
     }
     const deleteAddress=async(item)=>{
         const customer_id=await AsyncStorage.getItem(Storage.customer_id)
@@ -171,7 +171,7 @@ console.log(selector);
                                     </View>
                                     <View style={{ marginLeft: 8, width: '90%', }}>
                                         <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                          <Text style={styles.title}>{item.address_type}</Text>
+                                          <Text style={styles.title}>{item.address_type=='null'?'':item.address_type}</Text>
                                           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                                               <TouchableOpacity onPress={()=>editAddress(item)} style={{marginRight:15}}>
                                                <Edit height={13} width={13}/>

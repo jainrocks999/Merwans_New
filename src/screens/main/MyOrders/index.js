@@ -146,10 +146,15 @@ const MyOrders = ({ route }) => {
                                         renderItem={({ item }) => (
                                             <View style={[styles.cont, { marginTop: 12 }]}>
                                                 <View style={styles.view1}>
+                                                   {item.p_type==1? <View
+                                                        style={[styles.view,{ borderColor:'#0FAF33',}]}>
+                                                        <View style={[styles.square,{backgroundColor: '#0FAF33',}]} />
+                                                    </View>:
                                                     <View
-                                                        style={styles.view}>
-                                                        <View style={styles.square} />
-                                                    </View>
+                                                    style={[styles.view,{ borderColor:'#ED1B1A',}]}>
+                                                    <View style={[styles.square,{backgroundColor: '#ED1B1A',}]} />
+                                                     </View>
+                                                    }
                                                     <View style={{ marginLeft: 6, width: 38, height: 31, }}>
                                                         <Image style={{ width: 38, height: 31, }}
                                                             source={{ uri: item.image }} />

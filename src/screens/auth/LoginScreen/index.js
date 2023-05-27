@@ -225,10 +225,7 @@ const LoginScreen = () => {
                   </View>
                   <View style={[styles.row,{marginTop:10}]}>
                     <TouchableOpacity
-                       onPress={()=>navigation.reset({
-                        index: 0,
-                        routes: [{ name: "Main" }],
-                    })}
+                       onPress={()=>navigation.navigate('Main')}
                       style={{borderBottomColor:'#ED1B1A',borderBottomWidth:2}}
                       >
                       <Text style={styles.text4}>Skip to continue</Text>

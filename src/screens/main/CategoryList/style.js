@@ -25,7 +25,6 @@ export default StyleSheet.create({
         borderColor:'#dae1ed'
     },
     view1:{
-        borderColor:'#0FAF33',
         borderWidth:1,
         height:16,
         width:16,
@@ -35,7 +34,7 @@ export default StyleSheet.create({
     },
     border:{
         height:8,
-        width:8,backgroundColor:'#0FAF33',
+        width:8,
         borderRadius:4
     },
     tag:{
@@ -54,6 +53,12 @@ export default StyleSheet.create({
         fontSize:15,
         color:'#232323',
         marginLeft:5
+    },
+    desclamer:{
+        fontFamily:"Montserrat-Regular",
+        fontSize:13,
+        color:'#ED1B1A',
+        marginTop:8
     },
     title1:{
         fontFamily:"Montserrat-SemiBold",
@@ -81,12 +86,12 @@ export default StyleSheet.create({
     },
     image:{
         borderWidth:1,
-        width:20,
-        height:20,
+        width:26,
+        height:26,
         alignItems:'center',
         justifyContent:'center',
-        borderRadius:10,marginTop:5,
-        borderColor:'#dae1ed'
+        borderRadius:13,marginTop:5,
+        borderColor:'grey'
     },
     addCont:{
         borderWidth:1,
@@ -101,11 +106,28 @@ export default StyleSheet.create({
         paddingHorizontal:4,
         alignSelf:'center'
     },
+    addCont1:{
+        borderWidth:1,
+        borderColor:'#ED1717',
+        // width:'70%',
+        paddingVertical:5,
+        borderRadius:5,
+        backgroundColor:'#fff',
+        alignItems:'center',
+        alignSelf:'center',
+        paddingHorizontal:4
+    },
     add:{
         fontFamily:'Montserrat-SemiBold',
         fontSize:12,
         color:'#ED1717',
         marginLeft:10
+    },
+    add1:{
+        fontFamily:'Montserrat-SemiBold',
+        fontSize:12,
+        color:'#ED1717',
+        // marginLeft:10
     },
     plus:{
         fontFamily:'Montserrat-SemiBold',
@@ -423,11 +445,11 @@ export default StyleSheet.create({
         right: 0 
     },
     mod:{
-        // backgroundColor: '#FFF',
-        // width: '86%',
-        // alignSelf: 'center',
-        // elevation: 5,
-        // borderRadius: 20
+        backgroundColor: '#FFF',
+        width: '86%',
+        alignSelf: 'center',
+        elevation: 5,
+        borderRadius: 20
     },
     men:{
         flexDirection: 'row',
