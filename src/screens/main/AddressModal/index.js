@@ -21,13 +21,13 @@ const ChangeAddress = () => {
   const [add1,setAdd1]=useState('')
   const [add2,setAdd2]=useState('')
   const [add3,setAdd3]=useState('')
-  const [position, setPosition] = useState({
-    latitude: 22.7196,
-    longitude: 75.8577,
-    latitudeDelta: 0.001,
-    longitudeDelta: 0.001,
-  });
-
+  const [position, setPosition] = useState();
+  // {
+  //   latitude: 22.7196,
+  //   longitude: 75.8577,
+  //   latitudeDelta: 0.001,
+  //   longitudeDelta: 0.001,
+  // }
   // useEffect(() => {
   //   NetInfo.addEventListener(state => {
   //     if(!state.isConnected){
@@ -49,6 +49,9 @@ const ChangeAddress = () => {
       });
     })
   }, []);
+
+
+  
   Geocoder.from(position)
   .then(json => {
     var location = json.results[0].address_components[1].long_name

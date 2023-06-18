@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, ImageBackground, TextInput, FlatList, TouchableOpacity, StatusBar } from "react-native";
+import { View, Text, Image, ScrollView, ImageBackground, TextInput, FlatList, TouchableOpacity, StatusBar, Keyboard ,Alert} from "react-native";
 import BottomTab from "../../../components/BottomTab";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation, DrawerActions, useIsFocused } from "@react-navigation/native";
 import Header from "../../../components/Header";
 import Done from '../../../assets/Svg/Done.svg';
 import Multi from '../../../assets/Svg/multiply.svg';
@@ -18,6 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
+import Modal from "react-native-modal";
 Geocoder.init("AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw");
 
 const Payment = () => {
@@ -28,22 +29,21 @@ const Payment = () => {
     const selector = useSelector(state => state.Auth.Address)
     const isFetching1 = useSelector(state => state.Auth.isFetching)
     const dispatch = useDispatch()
-    const [qty,setQty]=useState()
+    const [qty, setQty] = useState('')
+    const isFocused = useIsFocused();
+    const [product, setProduct] = useState([])
+    const [visible,setVisible]=useState(false)
    
-    // useEffect(() => {
-    //     NetInfo.addEventListener(state => {
-    //       if(!state.isConnected){
-    //       showMessage({
-    //         message:'Please connect to your internet',
-    //         type:'danger',
-    //       });
-    //       }
-    //     });
-    //   },[])
+
 
     useEffect(() => {
-        firstCall()
-    }, [0])
+        if (isFocused) {
+            firstCall()
+        }
+        else {
+            firstCall()
+        }
+    }, [isFocused])
 
     const firstCall = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -66,6 +66,7 @@ const Payment = () => {
 
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -122,6 +123,7 @@ const Payment = () => {
                 });
                 if (response.data) {
                     setData(response.data)
+                    setProduct(response.data.products)
                     setFetching(false)
                 }
                 else {
@@ -152,6 +154,7 @@ const Payment = () => {
             });
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -162,45 +165,45 @@ const Payment = () => {
         }
     }
 
-    const updateCartInput = async (item,val) => {
-        setQty(val)
+
+    const updateCartInput = async (item, val, index) => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-       console.log('this is val',val);
-      if(val==''){
-      setQty(0)
-      }
-      else{
-       try {
-            setFetching(true)
-            const data = new FormData();
-            data.append('api_token', '');
-            data.append('customer_id', customer_id);
-            data.append('cart_id', item.cart_id);
-            data.append('quantity', parseInt(val));
-            const response = await axios({
-                method: 'POST',
-                data,
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    Accept: 'multipart/form-data',
-                },
-                url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
-            });
-            if (response.data) {
-                setData(response.data)
-                setQty('done')
-                setFetching(false)
-            }
-            else {
-                setFetching(false)
-            }
-        } catch (error) {
-            setFetching(false)
+        if (val == '') {
+            setQty(null)
         }
-    }
+        else {
+            setQty(val)
+            try {
+                setFetching(true)
+                const data = new FormData();
+                data.append('api_token', '');
+                data.append('customer_id', customer_id);
+                data.append('cart_id', item.cart_id);
+                data.append('quantity', Number(val).toFixed());
+                const response = await axios({
+                    method: 'POST',
+                    data,
+                    headers: {
+                        'content-type': 'multipart/form-data',
+                        Accept: 'multipart/form-data',
+                    },
+                    url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
+                });
+                if (response.data) {
+                    setData(response.data)
+                    setProduct(response.data.products)
+                    setFetching(false)
+                }
+                else {
+                    setFetching(false)
+                }
+            } catch (error) {
+                setFetching(false)
+            }
+        }
+
     }
     const manageAddress = async () => {
-        //    navigation.navigate('Address')
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const id = await AsyncStorage.getItem("Address_id")
         dispatch({
@@ -210,97 +213,94 @@ const Payment = () => {
             from: 'cart',
             navigation: navigation
         });
-        //    dispatch({
-        //     type: 'Get_Address_Request1',
-        //     url: 'apiorder/addressById',
-        //     customer_id:customer_id,
-        //     address_id:id,
-        //     navigation:navigation
-        //   });
+
     }
     const manageAddress1 = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-       
-        // Geolocation.getCurrentPosition((pos) => {
-        //     const crd = pos.coords;
-        //     Geocoder.from(crd.latitude,crd.longitude)
-        //     .then(json => {
-        //         var location = json.results[0].formatted_address
-                navigation.navigate('AddressForm', { from: 'cart'})
-        //     })
-        //     .catch(error => console.log(error));
-        //   })
-       
-        // dispatch({
-        //   type: 'Address_List_Request',
-        //   url: 'apiorder/addressList',
-        //   customer_id:customer_id,
-        //   from:'cart',
-        //   navigation:navigation
-        // });
-       
+        navigation.navigate('AddressForm', { from: 'cart' })
     }
     const manageDunzo = async () => {
-        const store_id = await AsyncStorage.getItem(Storage.store_id)
-        const customer_id = await AsyncStorage.getItem(Storage.customer_id)
-        Geocoder.from(`${selector.address_1} ${selector.address_2} ${selector.city}`)
-            .then(async (json) => {
-                var location = json.results[0].geometry.location;
-                if (location && store_id) {
-                    try {
-                        setFetching(true)
-                        console.log('this is loacation',location);
-                        const data1 = new FormData();
-                        data1.append('store_id', store_id);
-                        data1.append('customer_id', customer_id);
-                        data1.append('latitude',location.lat);
-                        data1.append('longitude',location.lng);
-                        const response = await axios({
-                            method: 'POST',
-                            data: data1,
-                            headers: {
-                                'content-type': 'multipart/form-data',
-                                Accept: 'multipart/form-data',
-                            },
-                            url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
-                        });
-                        console.log('this is dunzo response',response.data);
-                        if (response.data.status) {
-                            navigation.navigate('Quick', {
-                                data: data,
-                                dunzo: response.data,
-                                lat: location.lat,
-                                long: location.lng,
-                                instruction:instruction
-                            })
-                            setFetching(false)
-                        }
-                        else if(response.data.dunzo==false && response.data.status==false) {
-                            Toast.show(response.data.message)
-                            navigation.navigate('Quick', {
-                                data: data,
-                                dunzo: response.data,
-                                lat: location.lat,
-                                long: location.lng,
-                                instruction:instruction
-                            })
-                            setFetching(false)
-                        }
-                        else {
-                            Toast.show(response.data.message)
-                            setFetching(false)
-                        }
-                    } catch (error) {
-                        setFetching(false)
-                    }
-                }
-                else {
-                    Toast.show('Something went wrong')
-                }
-            })
-            .catch(error => console.warn(error));
+        if (qty == null) {
+            Toast.show('Please enter product quantity')
+        }
+        else {
+            const store_id = await AsyncStorage.getItem(Storage.store_id)
+            const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+            Geocoder.from(`${selector.address_1} ${selector.address_2} ${selector.city}`)
+                .then(async (json) => {
+                    var location = json.results[0].geometry.location;
+                    if (location && store_id) {
+                        try {
+                            setFetching(true)
 
+                            const data1 = new FormData();
+                            data1.append('store_id', store_id);
+                            data1.append('customer_id', customer_id);
+                            data1.append('latitude', location.lat);
+                            data1.append('longitude', location.lng);
+                            const response = await axios({
+                                method: 'POST',
+                                data: data1,
+                                headers: {
+                                    'content-type': 'multipart/form-data',
+                                    Accept: 'multipart/form-data',
+                                },
+                                url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
+                            });
+                            if (response.data.status) {
+                                navigation.navigate('Quick', {
+                                    data: data,
+                                    dunzo: response.data,
+                                    lat: location.lat,
+                                    long: location.lng,
+                                    instruction: instruction
+                                })
+                                setFetching(false)
+                            }
+                            else if (response.data.dunzo == false && response.data.status == false) {
+                                // Toast.show(response.data.message)
+                                // setVisible(true)
+                                // manageStore()
+                                // navigation.navigate('Quick', {
+                                //     data: data,
+                                //     dunzo: response.data,
+                                //     lat: location.lat,
+                                //     long: location.lng,
+                                //     instruction: instruction
+                                // })
+                                Alert.alert('Selected Location is out of Delivery Area!', `\nDo you want to Change Address/Store?`, [
+                                    {
+                                      text: 'YES',
+                                      style: 'cancel',
+                                    },
+                                    { text: 'NO', onPress: () => 
+                                    navigation.navigate('Quick', {
+                                        data: data,
+                                        dunzo: response.data,
+                                        lat: location.lat,
+                                        long: location.lng,
+                                        instruction: instruction
+                                    })
+                                 },
+                                  ]);
+                                setFetching(false)
+                            }
+                            else {
+                                Toast.show(response.data.message)
+                                setFetching(false)
+                            }
+                        } catch (error) {
+                            setFetching(false)
+                        }
+                    }
+                    else {
+                        Toast.show('Something went wrong')
+                    }
+                })
+                .catch(error => console.warn(error));
+        }
     }
+
     return (
         <View style={{ flex: 1 }}>
             {isFetching || isFetching1 ? <Loader /> : null}
@@ -325,23 +325,23 @@ const Payment = () => {
                             <Text style={styles.order}>Your Order</Text>
                             <View style={{ marginTop: -3 }}>
                                 <FlatList
-                                    data={data ? data.products : []}
+                                    data={data ? product : []}
                                     renderItem={({ item, index }) => (
                                         <View style={{ borderBottomWidth: data.products.length - 1 == index ? 0 : .5, borderColor: '#dae1ed', }}>
                                             <View style={[styles.list, { marginTop: 10 }]}>
-                                                <View style={[styles.row, { width: '75.5%'}]}>
+                                                <View style={[styles.row, { width: '75.5%' }]}>
                                                     <View style={{ height: 38, alignItems: 'center', justifyContent: 'center' }}>
-                                                      {item.p_type==1?  <View
-                                                            style={[styles.sq,{ borderColor: '#0FAF33',}]}>
-                                                            <View style={[styles.dot,{ backgroundColor: '#0FAF33',}]} />
-                                                        </View>:
-                                                        <View
-                                                        style={[styles.sq,{ borderColor: '#ED1717',}]}>
-                                                        <View style={[styles.dot,{ backgroundColor: '#ED1717',}]} />
-                                                    </View>
+                                                        {item.p_type == 1 ? <View
+                                                            style={[styles.sq, { borderColor: '#0FAF33', }]}>
+                                                            <View style={[styles.dot, { backgroundColor: '#0FAF33', }]} />
+                                                        </View> :
+                                                            <View
+                                                                style={[styles.sq, { borderColor: '#ED1717', }]}>
+                                                                <View style={[styles.dot, { backgroundColor: '#ED1717', }]} />
+                                                            </View>
                                                         }
                                                     </View>
-                                                    <View style={{ width: '85%', }}>
+                                                    <View style={{ width: '78%', }}>
                                                         <View style={{ flexDirection: 'row' }}>
                                                             <View style={{ marginLeft: 12 }}>
                                                                 <Image style={{ height: 38, width: 38, borderRadius: 5 }} source={{ uri: item.image }} />
@@ -378,15 +378,39 @@ const Payment = () => {
                                                             onPress={() => updateCart(item)}>
                                                             <Image source={require('../../../assets/Icon/minus.png')} />
                                                         </TouchableOpacity>
-                                                        <TextInput 
-                                                        defaultValue={item.quantity}
-                                                        // value={item.quantity||0}
-                                                        // value={qty==0?'':qty=='undefined'?item.quantity:qty=='done'?item.quantity:item.quantity}
-                                                        onChangeText={(val)=>updateCartInput(item,val)}
-                                                        style={{textAlign:'center',minWidth:20,fontSize: 11, color: '#ED1717',height:40}}
-                                                        maxLength={3}
-                                                        keyboardType='number-pad'
+                                                        <TextInput
+                                                        defaultValue={
+                                                          ''
+                                                        }
+                                                        value={product[index].quantity}
+                                                            // value={
+                                                            //     Number(product[index].quantity).toFixed(0)==''?'':Number(product[index].quantity).toFixed(0)
+                                                            // }
+                                                            onChangeText={(val) =>
+                                                                // 
+                                                                {
+                                                
+                                                                    if(val==0){
+                                                                        let newArr = [...product]; // copying the old datas array
+                                                                        // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                                                        newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
+                                                                        setProduct(newArr);
+                                                                        console.log('this i value',val);
+                                                                    }
+                                                                    {
+                                                                        let newArr = [...product]; // copying the old datas array
+                                                                        // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                                                        newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
+                                                                        setProduct(newArr);
+                                                                        updateCartInput(item, val, index)
+                                                                    }
+                                                                }
+                                                            }
+                                                            style={{ textAlign: 'center', minWidth: 20, fontSize: 11, color: '#ED1717', height: 40 }}
+                                                            maxLength={3}
+                                                            keyboardType='numeric'
                                                         />
+
                                                         {/* <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text> */}
                                                         <TouchableOpacity
                                                             style={{
@@ -404,17 +428,7 @@ const Payment = () => {
                                                     </View>
                                                 </View>
                                             </View>
-                                            {/* <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                                        {item.option.length>1? <View>
-                                            <Text style={styles.pric}>{'Message on Cake'}</Text>
-                                           <Text style={styles.pric}>{item.option[1].value}</Text>
-                                            </View>:null}
-                                        {item.option.length>0?<View>
-                                               <Text style={styles.pric}>{'Size'}</Text>
-                                               <Text style={styles.pric}>{item.option[0].value}</Text>
-                                            </View>:null}
-                                            
-                                            </View> */}
+                
                                             <View style={{ height: 10 }} />
                                         </View>
                                     )}
@@ -430,17 +444,11 @@ const Payment = () => {
                                 placeholderTextColor={'#000000'}
                                 multiline={true}
                                 value={instruction}
-                                onChangeText={(val)=>setInstruction(val)}
+                                onChangeText={(val) => setInstruction(val)}
                             />
                                 : <Text style={styles.add}>Add Instructions</Text>}
                         </TouchableOpacity>
-                        {/* {data.products[0].option[1].value? <View style={styles.apply}>
-                            <View>
-                                <Text style={styles.coupon}>Message on Cake</Text>
-                            </View>
-                           <Text style={[styles.floor,{marginTop:3}]}>{data.products[0].option[1].value}</Text>
-                        </View>:null} */}
-                        {/* Apply Coupon */}
+                       
                         <View style={styles.apply}>
                             <View>
                                 <Text style={styles.coupon}>Apply Coupon</Text>
@@ -527,14 +535,15 @@ const Payment = () => {
                             marginTop: '80%',
                             flexDirection: 'row'
                         }}>
-                            <Text style={{ textAlign: 'center', fontSize: 18,color:'black' }}>Your cart is Empty! </Text>
+                            <Text style={{ textAlign: 'center', fontSize: 18, color: 'black' }}>Your cart is Empty! </Text>
                             <View>
-                                <Text onPress={() => navigation.navigate('Home')} style={{ fontSize: 18,color:'black' }}>Continue Shopping</Text>
+                                <Text onPress={() => navigation.navigate('Home')} style={{ fontSize: 18, color: 'black' }}>Continue Shopping</Text>
                                 <View style={{ borderWidth: .6 }} />
                             </View>
                         </View>
                     }
                     <View style={{ height: 20 }} />
+                   
                 </ScrollView>
             </ImageBackground>
             <BottomTab

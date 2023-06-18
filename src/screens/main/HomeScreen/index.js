@@ -57,6 +57,30 @@ const HomeScreen = ({ route }) => {
             type: 'Home_Data_Request',
             url: 'home/mobileview',
         });
+       
+
+        try {
+            const data1 = new FormData();
+            data1.append('key', 'qeXLqaKz3zWcGuoHqRGd2G8RU724EenIAkSLBmbcdQbAtEtxBrO6eN6kXLAmqQueAflLJSbE4Bm3T51fOfH5XEc4NUAQmomhN5yk0HB8YaezaqxN71xHnsKPioOk0SVdjZKG9qW6FRPsqlq4hwHKmHcuuxN2gSIhohg5XPeVVR6omgA3nnetZja1CQkHnywvhU6z99sG0Q2hi5lrkeWq3HDSadXN0MbM4opT1Y9UDvDLe9H7PRN4KGmEdvat9SAL');
+            data1.append('username', 'Default');
+            const response = await axios({
+                method: 'POST',
+                data:data1,
+                headers: {
+                    'content-type': 'multipart/form-data',
+                    Accept: 'multipart/form-data',
+                },
+                url: 'https://merwans.co.in/index.php?route=api/origin/login',
+            });
+           console.log('tjhigfz gdf fdfdsfdfdasfsd f',response.data);
+            if (response.data.api_token) {
+               AsyncStorage.setItem("new_token",response.data.api_token)
+            }
+            else {
+            }
+        } catch (error) {
+           
+        }
     }, [])
     useEffect(async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)

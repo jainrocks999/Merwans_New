@@ -198,6 +198,7 @@ const CategoryList = () => {
 
   const addWish = async (id) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    const store_id = await AsyncStorage.getItem(Storage.store_id)
     try {
       setFetching(true)
       const data = new FormData();
@@ -219,6 +220,7 @@ const CategoryList = () => {
           const data2 = new FormData();
           data2.append('search', text);
           data2.append('customer_id',customer_id)
+          data2.append('store_id', store_id);
           const response = await axios({
             method: 'POST',
             data:data2,

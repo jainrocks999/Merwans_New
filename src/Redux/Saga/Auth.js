@@ -841,12 +841,24 @@ function* resetPass(action) {
         type: 'Reset_Pass_Success',
       });
       Toast.show(response.message)
-      action.navigation.navigate('Login'
-      // ,{
-      //   customer_id:response.customer_id,
-      //   otp:response.otp
-      // }
+      if(response.otp==null){
+        action.navigation.navigate('Login')
+      }
+      else{
+      action.navigation.navigate('Otp'
+      ,{
+        customer_id:response.customer_id,
+        otp:response.otp
+      }
       )
+    }
+      // Toast.show(response.message)
+      // action.navigation.navigate('Login'
+      // // ,{
+      // //   customer_id:response.customer_id,
+      // //   otp:response.otp
+      // // }
+      // )
     } else {
     Toast.show(response.message)
       yield put({

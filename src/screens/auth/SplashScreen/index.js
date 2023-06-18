@@ -47,8 +47,7 @@ const Splash = () => {
     },[])
 
 
-async function requestLocationPermission() 
-{
+async function requestLocationPermission(){
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -164,18 +163,19 @@ if (Platform.OS=='android') {
                         fontWeight: 'bold',
                         textAlign: 'center',
                     }}>
-                    Update
+                   {'New Update Available'}
                     </Text>
                 </View>
-                <TouchableOpacity style={styles.ModelmsgView}>
-                    <Text style={styles.ModelMsgText}>{'New Update Available'}</Text>
-                </TouchableOpacity>
+                {/* <TouchableOpacity style={styles.ModelmsgView}>
+                    <Text style={styles.ModelMsgText}>{''}</Text>
+                </TouchableOpacity> */}
 
                 <View
                     style={{
                     flexDirection: 'row',
                     justifyContent: 'space-around',
                     width: '100%',
+                    marginTop:10
                     }}>
                     <TouchableOpacity style={styles.popup}
                      onPress={()=>openUrl()}

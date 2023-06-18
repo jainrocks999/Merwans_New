@@ -40,7 +40,8 @@ const Payment = ({ route }) => {
     const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
     const [toggleCheckBox2, setToggleCheckBox2] = useState(true);
     const dispatch = useDispatch()
-    const [qty,setQty]=useState()
+    const [qty,setQty]=useState('')
+    const [product,setProduct]=useState()
     const isFocused = useIsFocused();
     useEffect(() => {
         if(isFocused){
@@ -55,6 +56,10 @@ const Payment = ({ route }) => {
       }
 
     const confirmOrder = async () => {
+        if(qty==null){
+          Toast.show('Please enter product quantity')
+        }
+        else{
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         const store_id = await AsyncStorage.getItem(Storage.store_id)
         const total = data.totals[2].text
@@ -207,6 +212,7 @@ const Payment = ({ route }) => {
             }
         }
     }
+    }
 
     const firstCall = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
@@ -229,6 +235,7 @@ const Payment = ({ route }) => {
             console.log('this is dunxo response',response.data);
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -262,6 +269,7 @@ const Payment = ({ route }) => {
 
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -292,6 +300,7 @@ const Payment = ({ route }) => {
 
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -353,6 +362,7 @@ const Payment = ({ route }) => {
 
                 if (response.data) {
                     setData(response.data)
+                    setProduct(response.data.products)
                     setFetching(false)
                 }
                 else {
@@ -386,6 +396,7 @@ const Payment = ({ route }) => {
 
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -397,19 +408,19 @@ const Payment = ({ route }) => {
     }
 
     const updateCartInput = async (item,val) => {
-        setQty(val)
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
        if(val==''){
-        setQty(0)
+        setQty(null)
        }
        else{
+            setQty(val)
         try {
             setFetching(true)
             const data = new FormData();
             data.append('api_token', '');
             data.append('customer_id', customer_id);
             data.append('cart_id', item.cart_id);
-            data.append('quantity', parseInt(val));
+            data.append('quantity', Number(val).toFixed());
             data.append('shipping_code', dunzo == 'checked' ? selector.shipping_methods.dunzo.quote.dunzo.code : selector.shipping_methods.pickup.quote.pickup.code)
             data.append('shipping_cost', dunzo == 'checked' ? route.params.dunzo.price : 0)
             const response = await axios({
@@ -424,6 +435,7 @@ const Payment = ({ route }) => {
 
             if (response.data) {
                 setData(response.data)
+                setProduct(response.data.products)
                 setFetching(false)
             }
             else {
@@ -683,7 +695,7 @@ const Payment = ({ route }) => {
                                 <Text style={styles.order}>Your Order</Text>
                                 <View style={{ marginTop: -3 }}>
                                     <FlatList
-                                        data={data.products}
+                                        data={data ? product : []}
                                         renderItem={({ item, index }) => (
                                             <View style={{ borderBottomWidth: data.products.length - 1 == index ? 0 : .5, borderColor: '#dae1ed', }}>
                                                 <View style={styles.border}>
@@ -732,12 +744,35 @@ const Payment = ({ route }) => {
                                                                 <Image source={require('../../../assets/Icon/minus.png')} />
                                                             </TouchableOpacity>
                                                             <TextInput
-                                                                defaultValue={item.quantity}
-                                                                // value={qty==0?'':qty?qty:item.quantity}
-                                                                onChangeText={(val)=>updateCartInput(item,val)}
+                                                                defaultValue={
+                                                                    ''
+                                                                  }
+                                                                  value={product[index].quantity}
+                                                                      // value={
+                                                                      //     Number(product[index].quantity).toFixed(0)==''?'':Number(product[index].quantity).toFixed(0)
+                                                                      // }
+                                                                      onChangeText={(val) =>
+                                                                          // 
+                                                                          {
+                                                                              if(val==0){
+                                                                                  let newArr = [...product]; // copying the old datas array
+                                                                                  // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                                                                  newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
+                                                                                  setProduct(newArr);
+                                                                                  console.log('this i value',val);
+                                                                              }
+                                                                              {
+                                                                                  let newArr = [...product]; // copying the old datas array
+                                                                                  // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                                                                  newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
+                                                                                  setProduct(newArr);
+                                                                                  updateCartInput(item, val, index)
+                                                                              }
+                                                                          }
+                                                                      }
                                                                 style={{textAlign:'center',minWidth:20,fontSize: 11, color: '#ED1717',height:40}}
                                                                 maxLength={3}
-                                                                keyboardType='number-pad'
+                                                                keyboardType='numeric'
                                                                 />
                                                             {/* <Text style={{ fontSize: 11, color: '#ED1717' }}>{item.quantity}</Text> */}
                                                             <TouchableOpacity

@@ -130,11 +130,13 @@ const CategoryList = () => {
   }
   const removeWishList = async (id) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+    const store_id=await AsyncStorage.getItem(Storage.store_id)
     try {
       setFetching(true)
       const data = new FormData();
       data.append('product_id', id);
       data.append('customer_id', customer_id)
+      data.append('store_id',store_id)
       const response = await axios({
         method: 'POST',
         data,

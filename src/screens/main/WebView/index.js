@@ -51,7 +51,7 @@ function WebViewPage ({route,}){
            style: 'cancel'
        }, {
            text: 'OK',
-           onPress: () => navigation.goBack()
+           onPress: () => navigation.navigate('Home')
        },], {
        cancelable: false
    }

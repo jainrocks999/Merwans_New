@@ -92,30 +92,30 @@ const Header = ({ location, onPress, }) => {
       }
     })
   }, []);
-  // if (lat && long) {
-  //   Geocoder.from(lat, long)
-  //     .then(json => {
-  //       var location = json.results[0].address_components[1].long_name
-  //       var location1 = json.results[0].address_components[2].long_name
-  //       var location2 = json.results[0].address_components[3].long_name
-  //       setAdd1(location)
-  //       setAdd2(location1)
-  //       setAdd3(location2)
-  //     })
-  //     .catch(error => console.warn(error));
-  // }
-  // else {
-  //   Geocoder.from(position)
-  //     .then(json => {
-  //       var location = json.results[0].address_components[1].long_name
-  //       var location1 = json.results[0].address_components[2].long_name
-  //       var location2 = json.results[0].address_components[3].long_name
-  //       setAdd1(location)
-  //       setAdd2(location1)
-  //       setAdd3(location2)
-  //     })
-  //     .catch(error => console.warn(error));
-  // }
+  if (lat && long) {
+    Geocoder.from(lat, long)
+      .then(json => {
+        var location = json.results[0].address_components[1].long_name
+        var location1 = json.results[0].address_components[2].long_name
+        var location2 = json.results[0].address_components[3].long_name
+        setAdd1(location)
+        setAdd2(location1)
+        setAdd3(location2)
+      })
+      .catch(error => console.warn(error));
+  }
+  else {
+    Geocoder.from(position)
+      .then(json => {
+        var location = json.results[0].address_components[1].long_name
+        var location1 = json.results[0].address_components[2].long_name
+        var location2 = json.results[0].address_components[3].long_name
+        setAdd1(location)
+        setAdd2(location1)
+        setAdd3(location2)
+      })
+      .catch(error => console.warn(error));
+  }
   return (
     <View style={{ backgroundColor: '#232323', paddingVertical: 0, height: 40, }}>
       <View style={{ height: 40, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
@@ -124,7 +124,7 @@ const Header = ({ location, onPress, }) => {
             <Logo
               height={76} width={76} />
           </View>
-          {/* <TouchableOpacity
+          <TouchableOpacity
             onPress={() => navigation.navigate('MyModal', { add1, add2, add3 })}
             style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
             <Location />
@@ -144,7 +144,7 @@ const Header = ({ location, onPress, }) => {
                 }}>{'Your Location'}</Text>}
             {add1 ? null : <Image style={{ tintColor: '#fff', marginLeft: 15, marginTop: 2 }}
               source={require('../../assets/Icon/down.png')} />}
-          </TouchableOpacity> */}
+          </TouchableOpacity> 
         </View>
         <View style={{
           flexDirection: 'row',
