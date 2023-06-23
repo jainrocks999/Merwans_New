@@ -216,10 +216,12 @@ const Payment = ({ route }) => {
 
     const firstCall = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
+        const store_id=await AsyncStorage.getItem(Storage.store_id)
         try {
             setFetching(true)
             const data = new FormData();
             data.append('api_token', '');
+            data.append('store_id',store_id)
             data.append('customer_id', customer_id);
             data.append('shipping_code', route.params.dunzo.message == 'Not serviceable' || route.params.dunzo.message == 'Selected Location is out of Delivery Area, proceed with Store Pickup' ? selector.shipping_methods.pickup.quote.pickup.code : selector.shipping_methods.dunzo.quote.dunzo.code)
             data.append('shipping_cost', route.params.dunzo.status == false ? 0 : route.params.dunzo.price)

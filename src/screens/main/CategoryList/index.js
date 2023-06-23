@@ -82,6 +82,7 @@ const CategoryList = () => {
     //   }
     // });
   },[])
+  console.log('this is')
 
   const productDetail = async (id) => {
     const customer_id=await AsyncStorage.getItem(Storage.customer_id)
@@ -103,9 +104,24 @@ const CategoryList = () => {
         url: 'https://merwans.co.in/index.php?route=api/apiproduct/productDetails',
       });
       if (response.data.status == true) {
+      // console.log('this is categoryr',JSON.stringify(response.data.products))
         setFetching(false)
         setProduct(response.data.products)
         setOpenPanel(true)
+        if(response.data.products?.options[0]?.product_option_value[0]?.pickup_quantity>0){
+          setGram('checked')
+          setKg('unchecked')
+         // console.log('small........');
+        }else if(response.data.products?.options[0]?.product_option_value[1]?.pickup_quantity>0){
+          setGram('unchecked')
+          setKg('checked')
+        //  console.log('large.....');
+        }else{
+          setGram('unchecked')
+          setKg('unchecked')
+          
+        }
+
 
       }
     } catch (error) {
@@ -121,7 +137,7 @@ const CategoryList = () => {
   })
   }
   };
-
+ 
   const addItemToCart = async () => {
     setOpenPanel(false)
     // setFetching(true)
@@ -179,14 +195,36 @@ const CategoryList = () => {
     setMsg('checked')
   }
   const manageGram = () => {
+ if(product?.options[0].product_option_value[0].pickup_quantity>0){
+ 
     setGram('checked')
     setKg('unchecked')
+ }
+   
+  }
+ 
+
+  const largeManage=()=>{
+    if( product?.options[0]?.product_option_value[1]?.pickup_quantity<=0){
+     
+     return false
+    }
+    return true
+  }
+  const smallManage=()=>{
+    if(product?.options[0]?.product_option_value[0]?.pickup_quantity<=0){
+     return false
+    }
+    return true
   }
   const manageKg = () => {
+  if( product?.options[0]?.product_option_value[1]?.pickup_quantity>0){
     setGram('unchecked')
     setKg('checked')
   }
-
+  
+  }
+ 
   const searchFilterFunction = text => {
     if (text) {
       const newData = masterDataSource.filter(function (item) {
@@ -764,16 +802,16 @@ const CategoryList = () => {
                           <TouchableOpacity
 
                             onPress={() => manageGram()}
-                            style={styles.bottom}>
+                            style={[styles.bottom,smallManage()?null:{borderColor:'lightgrey'}]}>
                             <View
                               style={styles.row}>
-                              <Text style={styles.gram}>{product.options[0].product_option_value[0].name}</Text>
+                            <Text style={[styles.gram,smallManage()?null:{color:'lightgrey'}]}>{product.options[0].product_option_value[0].name}</Text>
                               <View style={{ marginLeft: 10 }}>
                                 {gram == 'checked' ? <RadioButton
                                   value="first"
-                                  status={gram}
+                                  status={smallManage()&&gram}
                                   onPress={() => manageGram()}
-                                  uncheckedColor='#ED1B1A'
+                                  uncheckedColor={smallManage()?'#ED1B1A':'lightgrey'}
                                   color='#ED1B1A'
                                 /> :
                                   version == 'ios' ? <TouchableOpacity
@@ -783,29 +821,29 @@ const CategoryList = () => {
                                   </TouchableOpacity> :
                                     <RadioButton
                                       value="first"
-                                      status={gram}
+                                      status={smallManage()&&gram}
                                       onPress={() => manageGram()}
-                                      uncheckedColor='#ED1B1A'
+                                      uncheckedColor={smallManage()?'#ED1B1A':'lightgrey'}
                                       color='#ED1B1A'
                                     />
                                 }
                               </View>
                             </View>
-                            <Text style={styles.text}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
+                            <Text style={[styles.text,smallManage()?null:{color:'lightgrey'}]}>{`₹${parseInt(product.products.price).toFixed(2)}`}</Text>
                           </TouchableOpacity>
                           <TouchableOpacity
-
+                                 disabled={largeManage()}
                             onPress={() => manageKg()}
-                            style={styles.bottom}>
+                            style={[styles.bottom,largeManage()?null:{borderColor:'lightgrey'}]}>
                             <View
                               style={styles.row}>
-                              <Text style={styles.gram}>{product.options[0].product_option_value[1].name}</Text>
+                              <Text style={[styles.gram,largeManage()?null:{color:'lightgrey'}]}>{product.options[0].product_option_value[1].name}</Text>
                               <View style={{ marginLeft: 10 }}>
                                 {kg == 'checked' ? <RadioButton
                                   value="first"
-                                  status={kg}
+                                  status={largeManage()&&kg}
                                   onPress={() => manageKg()}
-                                  uncheckedColor='#ED1B1A'
+                                  uncheckedColor={largeManage()?'#ED1B1A':'lightgrey'}
                                   color='#ED1B1A'
                                 /> :
                                   version == 'ios' ? <TouchableOpacity
@@ -815,15 +853,16 @@ const CategoryList = () => {
                                   </TouchableOpacity> :
                                     <RadioButton
                                       value="first"
-                                      status={kg}
-                                      onPress={() => manageKg()}
-                                      uncheckedColor='#ED1B1A'
+                                      status={largeManage()&&kg}
+                                     onPress={() => manageKg()}
+                                      uncheckedColor={largeManage()?'#ED1B1A':'lightgrey'}//#ED1B1A
                                       color='#ED1B1A'
+                                     
                                     />
                                 }
                               </View>
                             </View>
-                            <Text style={styles.text}>{
+                            <Text style={[styles.text,largeManage()?null:{color:'lightgrey'}]}>{
                               `₹${(parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}</Text>
                           </TouchableOpacity>
                         </View>
@@ -850,12 +889,12 @@ const CategoryList = () => {
                   </View> : null}
                   <View style={styles.pay}>
 
-                  {product.products.quantity>0?<TouchableOpacity
+                  {largeManage()||smallManage()?<TouchableOpacity
                       onPress={() => addItemToCart()}
                       style={styles.items}>
                         <Text style={styles.rs}>
-                        {`Add item ₹${gram == 'checked' ? parseInt(product.products.price).toFixed(2) :
-                          (parseInt(product.options[0].product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}
+                        {`Add item ₹${gram == 'checked' ? parseInt(product.products.price).toFixed(2) :product.options.length<=0?parseInt(product?.products.price).toFixed(2):
+                          (parseInt(product.options[0]?.product_option_value[1].price) + parseInt(product.products.price)).toFixed(2)}`}
                           </Text>
                     </TouchableOpacity>:
                     <TouchableOpacity

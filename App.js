@@ -36,10 +36,7 @@ const App = () => {
       //  icon={<Image resizeMode='contain' style={{height:20,width:20,tintColor:'#000'}} source={require('./src/assets/Icon/arrow.png')}/>}
        duration={3000} 
        style={{
-        //  borderRadius:10,
-        //  marginHorizontal:30,
-        //  marginVertical:20,
-        //  height:50,
+       
          alignItems:'center',
          justifyContent:'center',
          backgroundColor:'#ED1B1A',

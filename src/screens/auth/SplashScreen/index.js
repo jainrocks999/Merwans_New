@@ -74,7 +74,7 @@ const appVersion = async (url) => {
       url: 'https://merwans.co.in/index.php?route=api/version',
     });
     if (Platform.OS=='android') {
-      if (response.data.android_version > 1) {
+      if (response.data.android_version > 2) {
         setAndroidUrl(response.data.android_url)
         setModalVisible(true)
        } else {

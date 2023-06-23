@@ -54,6 +54,7 @@ const Payment = () => {
             const data = new FormData();
             data.append('api_token', '');
             data.append('customer_id', customer_id);
+            data.append('store_id',id)
             const response = await axios({
                 method: 'POST',
                 data,
@@ -68,6 +69,7 @@ const Payment = () => {
                 setData(response.data)
                 setProduct(response.data.products)
                 setFetching(false)
+                console.log('this is data',response.data)
             }
             else {
                 setFetching(false)
