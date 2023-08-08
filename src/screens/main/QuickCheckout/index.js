@@ -40,15 +40,11 @@ import {showMessage} from 'react-native-flash-message';
 
 const Payment = ({route}) => {
   const navigation = useNavigation();
-  const [dunzo, setDunzo] = useState('checked');
-  const [pick, setPick] = useState(
-    route.params.dunzo.message == 'Not serviceable' ||
-      route.params.dunzo.message ==
-        'Selected Location is out of Delivery Area, proceed with Store Pickup'
-      ? 'checked'
-      : 'unchecked',
-  );
+  // const [dunzo, setDunzo] = useState('checked');
+  // const [pick, setPick] = useState();
+  // const [selfdelivery, setSelfdelivery] = useState('unchecked');
   const [mcpg, setMcpg] = useState('checked');
+
   const [online, setOnline] = useState('checked');
   const [cash, setCash] = useState('unchecked');
   const inputRef = React.useRef();
@@ -63,7 +59,26 @@ const Payment = ({route}) => {
   const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
   const [toggleCheckBox2, setToggleCheckBox2] = useState(true);
   const coupon = useSelector(state => state.Coupon);
-  console.log('this is coupon', coupon);
+  const getIntialCode = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let code = Object.values(value)[0].code;
+
+    return code;
+  };
+  const getIntialPrice = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let price = Object.values(value)[0].cost;
+    return price;
+  };
+  const getIntialMethod = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let title = Object.values(value)[0].title;
+
+    return title;
+  };
+  const [shipingOption, setShipingOption] = useState(getIntialCode());
+  const [shipingPrice, setShippingPrice] = useState(getIntialPrice());
+  const [shippingMethod, setShippingMethod] = useState(getIntialMethod());
   const dispatch = useDispatch();
   const [qty, setQty] = useState('');
   const [product, setProduct] = useState();
@@ -76,12 +91,6 @@ const Payment = ({route}) => {
     }
   }, [isFocused]);
 
-  const handleBackButtonClick = () => {
-    // setData()
-    navigation.goBack();
-    return true;
-  };
-
   const confirmOrder = async () => {
     if (qty == null) {
       Toast.show('Please enter product quantity');
@@ -91,11 +100,12 @@ const Payment = ({route}) => {
       const total = data.totals[2].text;
       const subTotal = data.totals[0].text;
       const shippingPrice = data.totals[1].text;
+
       if (toggleCheckBox1 == false) {
         Toast.show('Please select Privacy Policy');
       } else if (toggleCheckBox2 == false) {
         Toast.show('Please select Term & Conditions');
-      } else if (pick == 'checked' && state == 0) {
+      } else if (shipingOption == 'pickup.pickup' && state == 0) {
         Toast.show('Please select Pickup Time');
       } else {
         try {
@@ -138,16 +148,11 @@ const Payment = ({route}) => {
           data.append('shipping_country', address.country);
           data.append('shipping_zone_id', address.zone_id);
           data.append('shipping_zone', address.zone);
-          data.append(
-            'shipping_method',
-            pick == 'checked' ? 'Pickup From Store' : 'Dunzo Delivery',
-          );
+          data.append('shipping_method', shippingMethod);
           data.append('shipping_latitude', route.params.lat);
           data.append('shipping_longitude', route.params.lng);
-          data.append(
-            'shipping_code',
-            pick == 'checked' ? 'pickup.pickup' : 'dunzo.dunzo',
-          );
+          data.append('shipping_code', shipingOption);
+
           // data.append('payment_method', pick=='checked'?'Pickup From Store':'Dunzo Delivery');
           data.append('ip', '');
           data.append('user_agent', '');
@@ -238,6 +243,7 @@ const Payment = ({route}) => {
           }
         } catch (error) {
           setFetching(false);
+          console.log(error);
         }
       }
     }
@@ -246,6 +252,7 @@ const Payment = ({route}) => {
   const firstCall = async msg => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     const store_id = await AsyncStorage.getItem(Storage.store_id);
+
     try {
       setFetching(true);
       const data = new FormData();
@@ -253,18 +260,8 @@ const Payment = ({route}) => {
       data.append('store_id', store_id);
       data.append('customer_id', customer_id);
       data.append('coupon', coupon);
-      data.append(
-        'shipping_code',
-        route.params.dunzo.message == 'Not serviceable' ||
-          route.params.dunzo.message ==
-            'Selected Location is out of Delivery Area, proceed with Store Pickup'
-          ? selector.shipping_methods.pickup.quote.pickup.code
-          : selector.shipping_methods.dunzo.quote.dunzo.code,
-      );
-      data.append(
-        'shipping_cost',
-        route.params.dunzo.status == false ? 0 : route.params.dunzo.price,
-      );
+      data.append('shipping_code', shipingOption);
+      data.append('shipping_cost', shipingPrice);
       const response = await axios({
         method: 'POST',
         data,
@@ -298,7 +295,19 @@ const Payment = ({route}) => {
       }
     } catch (error) {
       setFetching(false);
+      console.log('EEEEEEEEEEE', error);
     }
+  };
+  const manageShipping = async (code, price, method) => {
+    if (code != 'pickup.pickup') {
+      setState(0);
+    }
+    setShippingPrice(price);
+    setShipingOption(code);
+    setShippingMethod(method);
+
+    manageRadioDunzo(code, price);
+    console.log(data.totals[2].text);
   };
   const ApplyCoupon = async coupn => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
@@ -311,9 +320,9 @@ const Payment = ({route}) => {
       data.append('customer_id', customer_id);
       data.append('store_id', id);
       data.append('coupon', coupn);
+      data.append('shipping_code', shipingOption);
+      data.append('shipping_cost', shipingPrice);
 
-      // console.log('sendCCCCCCCCCCCCCC', coupn);
-      // console.log('sendCCCCCCCCCCCCCC', customer_id);
       const response = await axios({
         method: 'POST',
         data,
@@ -321,26 +330,26 @@ const Payment = ({route}) => {
           'content-type': 'multipart/form-data',
           Accept: 'multipart/form-data',
         },
-        url: 'https://merwans.co.in/index.php?route=api/apiorder/applyCoupon',
+        url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
       });
-      // console.log('FFFFFFFFFFFFFFFFFFFFFFFFF', response.data);
-      if (response.data.coupon_status) {
+
+      if (response?.data?.coupon_status) {
         setData(response.data);
         setProduct(response.data.products);
         setTotal(response.data.totals);
 
-        setInput(response.data.coupon);
+        setInput('');
         dispatch({
           type: 'add_coupon',
           payload: response.data.coupon,
         });
 
         setFetching(false);
-        Toast.show(response.data.message);
+        Toast.show('Coupon Applied');
       } else {
         setFetching(false);
 
-        Toast.show(response.data.message);
+        Toast.show('Invalid or Expiered Coupon');
         dispatch({
           type: 'remove_coupon',
         });
@@ -360,9 +369,9 @@ const Payment = ({route}) => {
       data.append('customer_id', customer_id);
       data.append('store_id', id);
       data.append('coupon', coupn);
+      data.append('shipping_code', shipingOption);
+      data.append('shipping_cost', shipingPrice);
 
-      console.log('sendCCCCCCCCCCCCCC', coupn);
-      console.log('sendCCCCCCCCCCCCCC', customer_id);
       const response = await axios({
         method: 'POST',
         data,
@@ -370,9 +379,9 @@ const Payment = ({route}) => {
           'content-type': 'multipart/form-data',
           Accept: 'multipart/form-data',
         },
-        url: 'https://merwans.co.in/index.php?route=api/apiorder2/cart',
+        url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
       });
-      console.log('FFFFFFFFFFFFFFFFFFFFFFFFF', response.data);
+      // console.log('FFFFFFFFFFFFFFFFFFFFFFFFF', response.data);
       if (response.data.coupon_status) {
         setData(response.data);
         setProduct(response.data.products);
@@ -401,7 +410,7 @@ const Payment = ({route}) => {
     }
   };
 
-  const manageRadioDunzo = async () => {
+  const manageRadioDunzo = async (code, price) => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     try {
       setFetching(true);
@@ -409,11 +418,10 @@ const Payment = ({route}) => {
       data.append('api_token', '123456');
       data.append('customer_id', customer_id);
       data.append('coupon', coupon);
-      data.append(
-        'shipping_code',
-        selector.shipping_methods.dunzo.quote.dunzo.code,
-      );
-      data.append('shipping_cost', route.params.dunzo.price);
+      data.append('coupon', coupon);
+      data.append('shipping_code', code);
+      data.append('shipping_cost', price);
+
       const response = await axios({
         method: 'POST',
         data,
@@ -421,7 +429,7 @@ const Payment = ({route}) => {
           'content-type': 'multipart/form-data',
           Accept: 'multipart/form-data',
         },
-        url: 'https://merwans.co.in/index.php?route=api/apiorder2/cart',
+        url: 'https://merwans.co.in/index.php?route=api/apiorder/cart',
       });
       if (response.data) {
         setData(response.data);
@@ -436,52 +444,51 @@ const Payment = ({route}) => {
       setFetching(false);
     }
   };
-  const manageRadioPick = async () => {
-    const customer_id = await AsyncStorage.getItem(Storage.customer_id);
-    try {
-      setFetching(true);
-      const data = new FormData();
-      data.append('api_token', '123456');
-      data.append('customer_id', customer_id);
-      data.append('coupon', coupon);
-      data.append(
-        'shipping_code',
-        selector.shipping_methods.pickup.quote.pickup.code,
-      );
-      data.append('shipping_cost', 0);
-      const response = await axios({
-        method: 'POST',
-        data,
-        headers: {
-          'content-type': 'multipart/form-data',
-          Accept: 'multipart/form-data',
-        },
-        url: 'https://merwans.co.in/index.php?route=api/apiorder2/cart',
-      });
+  // const manageRadioPick = async () => {
+  //   const customer_id = await AsyncStorage.getItem(Storage.customer_id);
+  //   try {
+  //     setFetching(true);
+  //     const data = new FormData();
+  //     data.append('api_token', '123456');
+  //     data.append('customer_id', customer_id);
+  //     data.append('coupon', coupon);
+  //     data.append(
+  //       'shipping_code',
+  //       selector.shipping_methods.pickup.quote.pickup.code,
+  //     );
+  //     data.append('shipping_cost', 0);
+  //     const response = await axios({
+  //       method: 'POST',
+  //       data,
+  //       headers: {
+  //         'content-type': 'multipart/form-data',
+  //         Accept: 'multipart/form-data',
+  //       },
+  //       url: 'https://merwans.co.in/index.php?route=api/apiorder2/cart',
+  //     });
 
-      if (response.data) {
-        setData(response.data);
-        setProduct(response.data.products);
-        setTotal(response.data.totals);
-        setFetching(false);
-      } else {
-        setFetching(false);
-      }
-    } catch (error) {
-      setFetching(false);
-    }
-  };
+  //     if (response.data) {
+  //       setData(response.data);
+  //       setProduct(response.data.products);
+  //       setTotal(response.data.totals);
+  //       setFetching(false);
+  //     } else {
+  //       setFetching(false);
+  //     }
+  //   } catch (error) {
+  //     setFetching(false);
+  //   }
+  // };
 
-  const manageDunzo = () => {
-    setDunzo('checked');
-    setPick('unchecked');
-    manageRadioDunzo();
-  };
-  const managePick = () => {
-    setDunzo('unchecked');
-    setPick('checked');
-    manageRadioPick();
-  };
+  // const manageDunzo = () => {
+  //   setDunzo('checked');
+  //   setPick('unchecked');
+  // };
+  // const managePick = () => {
+  //   setDunzo('unchecked');
+  //   setPick('checked');
+  //   manageRadioPick();
+  // };
   const manageMcpg = () => {
     setMcpg('checked');
     setOnline('unchecked');
@@ -501,6 +508,7 @@ const Payment = ({route}) => {
   const updateCart = async item => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     if (item.quantity) {
+      console.log('this is coutpon', coupon);
       try {
         setFetching(true);
         const data = new FormData();
@@ -509,16 +517,9 @@ const Payment = ({route}) => {
         data.append('cart_id', item.cart_id);
         data.append('coupon', coupon);
         data.append('quantity', parseInt(item.quantity) - 1);
-        data.append(
-          'shipping_code',
-          dunzo == 'checked'
-            ? selector.shipping_methods.dunzo.quote.dunzo.code
-            : selector.shipping_methods.pickup.quote.pickup.code,
-        );
-        data.append(
-          'shipping_cost',
-          dunzo == 'checked' ? route.params.dunzo.price : 0,
-        );
+        data.append('shipping_code', shipingOption);
+        data.append('shipping_cost', shipingPrice);
+
         const response = await axios({
           method: 'POST',
           data,
@@ -528,7 +529,7 @@ const Payment = ({route}) => {
           },
           url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
         });
-
+        console.log('this is shiipiggigig', JSON.stringify(response.data));
         if (response.data) {
           setData(response.data);
           setProduct(response.data.products);
@@ -553,16 +554,8 @@ const Payment = ({route}) => {
       data.append('cart_id', item.cart_id);
       data.append('quantity', parseInt(item.quantity) + 1);
       data.append('coupon', coupon);
-      data.append(
-        'shipping_code',
-        dunzo == 'checked'
-          ? selector.shipping_methods.dunzo.quote.dunzo.code
-          : selector.shipping_methods.pickup.quote.pickup.code,
-      );
-      data.append(
-        'shipping_cost',
-        dunzo == 'checked' ? route.params.dunzo.price : 0,
-      );
+      data.append('shipping_code', shipingOption);
+      data.append('shipping_cost', shipingPrice);
       const response = await axios({
         method: 'POST',
         data,
@@ -572,7 +565,7 @@ const Payment = ({route}) => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiorder/update_to_cart',
       });
-
+      console.log('this is shiipiggigig', JSON.stringify(response.data));
       if (response.data) {
         setData(response.data);
         setProduct(response.data.products);
@@ -600,16 +593,8 @@ const Payment = ({route}) => {
         data.append('cart_id', item.cart_id);
         data.append('quantity', Number(val).toFixed());
         data.append('coupon', coupon);
-        data.append(
-          'shipping_code',
-          dunzo == 'checked'
-            ? selector.shipping_methods.dunzo.quote.dunzo.code
-            : selector.shipping_methods.pickup.quote.pickup.code,
-        );
-        data.append(
-          'shipping_cost',
-          dunzo == 'checked' ? route.params.dunzo.price : 0,
-        );
+        data.append('shipping_code', shipingOption);
+        data.append('shipping_cost', shipingPrice);
         const response = await axios({
           method: 'POST',
           data,
@@ -668,9 +653,134 @@ const Payment = ({route}) => {
               <View style={{paddingHorizontal: 5}}>
                 <View style={[styles.ship, {marginTop: 15}]}>
                   <Text style={styles.shipp}>Shipping Method</Text>
-                  {route.params.dunzo.message == 'Not serviceable' ||
-                  route.params.dunzo.message ==
-                    'Selected Location is out of Delivery Area, proceed with Store Pickup' ? (
+                  <View style={{height: 14}} />
+                  {Object.values(selector.shipping_methods).map(
+                    (item, index) => {
+                      return (
+                        <View>
+                          <View style={styles.checkV}>
+                            <Fast />
+                            <View style={[{marginLeft: 6}]}>
+                              {/* <RadioButton
+                              value="first"
+                              status={index === 0 ? 'checked' : 'unchecked'}
+                              onPress={() => manageDunzo()}
+                              uncheckedColor="#ED1B1A"
+                              color="#ED1B1A"
+                            /> */}
+
+                              {version == 'ios' ? (
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    manageShipping(
+                                      Object.values(item.quote)[0].code,
+                                      Object.values(item.quote)[0].cost,
+                                      Object.values(item.quote)[0].title,
+                                    )
+                                  }
+                                  style={{margin: 5}}>
+                                  <Done width={26} height={25} />
+                                </TouchableOpacity>
+                              ) : (
+                                <RadioButton
+                                  value="first"
+                                  status={
+                                    Object.values(item.quote)[0].code ===
+                                    shipingOption
+                                      ? 'checked'
+                                      : 'unchecked'
+                                  }
+                                  onPress={() =>
+                                    manageShipping(
+                                      Object.values(item.quote)[0].code,
+                                      Object.values(item.quote)[0].cost,
+                                      item.title,
+                                    )
+                                  }
+                                  uncheckedColor="#ED1B1A"
+                                  color="#ED1B1A"
+                                />
+                              )}
+                            </View>
+                            <Text style={styles.dunzo}>{`${
+                              Object.values(item.quote)[0].title
+                            } - ${Object.values(item.quote)[0].text}`}</Text>
+                          </View>
+                          {Object.values(item.quote)[0].code ===
+                            'pickup.pickup' &&
+                          shipingOption === 'pickup.pickup' ? (
+                            <View style={styles.view1}>
+                              <Text style={styles.time}>{'Pickup Time'}</Text>
+                              <View style={styles.drop}>
+                                <RNPickerSelect
+                                  onValueChange={val => setState(val)}
+                                  items={selector1}
+                                  style={{
+                                    inputAndroid: {
+                                      color: '#000000',
+                                      width: '100%',
+                                      fontSize: 14,
+                                      marginBottom: 0,
+                                      fontFamily: 'Montserrat-Medium',
+                                      includeFontPadding: false,
+                                      padding: 0,
+                                      margin: 0,
+                                      marginRight: 20,
+                                      // borderWidth:1,
+                                      paddingHorizontal: 8,
+                                    },
+                                    inputIOS: {
+                                      color: '#000000',
+                                      width: '100%',
+                                      fontSize: 14,
+                                      marginBottom: 0,
+                                      fontFamily: 'Montserrat-Medium',
+                                      includeFontPadding: false,
+                                      padding: 0,
+                                      margin: 0,
+                                      marginRight: 20,
+                                      paddingHorizontal: 8,
+                                    },
+                                    placeholder: {
+                                      color: '#000000',
+                                      width: '100%',
+                                      fontSize: 14,
+                                      marginBottom: 0,
+                                      fontFamily: 'Montserrat-Medium',
+                                      includeFontPadding: false,
+                                      padding: 0,
+                                      margin: 0,
+                                      marginRight: 20,
+                                    },
+                                  }}
+                                  value={
+                                    state == null || state == 0 ? '' : state
+                                  }
+                                  useNativeAndroidPickerStyle={false}
+                                  placeholder={{label: 'Time', value: ''}}
+                                  Icon={() => (
+                                    <Image
+                                      style={{
+                                        width: 10,
+                                        height: 6,
+                                        marginRight: 8,
+                                        marginTop: 8,
+                                      }}
+                                      source={require('../../../assets/Icon/down.png')}
+                                    />
+                                  )}
+                                />
+                              </View>
+                            </View>
+                          ) : null}
+                        </View>
+                      );
+                    },
+                  )}
+                  {/* {route.params.dunzo.isDunzoActive &&
+                  (route.params.dunzo.message == 'Not serviceable' ||
+                    route.params.dunzo.message ==
+                      'Selected Location is out of Delivery Area, proceed with Store Pickup') ? (
                     <View style={{height: 14}} />
                   ) : (
                     <View style={styles.checkV}>
@@ -708,7 +818,7 @@ const Payment = ({route}) => {
                     </View>
                   )}
                   <View style={styles.pick}>
-                    {/* <Delivery /> */}
+                    {/* <Delivery />
                     <Image
                       style={{width: 20, height: 20}}
                       source={require('../../../assets/Icon/shop.png')}
@@ -742,70 +852,7 @@ const Payment = ({route}) => {
                       style={
                         styles.dunzo
                       }>{`${selector.shipping_methods.pickup.quote.pickup.title} - ${selector.shipping_methods.pickup.quote.pickup.text}`}</Text>
-                  </View>
-                  {pick == 'checked' ? (
-                    <View style={styles.view1}>
-                      <Text style={styles.time}>{'Pickup Time'}</Text>
-                      <View style={styles.drop}>
-                        <RNPickerSelect
-                          onValueChange={val => setState(val)}
-                          items={selector1}
-                          style={{
-                            inputAndroid: {
-                              color: '#000000',
-                              width: '100%',
-                              fontSize: 14,
-                              marginBottom: 0,
-                              fontFamily: 'Montserrat-Medium',
-                              includeFontPadding: false,
-                              padding: 0,
-                              margin: 0,
-                              marginRight: 20,
-                              // borderWidth:1,
-                              paddingHorizontal: 8,
-                            },
-                            inputIOS: {
-                              color: '#000000',
-                              width: '100%',
-                              fontSize: 14,
-                              marginBottom: 0,
-                              fontFamily: 'Montserrat-Medium',
-                              includeFontPadding: false,
-                              padding: 0,
-                              margin: 0,
-                              marginRight: 20,
-                              paddingHorizontal: 8,
-                            },
-                            placeholder: {
-                              color: '#000000',
-                              width: '100%',
-                              fontSize: 14,
-                              marginBottom: 0,
-                              fontFamily: 'Montserrat-Medium',
-                              includeFontPadding: false,
-                              padding: 0,
-                              margin: 0,
-                              marginRight: 20,
-                            },
-                          }}
-                          value={state == null || state == 0 ? '' : state}
-                          useNativeAndroidPickerStyle={false}
-                          placeholder={{label: 'Time', value: ''}}
-                          Icon={() => (
-                            <Image
-                              style={{
-                                width: 10,
-                                height: 6,
-                                marginRight: 8,
-                                marginTop: 8,
-                              }}
-                              source={require('../../../assets/Icon/down.png')}
-                            />
-                          )}
-                        />
-                      </View>
-                    </View>
-                  ) : null}
+                  </View> */}
                 </View>
 
                 <View style={[styles.ship, {marginTop: 15}]}>
@@ -1079,7 +1126,7 @@ const Payment = ({route}) => {
                                           // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
                                           newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
                                           setProduct(newArr);
-                                          console.log('this i value', val);
+                                          //console.log('this i value', val);
                                         }
                                         {
                                           let newArr = [...product]; // copying the old datas array

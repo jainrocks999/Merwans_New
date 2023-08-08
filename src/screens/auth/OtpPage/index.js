@@ -58,7 +58,8 @@ const Otp = ({route}) => {
           </View>
           <View style={styles.please}>
             <Text style={styles.enter}>
-              Please Enter The 4 Digit Code Sent To
+              Please Enter The 4 Digit Code Sent To Your Registered Mobile
+              Number
             </Text>
           </View>
           <View style={{paddingHorizontal: 45, marginTop: 12}}>
@@ -66,11 +67,9 @@ const Otp = ({route}) => {
               <OtpInputs
                 handleChange={code => setCode(code)}
                 numberOfInputs={4}
-                defaultValue={''}
                 autofillFromClipboard={true}
                 keyboardType={'numeric'}
                 style={styles.all}
-                //value={}
                 inputContainerStyles={[styles.otp]}
                 inputStyles={styles.box}
               />

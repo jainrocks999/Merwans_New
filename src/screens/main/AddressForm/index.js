@@ -100,11 +100,13 @@ const AddressForm = ({route}) => {
       Toast.show('Please select state');
     } else if (values.city == '') {
       Toast.show('Please enter city name');
+    } else if (values.address2 == '') {
+      Toast.show('Please enter Flat or Building detail');
     } else {
       try {
         setFetching(true);
         const data = new FormData();
-        data.append('api_token', '');
+        data.append('api_token', '123456');
         data.append('customer_id', customer_id);
         data.append('type', type);
         data.append('company', 'Merwans');
@@ -127,7 +129,7 @@ const AddressForm = ({route}) => {
           },
           url: 'https://merwans.co.in/index.php?route=api/apiorder/addressAdd',
         });
-
+        console.log('this is address', JSON.stringify(response.data));
         if (response.data.status == true) {
           Geocoder.from(values.address1)
             .then(json => {
@@ -161,6 +163,7 @@ const AddressForm = ({route}) => {
           setFetching(false);
         } else {
           setFetching(false);
+          Toast.show(response.data.message);
         }
       } catch (error) {
         throw error;

@@ -1,5 +1,5 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, LogBox, Alert} from 'react-native';
+import {View, Text, SafeAreaView, LogBox, Platform, Alert} from 'react-native';
 import Navigation from './src/navigation/index';
 import {Provider} from 'react-redux';
 import Store from './src/Redux/Store';
@@ -8,7 +8,6 @@ import {enableLatestRenderer} from 'react-native-maps';
 import FlashMessage from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
 import Dialog, {DialogContent} from 'react-native-popup-dialog';
-
 enableLatestRenderer();
 const App = () => {
   LogBox.ignoreLogs(['Warning: ...']);

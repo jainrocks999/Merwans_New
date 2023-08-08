@@ -44,6 +44,7 @@ const Payment = () => {
   const [isFetching, setFetching] = useState(false);
   const [data, setData] = useState('');
   const selector = useSelector(state => state.Auth.Address);
+  console.log('SEELELLEELL', selector);
   const isFetching1 = useSelector(state => state.Auth.isFetching);
   const dispatch = useDispatch();
   const [qty, setQty] = useState('');
@@ -53,6 +54,7 @@ const Payment = () => {
   const coupon = useSelector(state => state.Coupon);
   const [total, setTotal] = useState([]);
   const [input, setInut] = useState(useSelector(state => state.Coupon));
+  const detail = useSelector(state => state.Auth.UserDetail);
 
   useEffect(() => {
     if (isFocused) {
@@ -113,6 +115,23 @@ const Payment = () => {
       type: 'Shipping_List_Request',
       url: 'apiorder/shippingMethods',
       navigation: navigation,
+      store_id: id,
+      customer_id: customer_id,
+      address_id: selector.address_id,
+      firstname: detail.firstname,
+      lastname: detail.lastname,
+      company: '',
+      address_1: selector.address_1,
+      address_2: selector.address_2,
+      postcode: selector.postcode,
+      area_id: 0,
+      city: selector.city,
+      zone_id: selector.zone_id,
+      mobile: detail.telephone,
+      alternate_mobile: detail.telephone,
+      zone: selector.zone,
+      zone_code: '',
+      address_format: '',
     });
 
     dispatch({
@@ -395,6 +414,7 @@ const Payment = () => {
     navigation.navigate('AddressForm', {from: 'cart'});
   };
   const manageDunzo = async () => {
+    console.log('called');
     if (qty == null) {
       Toast.show('Please enter product quantity');
     } else {
@@ -423,7 +443,59 @@ const Payment = () => {
                 },
                 url: 'https://merwans.co.in/index.php?route=api/apiorder/dunzo',
               });
-              if (response.data.status) {
+              console.log('this is dunzo respones', response.data);
+              if (response.data.isDunzoActive) {
+                if (response.data.status) {
+                  navigation.navigate('Quick', {
+                    data: data,
+                    dunzo: response.data,
+                    lat: location.lat,
+                    long: location.lng,
+                    instruction: instruction,
+                  });
+                  setFetching(false);
+                } else if (
+                  response.data.dunzo == false &&
+                  response.data.status == false
+                ) {
+                  // Toast.show(response.data.message);
+                  // setVisible(true);
+
+                  // navigation.navigate('Quick', {
+                  //   data: data,
+                  //   dunzo: response.data,
+                  //   lat: location.lat,
+                  //   long: location.lng,
+                  //   instruction: instruction,
+                  // });
+                  Alert.alert(
+                    'Selected Location is out of Delivery Area!',
+                    `\nDo you want to Change Address/Store?`,
+                    [
+                      {
+                        text: 'YES',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'NO',
+                        onPress: () =>
+                          navigation.navigate('Quick', {
+                            data: data,
+                            dunzo: response.data,
+                            lat: location.lat,
+                            long: location.lng,
+                            instruction: instruction,
+                          }),
+                      },
+                    ],
+                  );
+                  setFetching(false);
+                } else {
+                  Toast.show(response.data.message);
+                  // alert('gggj');
+                  setFetching(false);
+                }
+              } else {
                 navigation.navigate('Quick', {
                   data: data,
                   dunzo: response.data,
@@ -431,46 +503,6 @@ const Payment = () => {
                   long: location.lng,
                   instruction: instruction,
                 });
-                setFetching(false);
-              } else if (
-                response.data.dunzo == false &&
-                response.data.status == false
-              ) {
-                // Toast.show(response.data.message)
-                // setVisible(true)
-                // manageStore()
-                // navigation.navigate('Quick', {
-                //     data: data,
-                //     dunzo: response.data,
-                //     lat: location.lat,
-                //     long: location.lng,
-                //     instruction: instruction
-                // })
-                Alert.alert(
-                  'Selected Location is out of Delivery Area!',
-                  `\nDo you want to Change Address/Store?`,
-                  [
-                    {
-                      text: 'YES',
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'NO',
-                      onPress: () =>
-                        navigation.navigate('Quick', {
-                          data: data,
-                          dunzo: response.data,
-                          lat: location.lat,
-                          long: location.lng,
-                          instruction: instruction,
-                        }),
-                    },
-                  ],
-                );
-                setFetching(false);
-              } else {
-                Toast.show(response.data.message);
-                setFetching(false);
               }
             } catch (error) {
               setFetching(false);
@@ -479,7 +511,10 @@ const Payment = () => {
             Toast.show('Something went wrong');
           }
         })
-        .catch(error => console.warn(error));
+        .catch(error => {
+          console.warn('errrommm', error);
+          alert('Something went wrong');
+        });
     }
   };
 
