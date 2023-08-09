@@ -12,7 +12,6 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
-import BottomTab from '../../../components/BottomTab';
 import {
   useNavigation,
   DrawerActions,
@@ -95,9 +94,10 @@ const Payment = ({route}) => {
     if (qty == null) {
       Toast.show('Please enter product quantity');
     } else {
+      const n = total.length - 1;
       const customer_id = await AsyncStorage.getItem(Storage.customer_id);
       const store_id = await AsyncStorage.getItem(Storage.store_id);
-      const total = data.totals[2].text;
+      const total2 = data.totals[n].text;
       const subTotal = data.totals[0].text;
       const shippingPrice = data.totals[1].text;
 
@@ -157,7 +157,7 @@ const Payment = ({route}) => {
           data.append('ip', '');
           data.append('user_agent', '');
           data.append('comment', '');
-          data.append('total', total);
+          data.append('total', total2);
           data.append('privacy', toggleCheckBox1);
           data.append('agree', toggleCheckBox2);
           data.append('subscribe', toggleCheckBox);
@@ -174,6 +174,7 @@ const Payment = ({route}) => {
           data.append('shippingPrice', shippingPrice);
           data.append('subTotal', subTotal);
           data.append('pickup_time', state);
+          data.append('coupon', coupon);
 
           const response = await axios({
             method: 'POST',
@@ -199,6 +200,7 @@ const Payment = ({route}) => {
                 },
                 url: 'https://merwans.co.in/index.php?route=api/apiorder/addInstruction',
               });
+
               if (responsedata1.data.status == true) {
                 // setFetching(false)
 
@@ -208,7 +210,7 @@ const Payment = ({route}) => {
                   data1.append('token', 'abcd1234');
                   data1.append('store_id', store_id);
                   data1.append('order_id', response.data.order_id);
-                  data1.append('amount', total);
+                  data1.append('amount', total2);
                   const responsedata = await axios({
                     method: 'POST',
                     data: data1,
