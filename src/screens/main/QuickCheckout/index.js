@@ -150,10 +150,8 @@ const Payment = ({route}) => {
           data.append('shipping_zone', address.zone);
           data.append('shipping_method', shippingMethod);
           data.append('shipping_latitude', route.params.lat);
-          data.append('shipping_longitude', route.params.lng);
+          data.append('shipping_longitude', route.params.long);
           data.append('shipping_code', shipingOption);
-
-          // data.append('payment_method', pick=='checked'?'Pickup From Store':'Dunzo Delivery');
           data.append('ip', '');
           data.append('user_agent', '');
           data.append('comment', '');
@@ -202,8 +200,6 @@ const Payment = ({route}) => {
               });
 
               if (responsedata1.data.status == true) {
-                // setFetching(false)
-
                 try {
                   setFetching(true);
                   const data1 = new FormData();
