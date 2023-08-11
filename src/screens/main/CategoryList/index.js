@@ -497,159 +497,178 @@ const CategoryList = () => {
               ) : null}
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity
-              onPress={() => handleWidth()}
-              style={[
-                styles.container,
-                {
-                  width: 122,
-                  height: 30,
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                },
-              ]}>
-              <Search />
-              <Text style={[styles.search, {marginTop: 0}]}>Search</Text>
-            </TouchableOpacity>
+            <>
+              {filteredDataSource?.length > 0 ? (
+                <TouchableOpacity
+                  onPress={() => handleWidth()}
+                  style={[
+                    styles.container,
+                    {
+                      width: 122,
+                      height: 30,
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                    },
+                  ]}>
+                  <Search />
+                  <Text style={[styles.search, {marginTop: 0}]}>Search</Text>
+                </TouchableOpacity>
+              ) : (
+                <></>
+              )}
+            </>
           )}
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{paddingHorizontal: 10}}>
-            {category.subcatname || catname.subcatname ? (
-              <View style={styles.row1}>
-                <Text style={styles.cakes}>
-                  {catname ? catname.catname : category.catname}
-                </Text>
-                {category.subcatname == undefined ||
-                catname.subcatname == undefined ? null : (
-                  <Text style={styles.black}>{` /  ${
-                    catname ? catname.subcatname : category.subcatname
-                  }`}</Text>
-                )}
-              </View>
-            ) : (
-              <View />
-            )}
-            <View>
-              <FlatList
-                data={filteredDataSource}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.product_id}
-                removeClippedSubviews={true}
-                updateCellsBatchingPeriod={10}
-                maxToRenderPerBatch={5}
-                initialNumToRender={5}
-                renderItem={({item, index}) => (
-                  <View
-                    style={[
-                      styles.view,
-                      {borderBottomWidth: index == length - 1 ? 0 : 0.5},
-                    ]}>
-                    <View style={{width: '56%', marginTop: 20}}>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        {item.p_type == 1 ? (
+        {filteredDataSource?.length > 0 ? (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={{paddingHorizontal: 10}}>
+              {category.subcatname || catname.subcatname ? (
+                <View style={styles.row1}>
+                  <Text style={styles.cakes}>
+                    {catname ? catname.catname : category.catname}
+                  </Text>
+                  {category.subcatname == undefined ||
+                  catname.subcatname == undefined ? null : (
+                    <Text style={styles.black}>{` /  ${
+                      catname ? catname.subcatname : category.subcatname
+                    }`}</Text>
+                  )}
+                </View>
+              ) : (
+                <View />
+              )}
+              <View>
+                <FlatList
+                  data={filteredDataSource}
+                  showsVerticalScrollIndicator={false}
+                  keyExtractor={item => item.product_id}
+                  removeClippedSubviews={true}
+                  updateCellsBatchingPeriod={10}
+                  maxToRenderPerBatch={5}
+                  initialNumToRender={5}
+                  renderItem={({item, index}) => (
+                    <View
+                      style={[
+                        styles.view,
+                        {borderBottomWidth: index == length - 1 ? 0 : 0.5},
+                      ]}>
+                      <View style={{width: '56%', marginTop: 20}}>
+                        <View
+                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          {item.p_type == 1 ? (
+                            <TouchableOpacity
+                              style={[styles.view1, {borderColor: '#0FAF33'}]}>
+                              <View
+                                style={[
+                                  styles.border,
+                                  {backgroundColor: '#0FAF33'},
+                                ]}
+                              />
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={[styles.view1, {borderColor: '#ED1B1A'}]}>
+                              <View
+                                style={[
+                                  styles.border,
+                                  {backgroundColor: '#ED1B1A'},
+                                ]}
+                              />
+                            </TouchableOpacity>
+                          )}
+
+                          <Text style={[styles.title]}>{item.name}</Text>
+                        </View>
+
+                        <View style={styles.round}>
+                          <Stars
+                            disabled={true}
+                            default={item.rating}
+                            spacing={3}
+                            count={5}
+                            starSize={12}
+                            fullStar={<Blank />}
+                            emptyStar={<Full />}
+                          />
+                        </View>
+                        <View style={styles.views}>
+                          <Text style={styles.price}>{item.price}</Text>
+                        </View>
+                        <View style={{marginTop: 6}}>
+                          <Text style={styles.desc}>{item.description}</Text>
+                        </View>
+                        {item.favourite == false ? (
                           <TouchableOpacity
-                            style={[styles.view1, {borderColor: '#0FAF33'}]}>
-                            <View
-                              style={[
-                                styles.border,
-                                {backgroundColor: '#0FAF33'},
-                              ]}
-                            />
+                            onPress={() => addWish(item.product_id)}
+                            style={styles.image}>
+                            <Heart height={14} width={14} />
                           </TouchableOpacity>
                         ) : (
                           <TouchableOpacity
-                            style={[styles.view1, {borderColor: '#ED1B1A'}]}>
-                            <View
-                              style={[
-                                styles.border,
-                                {backgroundColor: '#ED1B1A'},
-                              ]}
-                            />
+                            // disabled
+                            onPress={() => addWish(item.product_id)}
+                            style={[styles.image]}>
+                            <HeartF height={14} width={14} />
                           </TouchableOpacity>
                         )}
-
-                        <Text style={[styles.title]}>{item.name}</Text>
+                        <View style={{height: 15}} />
                       </View>
 
-                      <View style={styles.round}>
-                        <Stars
-                          disabled={true}
-                          default={item.rating}
-                          spacing={3}
-                          count={5}
-                          starSize={12}
-                          fullStar={<Blank />}
-                          emptyStar={<Full />}
+                      <View style={styles.img}>
+                        <Image
+                          style={{
+                            height: 122,
+                            width: 122,
+                            borderRadius: 15,
+                            opacity:
+                              item.quantity > 0 && item.p_status == 1 ? 1 : 0.2,
+                          }}
+                          source={{uri: item.thumb}}
                         />
-                      </View>
-                      <View style={styles.views}>
-                        <Text style={styles.price}>{item.price}</Text>
-                      </View>
-                      <View style={{marginTop: 6}}>
-                        <Text style={styles.desc}>{item.description}</Text>
-                      </View>
-                      {item.favourite == false ? (
-                        <TouchableOpacity
-                          onPress={() => addWish(item.product_id)}
-                          style={styles.image}>
-                          <Heart height={14} width={14} />
-                        </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity
-                          // disabled
-                          onPress={() => addWish(item.product_id)}
-                          style={[styles.image]}>
-                          <HeartF height={14} width={14} />
-                        </TouchableOpacity>
-                      )}
-                      <View style={{height: 15}} />
-                    </View>
-
-                    <View style={styles.img}>
-                      <Image
-                        style={{
-                          height: 122,
-                          width: 122,
-                          borderRadius: 15,
-                          opacity:
-                            item.quantity > 0 && item.p_status == 1 ? 1 : 0.2,
-                        }}
-                        source={{uri: item.thumb}}
-                      />
-                      <View style={styles.iview}>
-                        {item.quantity > 0 && item.p_status == 1 ? (
-                          <TouchableOpacity
-                            delayPressIn={0}
-                            activeOpacity={1}
-                            onPress={() => productDetail(item.product_id)}
-                            style={styles.addCont}>
-                            <View />
-                            <Text style={styles.add}>Add</Text>
-                            <View style={{}}>
-                              <Plus />
-                            </View>
-                          </TouchableOpacity>
-                        ) : (
-                          <TouchableOpacity
-                            disabled
-                            delayPressIn={0}
-                            activeOpacity={1}
-                            onPress={() => productDetail(item.product_id)}
-                            style={styles.addCont1}>
-                            <Text style={styles.add1}>Out of stock</Text>
-                          </TouchableOpacity>
-                        )}
+                        <View style={styles.iview}>
+                          {item.quantity > 0 && item.p_status == 1 ? (
+                            <TouchableOpacity
+                              delayPressIn={0}
+                              activeOpacity={1}
+                              onPress={() => productDetail(item.product_id)}
+                              style={styles.addCont}>
+                              <View />
+                              <Text style={styles.add}>Add</Text>
+                              <View style={{}}>
+                                <Plus />
+                              </View>
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              disabled
+                              delayPressIn={0}
+                              activeOpacity={1}
+                              onPress={() => productDetail(item.product_id)}
+                              style={styles.addCont1}>
+                              <Text style={styles.add1}>Out of stock</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
                     </View>
-                  </View>
-                )}
-              />
-              <View style={{marginBottom: 60}} />
+                  )}
+                />
+                <View style={{marginBottom: 60}} />
+              </View>
             </View>
+          </ScrollView>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{textAlign: 'center', fontSize: 18, color: 'black'}}>
+              No Products Found
+            </Text>
           </View>
-        </ScrollView>
+        )}
         <View style={styles.bottom1}>
           <TouchableOpacity
             activeOpacity={0.1}

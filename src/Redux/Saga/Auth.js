@@ -273,18 +273,22 @@ function* categoryList(action) {
     const response = yield call(Api.fetchDataByPOST, action.url, data);
 
     if (response.status == true) {
-      yield put({
-        type: 'Category_List_Success',
-        payload: response.products,
-        payload1: response.category,
-      });
-      // Toast.show(response.message);
+      Toast.show(response.message);
       if (response.products.length > 0) {
-        action.navigation.navigate('CategoryList');
+        yield put({
+          type: 'Category_List_Success',
+          payload: response.products,
+          payload1: response.category,
+        });
+      } else {
+        yield put({
+          type: 'Category_List_Success',
+          payload: [],
+          payload1: response.category,
+        });
       }
+      action.navigation.navigate('CategoryList');
     } else {
-      // Toast.show(response.message);
-
       yield put({
         type: 'Category_List_Error',
       });
