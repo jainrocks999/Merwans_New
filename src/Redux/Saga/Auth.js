@@ -18,11 +18,11 @@ function* doLogin(action) {
         payload: response,
       });
       Toast.show(response.message);
-      AsyncStorage.setItem(Storage.customer_id, response.customer_id);
-      AsyncStorage.setItem(Storage.firstname, response.firstname);
-      AsyncStorage.setItem(Storage.lastname, response.lastname);
-      AsyncStorage.setItem(Storage.email, response.email);
-      AsyncStorage.setItem(Storage.telephone, response.telephone);
+      yield AsyncStorage.setItem(Storage.customer_id, response.customer_id);
+      yield AsyncStorage.setItem(Storage.firstname, response.firstname);
+      yield AsyncStorage.setItem(Storage.lastname, response.lastname);
+      yield AsyncStorage.setItem(Storage.email, response.email);
+      yield AsyncStorage.setItem(Storage.telephone, response.telephone);
       action.navigation.reset({
         index: 0,
         routes: [{name: 'Main'}],
@@ -58,11 +58,11 @@ function* doRegister(action) {
         payload: response,
       });
       Toast.show(response.message);
-      AsyncStorage.setItem(Storage.customer_id, response.customer_id);
-      AsyncStorage.setItem(Storage.firstname, response.firstname);
-      AsyncStorage.setItem(Storage.lastname, response.lastname);
-      AsyncStorage.setItem(Storage.email, response.email);
-      AsyncStorage.setItem(Storage.telephone, response.telephone);
+      yield AsyncStorage.setItem(Storage.customer_id, response.customer_id);
+      yield AsyncStorage.setItem(Storage.firstname, response.firstname);
+      yield AsyncStorage.setItem(Storage.lastname, response.lastname);
+      yield AsyncStorage.setItem(Storage.email, response.email);
+      yield AsyncStorage.setItem(Storage.telephone, response.telephone);
       action.navigation.reset({
         index: 0,
         routes: [{name: 'Main'}],
@@ -86,16 +86,19 @@ function* logout(action) {
     data.append('customer_id', action.customer_id);
     const response = yield call(Api.fetchDataByPOST, action.url, data);
     if (response.status == true) {
+      yield AsyncStorage.setItem(Storage.customer_id, '');
+      yield AsyncStorage.setItem(Storage.firstname, '');
+      yield AsyncStorage.setItem(Storage.lastname, '');
+      yield AsyncStorage.setItem(Storage.email, '');
+      yield AsyncStorage.setItem(Storage.telephone, '');
+      yield AsyncStorage.setItem(Storage.location, '');
       yield put({
         type: 'User_Logout_Success',
       });
-      // Toast.show(response.message);
-      action.navigation.navigate('Login');
-      AsyncStorage.setItem(Storage.customer_id, '');
-      AsyncStorage.setItem(Storage.firstname, '');
-      AsyncStorage.setItem(Storage.lastname, '');
-      AsyncStorage.setItem(Storage.email, '');
-      AsyncStorage.setItem(Storage.telephone, '');
+      action.navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
     } else {
       Toast.show(response.message);
       yield put({
@@ -127,10 +130,16 @@ function* editProfile(action) {
         payload: response,
       });
       // Toast.show(response.message);
-      AsyncStorage.setItem(Storage.firstname, response.user_data.firstname);
-      AsyncStorage.setItem(Storage.lastname, response.user_data.lastname);
-      AsyncStorage.setItem(Storage.email, response.user_data.email);
-      AsyncStorage.setItem(Storage.telephone, response.user_data.telephone);
+      yield AsyncStorage.setItem(
+        Storage.firstname,
+        response.user_data.firstname,
+      );
+      yield AsyncStorage.setItem(Storage.lastname, response.user_data.lastname);
+      yield AsyncStorage.setItem(Storage.email, response.user_data.email);
+      yield AsyncStorage.setItem(
+        Storage.telephone,
+        response.user_data.telephone,
+      );
 
       action.navigation.push('MyAccountPage');
     } else {
@@ -595,7 +604,7 @@ function* getAddress1(action) {
         payload: response.data,
       });
       action.navigation.navigate('Payment');
-      AsyncStorage.setItem('Address_id', action.address_id);
+      yield AsyncStorage.setItem('Address_id', action.address_id);
     } else {
       yield put({
         type: 'Get_Address_Error1',
@@ -624,7 +633,7 @@ function* getAddress2(action) {
       });
       Toast.show('Address add successfully');
       // action.navigation.navigate('Payment')
-      AsyncStorage.setItem('Address_id', action.address_id);
+      yield AsyncStorage.setItem('Address_id', action.address_id);
     } else {
       yield put({
         type: 'Get_Address_Error2',

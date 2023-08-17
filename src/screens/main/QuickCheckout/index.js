@@ -58,26 +58,10 @@ const Payment = ({route}) => {
   const [toggleCheckBox1, setToggleCheckBox1] = useState(true);
   const [toggleCheckBox2, setToggleCheckBox2] = useState(true);
   const coupon = useSelector(state => state.Coupon);
-  const getIntialCode = () => {
-    let value = Object.values(selector.shipping_methods)[0].quote;
-    let code = Object.values(value)[0].code;
 
-    return code;
-  };
-  const getIntialPrice = () => {
-    let value = Object.values(selector.shipping_methods)[0].quote;
-    let price = Object.values(value)[0].cost;
-    return price;
-  };
-  const getIntialMethod = () => {
-    let value = Object.values(selector.shipping_methods)[0].quote;
-    let title = Object.values(value)[0].title;
-
-    return title;
-  };
-  const [shipingOption, setShipingOption] = useState(getIntialCode());
-  const [shipingPrice, setShippingPrice] = useState(getIntialPrice());
-  const [shippingMethod, setShippingMethod] = useState(getIntialMethod());
+  const [shipingOption, setShipingOption] = useState('');
+  const [shipingPrice, setShippingPrice] = useState();
+  const [shippingMethod, setShippingMethod] = useState();
   const dispatch = useDispatch();
   const [qty, setQty] = useState('');
   const [product, setProduct] = useState();
@@ -89,6 +73,25 @@ const Payment = ({route}) => {
       firstCall();
     }
   }, [isFocused]);
+  const getIntialCode = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let code = Object.values(value)[0].code;
+    setShipingOption(code);
+    return code;
+  };
+  const getIntialPrice = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let price = Object.values(value)[0].cost;
+    setShippingPrice(price);
+    return price;
+  };
+  const getIntialMethod = () => {
+    let value = Object.values(selector.shipping_methods)[0].quote;
+    let title = Object.values(value)[0].title;
+
+    setShippingMethod(title);
+    return title;
+  };
 
   const confirmOrder = async () => {
     if (qty == null) {
@@ -250,7 +253,9 @@ const Payment = ({route}) => {
   const firstCall = async msg => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     const store_id = await AsyncStorage.getItem(Storage.store_id);
-
+    const shiipingcode = getIntialCode();
+    const shipingPrice = getIntialPrice();
+    getIntialMethod();
     try {
       setFetching(true);
       const data = new FormData();
@@ -258,7 +263,7 @@ const Payment = ({route}) => {
       data.append('store_id', store_id);
       data.append('customer_id', customer_id);
       data.append('coupon', coupon);
-      data.append('shipping_code', shipingOption);
+      data.append('shipping_code', shiipingcode);
       data.append('shipping_cost', shipingPrice);
       const response = await axios({
         method: 'POST',

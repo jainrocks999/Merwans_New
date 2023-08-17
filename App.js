@@ -63,8 +63,8 @@ const App = () => {
             elevation: 5,
             borderRadius: 10,
           }}
-          // onTouchOutside={() => setIsModalVisible(false)}
-          // onHardwareBackPress={() => setIsModalVisible(false)}
+          // onTouhOutside={() => setIsModalVisible(false)}
+          // onHardwareBackPress={c() => setIsModalVisible(false)}
         >
           <DialogContent>
             <View
@@ -82,14 +82,6 @@ const App = () => {
         </Dialog>
       </SafeAreaView>
     </Fragment>
-    // <SafeAreaView style={{flex:1}}>
-    //   <NativeBaseProvider>
-    //   <Provider store={Store}>
-    //   <Navigation/>
-    //   </Provider>
-    //   </NativeBaseProvider>
-    //   {/* <Text>narendra</Text> */}
-    // </SafeAreaView>
   );
 };
 export default App;
