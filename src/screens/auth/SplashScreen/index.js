@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   View,
@@ -8,12 +8,12 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {SvgUri} from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
+import { SvgUri } from 'react-native-svg';
 import Logo from '../../../assets/Logo/logo.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import styles from './style';
 import Modal from 'react-native-modal';
@@ -79,7 +79,7 @@ const Splash = () => {
         url: 'https://merwans.co.in/index.php?route=api/version',
       });
       if (Platform.OS == 'android') {
-        if (response.data.android_version > 3) {
+        if (response.data.android_version > 4) {
           setAndroidUrl(response.data.android_url);
           setModalVisible(true);
         } else {
@@ -111,7 +111,7 @@ const Splash = () => {
               () =>
                 navigation.reset({
                   index: 0,
-                  routes: [{name: 'Main'}],
+                  routes: [{ name: 'Main' }],
                 }),
               1500,
             );
@@ -121,21 +121,21 @@ const Splash = () => {
               () =>
                 navigation.reset({
                   index: 0,
-                  routes: [{name: 'Login'}],
+                  routes: [{ name: 'Login' }],
                 }),
               1500,
             );
             setModalVisible(false);
           }
         })
-        .catch(err => {});
+        .catch(err => { });
     } else {
       if (customer_id) {
         setTimeout(
           () =>
             navigation.reset({
               index: 0,
-              routes: [{name: 'Main'}],
+              routes: [{ name: 'Main' }],
             }),
           1500,
         );
@@ -145,7 +145,7 @@ const Splash = () => {
           () =>
             navigation.reset({
               index: 0,
-              routes: [{name: 'Login'}],
+              routes: [{ name: 'Login' }],
             }),
           1500,
         );
@@ -163,13 +163,13 @@ const Splash = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+    <View style={{ flex: 1 }}>
+      <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         <Logo height={400} width={windowWidth} />
       </View>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modal}>
-          <View style={{width: '100%'}}>
+          <View style={{ width: '100%' }}>
             <Text
               style={{
                 color: '#ED1B1A',
