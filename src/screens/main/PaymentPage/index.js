@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -28,12 +28,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
 import Loader from '../../../components/Loader';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 import Modal from 'react-native-modal';
 import Edit from '../../../assets/Svg/edit.svg';
 Geocoder.init('AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw');
@@ -44,7 +44,6 @@ const Payment = () => {
   const [isFetching, setFetching] = useState(false);
   const [data, setData] = useState('');
   const selector = useSelector(state => state.Auth.Address);
-  console.log('SEELELLEELL', selector);
   const isFetching1 = useSelector(state => state.Auth.isFetching);
   const dispatch = useDispatch();
   const [qty, setQty] = useState('');
@@ -85,7 +84,7 @@ const Payment = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/apiorder2/cart',
       });
-      console.log('FFFFFFFFFFFFFFFFFFFFFFFFF', response.data);
+
       if (response.data) {
         // console.log('this is MMMMMMMMMM total', response.data);
         // console.log('this is NNNNNNNNNN response', response);
@@ -411,7 +410,7 @@ const Payment = () => {
   };
   const manageAddress1 = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
-    navigation.navigate('AddressForm', {from: 'cart'});
+    navigation.navigate('AddressForm', { from: 'cart' });
   };
   const manageDunzo = async () => {
     console.log('called');
@@ -519,17 +518,17 @@ const Payment = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {isFetching || isFetching1 ? <Loader /> : null}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../../../assets/Icon/bg.png')}>
         <ScrollView stickyHeaderIndices={[0]}>
           <Header
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           />
           {data && data.products.length > 0 ? (
-            <View style={{paddingHorizontal: 5}}>
+            <View style={{ paddingHorizontal: 5 }}>
               <View style={styles.main}>
                 <View style={styles.row}>
                   <View style={styles.done}>
@@ -543,18 +542,18 @@ const Payment = () => {
               </View>
               <View style={styles.your}>
                 <Text style={styles.order}>Your Order</Text>
-                <View style={{marginTop: -3}}>
+                <View style={{ marginTop: -3 }}>
                   <FlatList
                     data={data ? product : []}
-                    renderItem={({item, index}) => (
+                    renderItem={({ item, index }) => (
                       <View
                         style={{
                           borderBottomWidth:
                             data.products.length - 1 == index ? 0 : 0.5,
                           borderColor: '#dae1ed',
                         }}>
-                        <View style={[styles.list, {marginTop: 10}]}>
-                          <View style={[styles.row, {width: '75.5%'}]}>
+                        <View style={[styles.list, { marginTop: 10 }]}>
+                          <View style={[styles.row, { width: '75.5%' }]}>
                             <View
                               style={{
                                 height: 38,
@@ -563,39 +562,39 @@ const Payment = () => {
                               }}>
                               {item.p_type == 1 ? (
                                 <View
-                                  style={[styles.sq, {borderColor: '#0FAF33'}]}>
+                                  style={[styles.sq, { borderColor: '#0FAF33' }]}>
                                   <View
                                     style={[
                                       styles.dot,
-                                      {backgroundColor: '#0FAF33'},
+                                      { backgroundColor: '#0FAF33' },
                                     ]}
                                   />
                                 </View>
                               ) : (
                                 <View
-                                  style={[styles.sq, {borderColor: '#ED1717'}]}>
+                                  style={[styles.sq, { borderColor: '#ED1717' }]}>
                                   <View
                                     style={[
                                       styles.dot,
-                                      {backgroundColor: '#ED1717'},
+                                      { backgroundColor: '#ED1717' },
                                     ]}
                                   />
                                 </View>
                               )}
                             </View>
-                            <View style={{width: '78%'}}>
-                              <View style={{flexDirection: 'row'}}>
-                                <View style={{marginLeft: 12}}>
+                            <View style={{ width: '78%' }}>
+                              <View style={{ flexDirection: 'row' }}>
+                                <View style={{ marginLeft: 12 }}>
                                   <Image
                                     style={{
                                       height: 38,
                                       width: 38,
                                       borderRadius: 5,
                                     }}
-                                    source={{uri: item.image}}
+                                    source={{ uri: item.image }}
                                   />
                                 </View>
-                                <View style={{marginTop: -1, marginLeft: 2}}>
+                                <View style={{ marginTop: -1, marginLeft: 2 }}>
                                   <Text style={styles.name}>{item.name}</Text>
                                   <View
                                     style={{
@@ -608,9 +607,9 @@ const Payment = () => {
                                   </View>
                                 </View>
                               </View>
-                              <View style={{marginLeft: 12, width: '100%'}}>
+                              <View style={{ marginLeft: 12, width: '100%' }}>
                                 {item.option.length > 0 ? (
-                                  <View style={{marginTop: 2}}>
+                                  <View style={{ marginTop: 2 }}>
                                     <Text
                                       style={
                                         styles.pric
@@ -618,7 +617,7 @@ const Payment = () => {
                                   </View>
                                 ) : null}
                                 {item.option.length > 1 ? (
-                                  <View style={{marginTop: 2}}>
+                                  <View style={{ marginTop: 2 }}>
                                     <Text
                                       style={
                                         styles.pric
@@ -629,7 +628,7 @@ const Payment = () => {
                             </View>
                           </View>
 
-                          <View style={{alignItems: 'center'}}>
+                          <View style={{ alignItems: 'center' }}>
                             <View style={styles.view}>
                               <TouchableOpacity
                                 style={{
@@ -650,23 +649,23 @@ const Payment = () => {
                                 //     Number(product[index].quantity).toFixed(0)==''?'':Number(product[index].quantity).toFixed(0)
                                 // }
                                 onChangeText={val =>
-                                  //
-                                  {
-                                    if (val == 0) {
-                                      let newArr = [...product]; // copying the old datas array
-                                      // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
-                                      newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
-                                      setProduct(newArr);
-                                      console.log('this i value', val);
-                                    }
-                                    {
-                                      let newArr = [...product]; // copying the old datas array
-                                      // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
-                                      newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
-                                      setProduct(newArr);
-                                      updateCartInput(item, val, index);
-                                    }
+                                //
+                                {
+                                  if (val == 0) {
+                                    let newArr = [...product]; // copying the old datas array
+                                    // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                    newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
+                                    setProduct(newArr);
+                                    console.log('this i value', val);
                                   }
+                                  {
+                                    let newArr = [...product]; // copying the old datas array
+                                    // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                    newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
+                                    setProduct(newArr);
+                                    updateCartInput(item, val, index);
+                                  }
+                                }
                                 }
                                 style={{
                                   textAlign: 'center',
@@ -697,7 +696,7 @@ const Payment = () => {
                           </View>
                         </View>
 
-                        <View style={{height: 10}} />
+                        <View style={{ height: 10 }} />
                       </View>
                     )}
                   />
@@ -757,12 +756,12 @@ const Payment = () => {
                       alignItems: 'center',
                     }}>
                     <Text
-                      style={{color: 'green', fontFamily: 'Montserrat-Medium'}}>
+                      style={{ color: 'green', fontFamily: 'Montserrat-Medium' }}>
                       {coupon + ' ' + 'Applied Suceesefully'}
                     </Text>
 
                     <TouchableOpacity
-                      style={{marginRight: 10}}
+                      style={{ marginRight: 10 }}
                       onPress={async () => {
                         setInut('');
                         DeleteCoupon('');
@@ -803,7 +802,7 @@ const Payment = () => {
                     data={total}
                     scrollEnabled={false}
                     keyExtractor={(item, index) => index}
-                    renderItem={({item, index}) => {
+                    renderItem={({ item, index }) => {
                       return (
                         <View style={styles.row1}>
                           <View style={styles.row}>
@@ -837,10 +836,10 @@ const Payment = () => {
                 <TouchableOpacity
                   onPress={() => manageAddress()}
                   style={styles.dele}>
-                  <View style={{marginTop: -12}}>
+                  <View style={{ marginTop: -12 }}>
                     <Location />
                   </View>
-                  <View style={{marginLeft: 8, width: '92%'}}>
+                  <View style={{ marginLeft: 8, width: '92%' }}>
                     <View style={styles.view1}>
                       <Text style={styles.home}>{`Delivery at`}</Text>
                       <TouchableOpacity
@@ -857,7 +856,7 @@ const Payment = () => {
                 </TouchableOpacity>
               ) : null}
 
-              <View style={{paddingHorizontal: 15}}>
+              <View style={{ paddingHorizontal: 15 }}>
                 {selector ? (
                   <TouchableOpacity
                     onPress={() => manageDunzo()}
@@ -882,20 +881,20 @@ const Payment = () => {
                 marginTop: '80%',
                 flexDirection: 'row',
               }}>
-              <Text style={{textAlign: 'center', fontSize: 18, color: 'black'}}>
+              <Text style={{ textAlign: 'center', fontSize: 18, color: 'black' }}>
                 Your cart is Empty!{' '}
               </Text>
               <View>
                 <Text
                   onPress={() => navigation.navigate('Home')}
-                  style={{fontSize: 18, color: 'black'}}>
+                  style={{ fontSize: 18, color: 'black' }}>
                   Continue Shopping
                 </Text>
-                <View style={{borderWidth: 0.6}} />
+                <View style={{ borderWidth: 0.6 }} />
               </View>
             </View>
           )}
-          <View style={{height: 20}} />
+          <View style={{ height: 20 }} />
         </ScrollView>
       </ImageBackground>
       <BottomTab home={false} search={false} cart={true} profile={false} />

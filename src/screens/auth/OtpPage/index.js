@@ -6,16 +6,16 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './style';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Back from '../../../assets/Svg/back1.svg';
 import OtpInputs from 'react-native-otp-inputs';
 import Toast from 'react-native-simple-toast';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
-const Otp = ({route}) => {
+const Otp = ({ route }) => {
   const navigation = useNavigation();
   const [code, setCode] = useState('');
 
@@ -29,32 +29,32 @@ const Otp = ({route}) => {
   //       }
   //     });
   //   },[])
-  console.log(route.params.otp);
+
   const verifyOtp = () => {
     if (code == '') {
       Toast.show('Please enter otp');
     } else {
       if (code == route.params.otp) {
-        navigation.navigate('Change', {customer_id: route.params.customer_id});
+        navigation.navigate('Change', { customer_id: route.params.customer_id });
       } else {
         Toast.show('Please enter correct otp');
       }
     }
   };
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../../../assets/Icon/bg.png')}>
-        <View style={{padding: 8}}>
+        <View style={{ padding: 8 }}>
           <View style={styles.row}>
             <TouchableOpacity
-              style={{paddingHorizontal: 8, paddingVertical: 5}}
+              style={{ paddingHorizontal: 8, paddingVertical: 5 }}
               onPress={() => navigation.goBack()}>
               <Back />
             </TouchableOpacity>
             <Text style={styles.verify}>Verify Your Number</Text>
-            <View style={{width: 15}} />
+            <View style={{ width: 15 }} />
           </View>
           <View style={styles.please}>
             <Text style={styles.enter}>
@@ -62,7 +62,7 @@ const Otp = ({route}) => {
               Number
             </Text>
           </View>
-          <View style={{paddingHorizontal: 45, marginTop: 12}}>
+          <View style={{ paddingHorizontal: 45, marginTop: 12 }}>
             <View style={styles.inputContainer}>
               <OtpInputs
                 handleChange={code => setCode(code)}
@@ -79,10 +79,10 @@ const Otp = ({route}) => {
                         <Text style={styles.resend}>Resend Code</Text>
                         <View style={{borderWidth:0.6,}}/>
                     </View> */}
-          <View style={{alignItems: 'center', marginTop: 30}}>
+          <View style={{ alignItems: 'center', marginTop: 30 }}>
             <TouchableOpacity onPress={() => navigation.navigate('Forgot')}>
               <Text style={styles.resend}>Resend Code</Text>
-              <View style={{borderWidth: 0.6, borderColor: '#000000'}} />
+              <View style={{ borderWidth: 0.6, borderColor: '#000000' }} />
             </TouchableOpacity>
           </View>
           <View style={styles.bottom}>

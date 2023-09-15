@@ -1,4 +1,4 @@
-import {takeEvery, put, call, take} from 'redux-saga/effects';
+import { takeEvery, put, call, take } from 'redux-saga/effects';
 import Api from '../Api';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +22,7 @@ function* categoryList(action) {
       // Toast.show(response.message);
       if (response.products.length > 0) {
         action.navigation.navigate('CategoryList');
-        alert('cledd');
+
       }
     } else {
       // Toast.show(response.message);

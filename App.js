@@ -1,13 +1,13 @@
-import React, {Fragment, useEffect, useState} from 'react';
-import {View, Text, SafeAreaView, LogBox, Platform, Alert} from 'react-native';
+import React, { Fragment, useEffect, useState } from 'react';
+import { View, Text, SafeAreaView, LogBox, Platform, Alert } from 'react-native';
 import Navigation from './src/navigation/index';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import Store from './src/Redux/Store';
-import {NativeBaseProvider, Box} from 'native-base';
-import {enableLatestRenderer} from 'react-native-maps';
+import { NativeBaseProvider, Box } from 'native-base';
+import { enableLatestRenderer } from 'react-native-maps';
 import FlashMessage from 'react-native-flash-message';
 import NetInfo from '@react-native-community/netinfo';
-import Dialog, {DialogContent} from 'react-native-popup-dialog';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 enableLatestRenderer();
 const App = () => {
   LogBox.ignoreLogs(['Warning: ...']);
@@ -17,7 +17,8 @@ const App = () => {
   LogBox.ignoreLogs(['Require cycle: node_modules/']);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { manageNet() }, []);
+  const manageNet = () => {
     NetInfo.addEventListener(state => {
       if (!state.isConnected) {
         setIsModalVisible(true);
@@ -25,11 +26,11 @@ const App = () => {
         setIsModalVisible(false);
       }
     });
-  }, []);
+  }
   return (
     <Fragment>
       <SafeAreaView
-        style={{backgroundColor: Platform.OS == 'ios' ? '#232323' : '#fff'}}
+        style={{ backgroundColor: Platform.OS == 'ios' ? '#232323' : '#fff' }}
       />
       <SafeAreaView
         style={{
@@ -45,9 +46,9 @@ const App = () => {
             backgroundColor: '#ED1B1A',
             //  borderWidth:2
           }}
-          textStyle={{marginTop: 20, height: 40}}
+          textStyle={{ marginTop: 20, height: 40 }}
           position={'bottom'}
-          titleStyle={{fontSize: 16, marginTop: 15, color: '#fff'}}
+          titleStyle={{ fontSize: 16, marginTop: 15, color: '#fff' }}
         />
         <NativeBaseProvider>
           <Provider store={Store}>
@@ -63,8 +64,8 @@ const App = () => {
             elevation: 5,
             borderRadius: 10,
           }}
-          // onTouhOutside={() => setIsModalVisible(false)}
-          // onHardwareBackPress={c() => setIsModalVisible(false)}
+        // onTouhOutside={() => setIsModalVisible(false)}
+        // onHardwareBackPress={c() => setIsModalVisible(false)}
         >
           <DialogContent>
             <View
@@ -74,7 +75,7 @@ const App = () => {
                 height: 80,
                 marginTop: 20,
               }}>
-              <Text style={{fontSize: 16, fontFamily: 'Montserrat-SemiBold'}}>
+              <Text style={{ fontSize: 16, fontFamily: 'Montserrat-SemiBold' }}>
                 Please connect to your internet
               </Text>
             </View>

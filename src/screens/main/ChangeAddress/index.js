@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, Text, ImageBackground, Image, TouchableOpacity, StatusBar, StyleSheet, PermissionsAndroid, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Location from "../../../assets/Svg/location.svg";
@@ -14,7 +14,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
 
 const ChangeAddress = () => {
- const ref=useRef()
+  const ref = useRef()
   const navigation = useNavigation()
   const [address, setAddress] = useState('')
   const [position, setPosition] = useState({
@@ -35,6 +35,9 @@ const ChangeAddress = () => {
   //   });
   // },[])
   useEffect(() => {
+    handleLocation()
+  }, []);
+  const handleLocation = () => {
     Geolocation.getCurrentPosition((pos) => {
       const crd = pos.coords;
       setPosition({
@@ -44,7 +47,7 @@ const ChangeAddress = () => {
         longitudeDelta: 0.0421,
       });
     })
-  }, []);
+  }
   const permission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -75,9 +78,9 @@ const ChangeAddress = () => {
       setAddress(location)
     })
     .catch(error => console.warn(error));
-   
+
   const getCurrentLocation = () => {
-    if (Platform.OS=='android') {
+    if (Platform.OS == 'android') {
       RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
         interval: 10000,
         fastInterval: 5000,
@@ -97,7 +100,7 @@ const ChangeAddress = () => {
             longitudeDelta: 0.0421,
           });
         })
-        })
+      })
         .catch((err) => {
         });
     } else {
@@ -118,20 +121,20 @@ const ChangeAddress = () => {
       })
     }
   }
-  
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <ImageBackground style={{ flex: 1 }} source={require('../../../assets/Icon/bg.png')}>
         <View style={{ height: 260 }}>
           <View
             style={[
-            {
-              top: '40%',
-              // left: '50%',
-              zIndex: 1,
-              alignItems:'center',
-              justifyContent:'center'
-            }]}>
+              {
+                top: '40%',
+                // left: '50%',
+                zIndex: 1,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }]}>
             <Location width={30} height={30} />
           </View>
           <MapView
@@ -146,7 +149,7 @@ const ChangeAddress = () => {
               longitudeDelta: 0.0421,
             })}
             showsUserLocation={true}
-          followsUserLocation={position}
+            followsUserLocation={position}
             onPress={(val) => setPosition({
               latitude: val.nativeEvent.coordinate.latitude,
               longitude: val.nativeEvent.coordinate.longitude,
@@ -172,7 +175,7 @@ const ChangeAddress = () => {
 
         </View>
         <View style={{ alignItems: 'center', marginTop: -30 }}>
-          <TouchableOpacity onPress={()=>getCurrentLocation()}
+          <TouchableOpacity onPress={() => getCurrentLocation()}
             style={styles.use}>
             <Gps />
             <Text style={styles.current}>Use Current Location</Text>
@@ -189,7 +192,7 @@ const ChangeAddress = () => {
               </View>
             </View>
             {/* <View style={{ marginTop: 0, alignItems: 'center' }}> */}
-              {/* <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => navigation.navigate('ChangeAddress')}
                 style={{ alignSelf: 'flex-end', padding: 6, borderRadius: 15 }}>
                 <Text style={styles.change}>Change</Text>
@@ -199,7 +202,7 @@ const ChangeAddress = () => {
 
           <View style={styles.view}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('AddressForm',{address:address})}
+              onPress={() => navigation.navigate('AddressForm', { address: address })}
               style={styles.button}>
               <Text style={styles.enter}>Enter Complete Address</Text>
             </TouchableOpacity>

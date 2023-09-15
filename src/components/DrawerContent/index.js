@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,8 +10,8 @@ import {
 import styles from './style';
 import Plus from '../../assets/Svg/menuP.svg';
 import Minus from '../../assets/Svg/minus.svg';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
-import {useSelector, useDispatch} from 'react-redux';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useSelector, useDispatch } from 'react-redux';
 import Loader from '../Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../components/AsyncStorage';
@@ -20,7 +20,6 @@ const Drawer = () => {
   const [visible, setVisible] = useState(false);
   const navigation = useNavigation();
   const selector = useSelector(state => state.Auth.MenuList);
-  console.log('this is selector res', selector);
   const isFetching = useSelector(state => state.Auth.isFetching);
   const [listDataSource, setListDataSource] = useState(selector);
   const [multiSelect, setMultiSelect] = useState(false);
@@ -41,7 +40,7 @@ const Drawer = () => {
     });
     navigation.dispatch(DrawerActions.closeDrawer());
   };
-  const ExpandableComponent = ({item, onClickFunction}) => {
+  const ExpandableComponent = ({ item, onClickFunction }) => {
     const [layoutHeight, setLayoutHeight] = useState(0);
     useEffect(() => {
       if (item.isExpanded) {
@@ -55,11 +54,11 @@ const Drawer = () => {
       <View>
         <View
           // activeOpacity={0.8}  onPress={onClickFunction}
-          style={[styles.cmn, {marginTop: 5}]}>
+          style={[styles.cmn, { marginTop: 5 }]}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => manageData(item.category_id)}>
-            <Text style={[styles.home, {textTransform: 'uppercase'}]}>
+            <Text style={[styles.home, { textTransform: 'uppercase' }]}>
               {item.name}
             </Text>
           </TouchableOpacity>
@@ -67,7 +66,7 @@ const Drawer = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={onClickFunction}
-            style={{paddingHorizontal: 6, paddingVertical: 5}}>
+            style={{ paddingHorizontal: 6, paddingVertical: 5 }}>
             {layoutHeight == 0 ? (
               <View
                 style={{
@@ -101,8 +100,8 @@ const Drawer = () => {
           {item.submenus.map((item, key) => (
             <TouchableOpacity
               onPress={() => manageData(item.category_id)}
-              style={[styles.margin, {width: '90%'}]}>
-              <Text style={[styles.item, {textTransform: 'uppercase'}]}>
+              style={[styles.margin, { width: '90%' }]}>
+              <Text style={[styles.item, { textTransform: 'uppercase' }]}>
                 {item.name}
               </Text>
               <View style={styles.round2}>
@@ -142,7 +141,7 @@ const Drawer = () => {
     navigation.navigate('Payment');
   };
   return (
-    <View style={{backgroundColor: '#FFF', width: '100%', alignSelf: 'center'}}>
+    <View style={{ backgroundColor: '#FFF', width: '100%', alignSelf: 'center' }}>
       {isFetching ? <Loader /> : null}
       <View style={styles.header}>
         <Text
@@ -163,18 +162,18 @@ const Drawer = () => {
             borderRadius: 3,
           }}>
           <Image
-            style={{tintColor: '#fff', height: 8, width: 8}}
+            style={{ tintColor: '#fff', height: 8, width: 8 }}
             source={require('../../assets/Icon/multiply.png')}
           />
         </TouchableOpacity>
       </View>
       <View
-        style={{paddingVertical: 15, paddingHorizontal: 6, paddingLeft: 19}}>
+        style={{ paddingVertical: 15, paddingHorizontal: 6, paddingLeft: 19 }}>
         <TouchableOpacity onPress={() => manageHome()}>
           <Text
             style={[
               styles.home,
-              {marginBottom: 2, textTransform: 'uppercase'},
+              { marginBottom: 2, textTransform: 'uppercase' },
             ]}>
             Home
           </Text>
@@ -192,14 +191,14 @@ const Drawer = () => {
         </View>
         <TouchableOpacity onPress={() => manageCart()}>
           <Text
-            style={[styles.home, {marginTop: 8, textTransform: 'uppercase'}]}>
+            style={[styles.home, { marginTop: 8, textTransform: 'uppercase' }]}>
             Cart
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => manageContact()}>
           <Text
-            style={[styles.home, {marginTop: 8, textTransform: 'uppercase'}]}>
+            style={[styles.home, { marginTop: 8, textTransform: 'uppercase' }]}>
             Contact Us
           </Text>
         </TouchableOpacity>

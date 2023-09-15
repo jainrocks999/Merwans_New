@@ -7,17 +7,19 @@ import {
   PermissionsAndroid,
   Platform,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SvgUri } from 'react-native-svg';
 import Logo from '../../../assets/Logo/logo.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import styles from './style';
 import Modal from 'react-native-modal';
 import axios from 'axios';
+import { check, PERMISSIONS, RESULTS, request, openSettings } from 'react-native-permissions';
 
 const windowWidth = Dimensions.get('window').width;
 const Splash = () => {
@@ -26,13 +28,13 @@ const Splash = () => {
   const [androidUrl, setAndroidUrl] = useState('');
   const [iosUrl, setIosUrl] = useState('');
   const dispatch = useDispatch();
-  useEffect(async () => {
+  useEffect(() => {
     appVersion();
-    AsyncStorage.setItem(Storage.lat, '');
-    AsyncStorage.setItem(Storage.long, '');
+
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { getData() }, []);
+  const getData = async () => {
     dispatch({
       type: 'Get_Store_Request',
       url: 'apiproduct/getstore',
@@ -49,8 +51,11 @@ const Splash = () => {
       type: 'Menu_List_Request',
       url: 'apiproduct/menuSubmenuList',
     });
-    requestLocationPermission();
-  }, []);
+    Platform.OS === 'android' ? requestLocationPermission() : null;
+
+    await AsyncStorage.setItem(Storage.lat, '');
+    await AsyncStorage.setItem(Storage.long, '');
+  }
 
   async function requestLocationPermission() {
     try {
@@ -97,62 +102,118 @@ const Splash = () => {
       throw error;
     }
   };
+  const permisssionAndroid = async () => {
 
-  const initial = async () => {
-    const customer_id = await AsyncStorage.getItem(Storage.customer_id);
-    if (Platform.OS == 'android') {
-      RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
-        interval: 10000,
-        fastInterval: 5000,
-      })
-        .then(data => {
-          if (customer_id) {
-            setTimeout(
-              () =>
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Main' }],
-                }),
-              1500,
-            );
-            setModalVisible(false);
-          } else {
-            setTimeout(
-              () =>
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Login' }],
-                }),
-              1500,
-            );
-            setModalVisible(false);
-          }
-        })
-        .catch(err => { });
-    } else {
-      if (customer_id) {
-        setTimeout(
-          () =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Main' }],
-            }),
-          1500,
-        );
-        setModalVisible(false);
-      } else {
-        setTimeout(
-          () =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' }],
-            }),
-          1500,
-        );
-        setModalVisible(false);
-      }
+    const result = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+    console.log('thtiuttiti', result)
+    if (result === 'granted') {
+      goTo()
     }
-  };
+    else if (result === 'blocked') {
+      Alert.alert(
+        'Merwans needs To access the Location !',
+        `\n Do you want to allow?`,
+        [
+          {
+            text: 'Cancel',
+
+            onPress: () => { goTo() },
+            style: 'cancel'
+
+          },
+          {
+            text: 'Open Settings',
+            onPress: async () => {
+              await openSettings()
+              goTo()
+            }
+
+          },
+        ],
+      );
+    }
+    else {
+      const res = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+      if (res === 'granted') {
+        goTo()
+      } else {
+        goTo()
+      }
+
+    }
+
+  }
+  const permisssionIOS = async () => {
+
+    const result = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+    if (result === 'granted') {
+      goTo()
+    }
+    else if (result === 'blocked') {
+      Alert.alert(
+        'Merwans needs To access the Location !',
+        `\n Do you want to allow?`,
+        [
+          {
+            text: 'Cancel',
+
+            onPress: () => { goTo() },
+            style: 'cancel'
+
+          },
+          {
+            text: 'Open Settings',
+            onPress: async () => {
+              await openSettings()
+              goTo()
+            }
+            ,
+
+
+          },
+        ],
+      );
+    }
+    else {
+      const res = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+      if (res === 'granted') {
+        goTo()
+      } else {
+        goTo()
+      }
+
+    }
+
+  }
+  const initial = () => {
+    Platform.OS === 'android' ? permisssionAndroid() : permisssionIOS()
+  }
+  const goTo = async () => {
+    const customer_id = await AsyncStorage.getItem(Storage.customer_id);
+    if (customer_id) {
+      setTimeout(
+        () =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+          }),
+        1500,
+      );
+      setModalVisible(false);
+    } else {
+      setTimeout(
+        () =>
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          }),
+        1500,
+      );
+      setModalVisible(false);
+    }
+  }
+
+
 
   const openUrl = () => {
     if (Platform.OS == 'android') {

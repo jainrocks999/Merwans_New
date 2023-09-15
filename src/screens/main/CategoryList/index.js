@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -16,8 +16,8 @@ import {
 import Stars from 'react-native-stars';
 import styles from './style';
 import SwipeablePanel from 'react-native-sheets-bottom';
-import {useNavigation} from '@react-navigation/native';
-import {RadioButton} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { RadioButton } from 'react-native-paper';
 import Plus from '../../../assets/Svg/plus.svg';
 import Plus2 from '../../../assets/Svg/menuP.svg';
 import Full from '../../../assets/Svg/fullStar.svg';
@@ -30,18 +30,19 @@ import Minus from '../../../assets/Svg/minus.svg';
 import Multi from '../../../assets/Svg/multi.svg';
 import Diamond from '../../../assets/Svg/diamond.svg';
 import Poly from '../../../assets/Svg/poly.svg';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import Loader from '../../../components/Loader';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Storage from '../../../components/AsyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HeartF from '../../../assets/Svg/heartf.svg';
 import Done from '../../../assets/Svg/Done.svg';
-import Dialog, {DialogContent} from 'react-native-popup-dialog';
+import Done2 from '../../../assets/Svg/Done2.svg';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import BottomTab from '../../../components/BottomTab';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 import Modal from 'react-native-modal';
 
 const CategoryList = () => {
@@ -134,7 +135,7 @@ const CategoryList = () => {
       AsyncStorage.setItem('pageKey', 'CategoryList');
       navigation.reset({
         index: 0,
-        routes: [{name: 'Login'}],
+        routes: [{ name: 'Login' }],
       });
     }
   };
@@ -155,7 +156,7 @@ const CategoryList = () => {
           gram == 'checked'
             ? product.options[0].product_option_value[0].product_option_value_id
             : product.options[0].product_option_value[1]
-                .product_option_value_id,
+              .product_option_value_id,
         text_key: product.options[1].product_option_id,
         text_value: text,
         outlet_id: store_id,
@@ -172,7 +173,7 @@ const CategoryList = () => {
           gram == 'checked'
             ? product.options[0].product_option_value[0].product_option_value_id
             : product.options[0].product_option_value[1]
-                .product_option_value_id,
+              .product_option_value_id,
         text_key: 0,
         text_value: '',
         outlet_id: store_id,
@@ -304,7 +305,7 @@ const CategoryList = () => {
     }
   };
 
-  const ExpandableComponent = ({item, onClickFunction}) => {
+  const ExpandableComponent = ({ item, onClickFunction }) => {
     const [layoutHeight, setLayoutHeight] = useState(0);
     useEffect(() => {
       if (item.isExpanded) {
@@ -316,11 +317,11 @@ const CategoryList = () => {
 
     return (
       <View>
-        <View style={[styles.cmn, {marginTop: 5}]}>
+        <View style={[styles.cmn, { marginTop: 5 }]}>
           <TouchableOpacity
             activeOpacity={0.2}
             onPress={() => manageData(item.category_id)}>
-            <Text style={[styles.home, {textTransform: 'uppercase'}]}>
+            <Text style={[styles.home, { textTransform: 'uppercase' }]}>
               {item.name}
             </Text>
           </TouchableOpacity>
@@ -328,7 +329,7 @@ const CategoryList = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={onClickFunction}
-            style={{paddingHorizontal: 6, paddingVertical: 5}}>
+            style={{ paddingHorizontal: 6, paddingVertical: 5 }}>
             {layoutHeight == 0 ? (
               <View
                 style={{
@@ -363,8 +364,8 @@ const CategoryList = () => {
             <TouchableOpacity
               activeOpacity={0.2}
               onPress={() => manageData(item.category_id)}
-              style={[styles.margin, {width: '90%'}]}>
-              <Text style={[styles.item, {textTransform: 'uppercase'}]}>
+              style={[styles.margin, { width: '90%' }]}>
+              <Text style={[styles.item, { textTransform: 'uppercase' }]}>
                 {item.name}
               </Text>
               <View style={styles.round2}>
@@ -424,15 +425,15 @@ const CategoryList = () => {
   };
   const version = Platform.OS;
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {isFetching || Fetching ? <Loader /> : null}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../../../assets/Icon/bg.png')}>
         <View style={styles.main}>
           <View style={styles.go}>
             <TouchableOpacity
-              style={{paddingRight: 10, paddingVertical: 3}}
+              style={{ paddingRight: 10, paddingVertical: 3 }}
               onPress={() => {
                 navigation.navigate('Home');
                 // setIsModalVisible(false)
@@ -457,7 +458,7 @@ const CategoryList = () => {
                   justifyContent: 'space-between',
                 },
               ]}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {/* <Search /> */}
                 <TextInput
                   ref={inputRef}
@@ -490,7 +491,7 @@ const CategoryList = () => {
                     alignItems: 'center',
                   }}>
                   <Image
-                    style={{tintColor: '#fff'}}
+                    style={{ tintColor: '#fff' }}
                     source={require('../../../assets/Icon/multiply.png')}
                   />
                 </TouchableOpacity>
@@ -511,7 +512,7 @@ const CategoryList = () => {
                     },
                   ]}>
                   <Search />
-                  <Text style={[styles.search, {marginTop: 0}]}>Search</Text>
+                  <Text style={[styles.search, { marginTop: 0 }]}>Search</Text>
                 </TouchableOpacity>
               ) : (
                 <></>
@@ -521,17 +522,16 @@ const CategoryList = () => {
         </View>
         {filteredDataSource?.length > 0 ? (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{paddingHorizontal: 10}}>
+            <View style={{ paddingHorizontal: 10 }}>
               {category.subcatname || catname.subcatname ? (
                 <View style={styles.row1}>
                   <Text style={styles.cakes}>
                     {catname ? catname.catname : category.catname}
                   </Text>
                   {category.subcatname == undefined ||
-                  catname.subcatname == undefined ? null : (
-                    <Text style={styles.black}>{` /  ${
-                      catname ? catname.subcatname : category.subcatname
-                    }`}</Text>
+                    catname.subcatname == undefined ? null : (
+                    <Text style={styles.black}>{` /  ${catname ? catname.subcatname : category.subcatname
+                      }`}</Text>
                   )}
                 </View>
               ) : (
@@ -546,32 +546,32 @@ const CategoryList = () => {
                   updateCellsBatchingPeriod={10}
                   maxToRenderPerBatch={5}
                   initialNumToRender={5}
-                  renderItem={({item, index}) => (
+                  renderItem={({ item, index }) => (
                     <View
                       style={[
                         styles.view,
-                        {borderBottomWidth: index == length - 1 ? 0 : 0.5},
+                        { borderBottomWidth: index == length - 1 ? 0 : 0.5 },
                       ]}>
-                      <View style={{width: '56%', marginTop: 20}}>
+                      <View style={{ width: '56%', marginTop: 20 }}>
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           {item.p_type == 1 ? (
                             <TouchableOpacity
-                              style={[styles.view1, {borderColor: '#0FAF33'}]}>
+                              style={[styles.view1, { borderColor: '#0FAF33' }]}>
                               <View
                                 style={[
                                   styles.border,
-                                  {backgroundColor: '#0FAF33'},
+                                  { backgroundColor: '#0FAF33' },
                                 ]}
                               />
                             </TouchableOpacity>
                           ) : (
                             <TouchableOpacity
-                              style={[styles.view1, {borderColor: '#ED1B1A'}]}>
+                              style={[styles.view1, { borderColor: '#ED1B1A' }]}>
                               <View
                                 style={[
                                   styles.border,
-                                  {backgroundColor: '#ED1B1A'},
+                                  { backgroundColor: '#ED1B1A' },
                                 ]}
                               />
                             </TouchableOpacity>
@@ -594,7 +594,7 @@ const CategoryList = () => {
                         <View style={styles.views}>
                           <Text style={styles.price}>{item.price}</Text>
                         </View>
-                        <View style={{marginTop: 6}}>
+                        <View style={{ marginTop: 6 }}>
                           <Text style={styles.desc}>{item.description}</Text>
                         </View>
                         {item.favourite == false ? (
@@ -611,7 +611,7 @@ const CategoryList = () => {
                             <HeartF height={14} width={14} />
                           </TouchableOpacity>
                         )}
-                        <View style={{height: 15}} />
+                        <View style={{ height: 15 }} />
                       </View>
 
                       <View style={styles.img}>
@@ -623,7 +623,7 @@ const CategoryList = () => {
                             opacity:
                               item.quantity > 0 && item.p_status == 1 ? 1 : 0.2,
                           }}
-                          source={{uri: item.thumb}}
+                          source={{ uri: item.thumb }}
                         />
                         <View style={styles.iview}>
                           {item.quantity > 0 && item.p_status == 1 ? (
@@ -653,7 +653,7 @@ const CategoryList = () => {
                     </View>
                   )}
                 />
-                <View style={{marginBottom: 60}} />
+                <View style={{ marginBottom: 60 }} />
               </View>
             </View>
           </ScrollView>
@@ -664,7 +664,7 @@ const CategoryList = () => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Text style={{textAlign: 'center', fontSize: 18, color: 'black'}}>
+            <Text style={{ textAlign: 'center', fontSize: 18, color: 'black' }}>
               No Products Found
             </Text>
           </View>
@@ -677,15 +677,15 @@ const CategoryList = () => {
             }}
             style={styles.menu}>
             <Text style={styles.brow}>{'Browse Menu'}</Text>
-            <View style={{marginLeft: 8}}>
+            <View style={{ marginLeft: 8 }}>
               <Cutlery />
             </View>
           </TouchableOpacity>
         </View>
 
         <SwipeablePanel
-          style={{borderTopLeftRedius: 0}}
-          barStyle={{borderTopLeftRedius: 0}}
+          style={{ borderTopLeftRedius: 0 }}
+          barStyle={{ borderTopLeftRedius: 0 }}
           fullWidth
           isActive={openPanel}
           onClose={() => setOpenPanel(false)}
@@ -693,21 +693,21 @@ const CategoryList = () => {
           noBar={true}
           onlyLarge={true}
           showCloseButton={openPanel == true ? true : false}
-          closeIconStyle={{backgroundColor: '#000'}}
+          closeIconStyle={{ backgroundColor: '#000' }}
           closeRootStyle={{
             backgroundColor: '#fff',
             marginTop: -60,
             marginRight: width / 2 - 40,
             borderWidth: 1,
           }}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             {product && product.products ? (
-              <ScrollView stickyHeaderIndices={[0]} style={{flex: 1}}>
+              <ScrollView stickyHeaderIndices={[0]} style={{ flex: 1 }}>
                 <KeyboardAwareScrollView
                   extraScrollHeight={10}
                   enableOnAndroid={true}
                   keyboardShouldPersistTaps="handled"
-                  contentContainerStyle={{flex: 1}}>
+                  contentContainerStyle={{ flex: 1 }}>
                   <View />
                   <View />
                   <ImageBackground
@@ -719,8 +719,8 @@ const CategoryList = () => {
                     }}>
                     <View style={styles.thumb}>
                       <Image
-                        style={[styles.url, {opacity: 1}]}
-                        source={{uri: product.products.thumb}}
+                        style={[styles.url, { opacity: 1 }]}
+                        source={{ uri: product.products.thumb }}
                       />
                     </View>
                     <Text style={styles.desclamer}>
@@ -728,25 +728,25 @@ const CategoryList = () => {
                       IMAGES
                     </Text>
                     <View
-                      style={[styles.bests, {justifyContent: 'space-between'}]}>
+                      style={[styles.bests, { justifyContent: 'space-between' }]}>
                       <View style={styles.bests1}>
                         {product.products.p_type == 1 ? (
                           <View
-                            style={[styles.view1, {borderColor: '#0FAF33'}]}>
+                            style={[styles.view1, { borderColor: '#0FAF33' }]}>
                             <View
                               style={[
                                 styles.border,
-                                {backgroundColor: '#0FAF33'},
+                                { backgroundColor: '#0FAF33' },
                               ]}
                             />
                           </View>
                         ) : (
                           <View
-                            style={[styles.view1, {borderColor: '#ED1B1A'}]}>
+                            style={[styles.view1, { borderColor: '#ED1B1A' }]}>
                             <View
                               style={[
                                 styles.border,
-                                {backgroundColor: '#ED1B1A'},
+                                { backgroundColor: '#ED1B1A' },
                               ]}
                             />
                           </View>
@@ -775,7 +775,7 @@ const CategoryList = () => {
                           styles.review
                         }>{`${product.products.reviews} Reviews`}</Text>
                     </View>
-                    <View style={{marginTop: 10}}>
+                    <View style={{ marginTop: 10 }}>
                       <Text style={styles.descr}>
                         {product.products.description}
                       </Text>
@@ -784,7 +784,7 @@ const CategoryList = () => {
                       <View>
                         {product.options.length > 1 ? (
                           <View style={styles.show}>
-                            <View style={{width: '48%'}}>
+                            <View style={{ width: '48%' }}>
                               <TouchableOpacity
                                 onPress={() => managePref()}
                                 style={[
@@ -818,7 +818,7 @@ const CategoryList = () => {
                                   ) : version == 'ios' ? (
                                     <TouchableOpacity
                                       onPress={() => managePref()}
-                                      style={{marginRight: 4}}>
+                                      style={{ marginRight: 4 }}>
                                       <Done width={26} height={25} />
                                     </TouchableOpacity>
                                   ) : (
@@ -833,11 +833,11 @@ const CategoryList = () => {
                                 </View>
                               </TouchableOpacity>
                               <View
-                                style={{alignItems: 'center', marginTop: 2}}>
+                                style={{ alignItems: 'center', marginTop: 2 }}>
                                 {pref == 'checked' ? <Poly /> : null}
                               </View>
                             </View>
-                            <View style={{width: '48%'}}>
+                            <View style={{ width: '48%' }}>
                               <TouchableOpacity
                                 onPress={() => manageMsg()}
                                 style={[
@@ -872,7 +872,7 @@ const CategoryList = () => {
                                   ) : version == 'ios' ? (
                                     <TouchableOpacity
                                       onPress={() => manageMsg()}
-                                      style={{marginRight: 4}}>
+                                      style={{ marginRight: 4 }}>
                                       <Done width={26} height={25} />
                                     </TouchableOpacity>
                                   ) : (
@@ -887,7 +887,7 @@ const CategoryList = () => {
                                 </View>
                               </TouchableOpacity>
                               <View
-                                style={{alignItems: 'center', marginTop: 2}}>
+                                style={{ alignItems: 'center', marginTop: 2 }}>
                                 {msg == 'checked' ? <Poly /> : null}
                               </View>
                             </View>
@@ -895,7 +895,7 @@ const CategoryList = () => {
                         ) : null}
                         {pref == 'checked' ? (
                           <View>
-                            <View style={[styles.pref, {marginTop: 3}]}>
+                            <View style={[styles.pref, { marginTop: 3 }]}>
                               <View>
                                 <Text style={styles.title1}>
                                   {'Choose Your preference'}
@@ -909,22 +909,22 @@ const CategoryList = () => {
                               </View>
                             </View>
                             <View style={styles.pref}>
-                              <View style={{flexDirection: 'row'}}>
+                              <View style={{ flexDirection: 'row' }}>
                                 <TouchableOpacity
                                   style={[
                                     styles.view1,
-                                    {borderColor: '#0FAF33'},
+                                    { borderColor: '#0FAF33' },
                                   ]}>
                                   <View
                                     style={[
                                       styles.border,
-                                      {backgroundColor: '#0FAF33'},
+                                      { backgroundColor: '#0FAF33' },
                                     ]}
                                   />
                                 </TouchableOpacity>
                                 <Text style={styles.egg}>Eggless </Text>
                               </View>
-                              <View style={{marginLeft: 10}}>
+                              <View style={{ marginLeft: 10 }}>
                                 <RadioButton
                                   value="first"
                                   status={'checked'}
@@ -954,7 +954,7 @@ const CategoryList = () => {
                                   styles.bottom,
                                   smallManage()
                                     ? null
-                                    : {borderColor: 'lightgrey'},
+                                    : { borderColor: 'lightgrey' },
                                 ]}>
                                 <View style={styles.row}>
                                   <Text
@@ -962,14 +962,14 @@ const CategoryList = () => {
                                       styles.gram,
                                       smallManage()
                                         ? null
-                                        : {color: 'lightgrey'},
+                                        : { color: 'lightgrey' },
                                     ]}>
                                     {
                                       product.options[0].product_option_value[0]
                                         .name
                                     }
                                   </Text>
-                                  <View style={{marginLeft: 10}}>
+                                  <View style={{ marginLeft: 10 }}>
                                     {gram == 'checked' ? (
                                       <RadioButton
                                         value="first"
@@ -985,8 +985,8 @@ const CategoryList = () => {
                                     ) : version == 'ios' ? (
                                       <TouchableOpacity
                                         onPress={() => manageGram()}
-                                        style={{marginRight: 4, marginTop: 6}}>
-                                        <Done width={26} height={25} />
+                                        style={{ marginRight: 4, marginTop: 6 }}>
+                                        <Done2 width={26} height={25} />
                                       </TouchableOpacity>
                                     ) : (
                                       <RadioButton
@@ -1006,10 +1006,10 @@ const CategoryList = () => {
                                 <Text
                                   style={[
                                     styles.text,
-                                    smallManage() ? null : {color: 'lightgrey'},
+                                    smallManage() ? null : { color: 'lightgrey' },
                                   ]}>{`₹${parseInt(
-                                  product.products.price,
-                                ).toFixed(2)}`}</Text>
+                                    product.products.price,
+                                  ).toFixed(2)}`}</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
                                 disabled={!largeManage()}
@@ -1018,7 +1018,7 @@ const CategoryList = () => {
                                   styles.bottom,
                                   largeManage()
                                     ? null
-                                    : {borderColor: 'lightgrey'},
+                                    : { borderColor: 'lightgrey' },
                                 ]}>
                                 <View style={styles.row}>
                                   <Text
@@ -1026,14 +1026,14 @@ const CategoryList = () => {
                                       styles.gram,
                                       largeManage()
                                         ? null
-                                        : {color: 'lightgrey'},
+                                        : { color: 'lightgrey' },
                                     ]}>
                                     {
                                       product.options[0].product_option_value[1]
                                         .name
                                     }
                                   </Text>
-                                  <View style={{marginLeft: 10}}>
+                                  <View style={{ marginLeft: 10 }}>
                                     {kg == 'checked' ? (
                                       <RadioButton
                                         value="first"
@@ -1049,8 +1049,8 @@ const CategoryList = () => {
                                     ) : version == 'ios' ? (
                                       <TouchableOpacity
                                         onPress={() => manageKg()}
-                                        style={{marginRight: 4, marginTop: 6}}>
-                                        <Done width={26} height={25} />
+                                        style={{ marginRight: 4, marginTop: 6 }}>
+                                        <Done2 width={26} height={25} />
                                       </TouchableOpacity>
                                     ) : (
                                       <RadioButton
@@ -1070,13 +1070,13 @@ const CategoryList = () => {
                                 <Text
                                   style={[
                                     styles.text,
-                                    largeManage() ? null : {color: 'lightgrey'},
+                                    largeManage() ? null : { color: 'lightgrey' },
                                   ]}>{`₹${(
-                                  parseInt(
-                                    product.options[0].product_option_value[1]
-                                      .price,
-                                  ) + parseInt(product.products.price)
-                                ).toFixed(2)}`}</Text>
+                                    parseInt(
+                                      product.options[0].product_option_value[1]
+                                        .price,
+                                    ) + parseInt(product.products.price)
+                                  ).toFixed(2)}`}</Text>
                               </TouchableOpacity>
                             </View>
                           </View>
@@ -1109,18 +1109,17 @@ const CategoryList = () => {
                           onPress={() => addItemToCart()}
                           style={styles.items}>
                           <Text style={styles.rs}>
-                            {`Add item ₹${
-                              gram == 'checked'
-                                ? parseInt(product.products.price).toFixed(2)
-                                : product.options.length <= 0
+                            {`Add item ₹${gram == 'checked'
+                              ? parseInt(product.products.price).toFixed(2)
+                              : product.options.length <= 0
                                 ? parseInt(product?.products.price).toFixed(2)
                                 : (
-                                    parseInt(
-                                      product.options[0]
-                                        ?.product_option_value[1].price,
-                                    ) + parseInt(product.products.price)
-                                  ).toFixed(2)
-                            }`}
+                                  parseInt(
+                                    product.options[0]
+                                      ?.product_option_value[1].price,
+                                  ) + parseInt(product.products.price)
+                                ).toFixed(2)
+                              }`}
                           </Text>
                         </TouchableOpacity>
                       ) : (
@@ -1167,24 +1166,24 @@ const CategoryList = () => {
               borderRadius: 20,
             }}>
             <View style={styles.men}>
-              <View style={{width: '24%'}} />
+              <View style={{ width: '24%' }} />
               <View style={styles.space}>
                 <Text style={styles.enu}>Menu</Text>
                 <View style={styles.dia}>
-                  <View style={{borderWidth: 0.5, width: 30}} />
+                  <View style={{ borderWidth: 0.5, width: 30 }} />
                   <Diamond />
-                  <View style={{borderWidth: 0.5, width: 30}} />
+                  <View style={{ borderWidth: 0.5, width: 30 }} />
                 </View>
               </View>
               <TouchableOpacity
                 onPress={() => setIsModalVisible(false)}
-                style={{marginLeft: 36, marginTop: -20}}>
+                style={{ marginLeft: 36, marginTop: -20 }}>
                 <Multi />
               </TouchableOpacity>
               <View />
             </View>
 
-            <View style={{paddingVertical: 10, paddingHorizontal: 25}}>
+            <View style={{ paddingVertical: 10, paddingHorizontal: 25 }}>
               <View>
                 {selector1.map((item, key) => (
                   <ExpandableComponent

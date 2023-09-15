@@ -1,5 +1,5 @@
-import React, { useEffect, useState,useRef } from "react";
-import { View, Text,TouchableOpacity, StatusBar, StyleSheet, PermissionsAndroid, Platform } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import { View, Text, TouchableOpacity, StatusBar, StyleSheet, PermissionsAndroid, Platform } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Location from "../../../assets/Svg/location.svg";
 import styles from "./style";
@@ -16,11 +16,11 @@ import { showMessage } from "react-native-flash-message";
 import NetInfo from "@react-native-community/netinfo";
 
 const ChangeAddress = () => {
-  const ref=useRef()
+  const ref = useRef()
   const navigation = useNavigation()
-  const [add1,setAdd1]=useState('')
-  const [add2,setAdd2]=useState('')
-  const [add3,setAdd3]=useState('')
+  const [add1, setAdd1] = useState('')
+  const [add2, setAdd2] = useState('')
+  const [add3, setAdd3] = useState('')
   const [position, setPosition] = useState();
   // {
   //   latitude: 22.7196,
@@ -38,7 +38,8 @@ const ChangeAddress = () => {
   //     }
   //   });
   // },[])
-  useEffect(() => {
+  useEffect(() => handleLocation2(), []);
+  const handleLocation2 = () => {
     Geolocation.getCurrentPosition((pos) => {
       const crd = pos.coords;
       setPosition({
@@ -48,23 +49,23 @@ const ChangeAddress = () => {
         longitudeDelta: 0.0421,
       });
     })
-  }, []);
+  }
 
 
-  
+
   Geocoder.from(position)
-  .then(json => {
-    var location = json.results[0].address_components[1].long_name
-    var location1 = json.results[0].address_components[2].long_name
-    var location2 = json.results[0].address_components[3].long_name
-    setAdd1(location)
-    setAdd2(location1)
-    setAdd3(location2)
-  })
-  .catch(error => console.warn(error));
+    .then(json => {
+      var location = json.results[0].address_components[1].long_name
+      var location1 = json.results[0].address_components[2].long_name
+      var location2 = json.results[0].address_components[3].long_name
+      setAdd1(location)
+      setAdd2(location1)
+      setAdd3(location2)
+    })
+    .catch(error => console.warn(error));
 
   const getCurrentLocation = () => {
-    if (Platform.OS=='android') {
+    if (Platform.OS == 'android') {
       RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
         interval: 10000,
         fastInterval: 5000,
@@ -84,9 +85,9 @@ const ChangeAddress = () => {
             longitudeDelta: 0.0421,
           });
         })
-        })
+      })
         .catch((err) => {
-        }); 
+        });
     } else {
       Geolocation.getCurrentPosition((pos) => {
         const crd = pos.coords;
@@ -104,65 +105,65 @@ const ChangeAddress = () => {
         });
       })
     }
-    
+
   }
-const handleLocation=()=>{
- 
-    AsyncStorage.setItem(Storage.lat,JSON.stringify(position.latitude))
-    AsyncStorage.setItem(Storage.long,JSON.stringify(position.longitude))
+  const handleLocation = () => {
+
+    AsyncStorage.setItem(Storage.lat, JSON.stringify(position.latitude))
+    AsyncStorage.setItem(Storage.long, JSON.stringify(position.longitude))
     navigation.reset({
       index: 0,
       routes: [{ name: "Main" }],
-  })
-}
+    })
+  }
 
-   return (
+  return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-     
-          <View style={{
-              flexDirection:'row',
-              height:40,
-              alignItems:'center',
-              paddingHorizontal:10
-              }}>
-            <TouchableOpacity style={{paddingRight:15,paddingVertical:4}} onPress={()=>navigation.goBack()}>
-            <Back/>
-            </TouchableOpacity>
-            <Text style={{marginLeft:10,fontFamily:'Montserrat-SemiBold',fontSize:18}}>Choose delivery location</Text>
-          </View>
-        <View style={{height:'75%'}}>
-          <View
-            style={[
+
+      <View style={{
+        flexDirection: 'row',
+        height: 40,
+        alignItems: 'center',
+        paddingHorizontal: 10
+      }}>
+        <TouchableOpacity style={{ paddingRight: 15, paddingVertical: 4 }} onPress={() => navigation.goBack()}>
+          <Back />
+        </TouchableOpacity>
+        <Text style={{ marginLeft: 10, fontFamily: 'Montserrat-SemiBold', fontSize: 18 }}>Choose delivery location</Text>
+      </View>
+      <View style={{ height: '75%' }}>
+        <View
+          style={[
             {
               top: '45.5%',
               // left: '50%',
               zIndex: 1,
-              alignItems:'center'
+              alignItems: 'center'
             }]}>
-            <Location width={30} height={30} />
-          </View>
-          <MapView
-            ref={ref}
-            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-            style={StyleSheet.absoluteFillObject}
-            initialRegion={position}
-            onRegionChangeComplete={(val) => setPosition({
-              latitude: val.latitude,
-              longitude: val.longitude,
-              latitudeDelta: 0.0421,
-              longitudeDelta: 0.0421,
-            })}
-            showsUserLocation={true}
-            followsUserLocation={position}
-            onPress={(val) => setPosition({
-              latitude: val.nativeEvent.coordinate.latitude,
-              longitude: val.nativeEvent.coordinate.longitude,
-              latitudeDelta: 0.0421,
-              longitudeDelta: 0.0421,
-            })}
-          >
+          <Location width={30} height={30} />
+        </View>
+        <MapView
+          ref={ref}
+          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+          style={StyleSheet.absoluteFillObject}
+          initialRegion={position}
+          onRegionChangeComplete={(val) => setPosition({
+            latitude: val.latitude,
+            longitude: val.longitude,
+            latitudeDelta: 0.0421,
+            longitudeDelta: 0.0421,
+          })}
+          showsUserLocation={true}
+          followsUserLocation={position}
+          onPress={(val) => setPosition({
+            latitude: val.nativeEvent.coordinate.latitude,
+            longitude: val.nativeEvent.coordinate.longitude,
+            latitudeDelta: 0.0421,
+            longitudeDelta: 0.0421,
+          })}
+        >
 
-            {/* <Marker 
+          {/* <Marker 
                     draggable={false} 
                     coordinate={position}
                     onDragEnd={e => {
@@ -175,40 +176,40 @@ const handleLocation=()=>{
                     }}
                     style={{zIndex:3,position:'absolute'}}
                     /> */}
-          </MapView>
+        </MapView>
 
+      </View>
+      <View style={{ alignItems: 'center', marginTop: -30, }}>
+        <TouchableOpacity onPress={() => getCurrentLocation()}
+          style={styles.use}>
+          <Gps />
+          <Text style={styles.current}>Use Current Location</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ height: '25%' }}>
+        <View style={{
+          marginLeft: 3,
+          marginTop: 20,
+          flexDirection: 'row',
+          paddingHorizontal: 5,
+          backgroundColor: '#fff',
+          alignItems: 'center'
+        }}>
+          <Location />
+          <View style={{ marginLeft: 10 }}>
+            <Text style={{ fontFamily: 'Montserrat-Bold', fontSize: 16, color: '#000' }}>{`${add1}`}</Text>
+            <Text style={{ fontFamily: 'Montserrat-Medium', fontSize: 12, color: '#000' }}>{`${add2} ${add3}`}</Text>
+          </View>
         </View>
-        <View style={{ alignItems: 'center', marginTop: -30, }}>
-          <TouchableOpacity onPress={()=>getCurrentLocation()}
-            style={styles.use}>
-            <Gps />
-            <Text style={styles.current}>Use Current Location</Text>
+        <View style={{ paddingHorizontal: 15, marginBottom: 0 }}>
+          <TouchableOpacity
+            onPress={() => handleLocation()}
+            style={styles.btns}>
+            <Text style={styles.pro}>{`Confirm Location`}</Text>
           </TouchableOpacity>
         </View>
-       
-     <View style={{height:'25%'}}>
-            <View style={{ 
-                marginLeft: 3,
-                marginTop:20,
-                flexDirection:'row' ,
-                paddingHorizontal:5,
-                backgroundColor:'#fff',
-                alignItems:'center'
-                }}>
-                <Location/>
-                <View style={{marginLeft:10}}>
-                <Text style={{fontFamily:'Montserrat-Bold',fontSize:16,color:'#000'}}>{`${add1}`}</Text>
-                <Text style={{fontFamily:'Montserrat-Medium',fontSize:12,color:'#000'}}>{`${add2} ${add3}`}</Text>
-                </View>
-              </View>
-              <View style={{ paddingHorizontal: 15,marginBottom:0 }}>
-                      <TouchableOpacity
-                            onPress={()=>handleLocation()}
-                            style={styles.btns}>
-                            <Text style={styles.pro}>{`Confirm Location`}</Text>
-                        </TouchableOpacity>
-               </View>
-     </View>
+      </View>
       <StatusBar barStyle="dark-content" backgroundColor={'#fff'} />
     </View>
   )

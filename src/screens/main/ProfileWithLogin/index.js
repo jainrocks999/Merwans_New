@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,13 +8,15 @@ import {
   ScrollView,
   Alert,
   StatusBar,
+  Linking,
+  Platform
 } from 'react-native';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import styles from './style';
 import BottomTab from '../../../components/BottomTab';
 import Header from '../../../components/Header';
 import Forward from '../../../assets/Svg/forward.svg';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
 import Loader from '../../../components/Loader';
@@ -25,8 +27,7 @@ import Rating from '../../../assets/Svg/rating-rate.svg';
 import Privacy from '../../../assets/Svg/privacy-info.svg';
 import Terms from '../../../assets/Svg/terms-and-conditions.svg';
 import Logout from '../../../assets/Svg/log-out.svg';
-import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import axios from 'axios';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -49,7 +50,10 @@ const Profile = () => {
   //   });
   // },[])
 
-  useEffect(async () => {
+  useEffect(() => {
+    data2()
+  }, []);
+  const data2 = async () => {
     const fname = await AsyncStorage.getItem(Storage.firstname);
     const lname = await AsyncStorage.getItem(Storage.lastname);
     const email = await AsyncStorage.getItem(Storage.email);
@@ -58,8 +62,10 @@ const Profile = () => {
     setLname(lname);
     setEmail(email);
     set_customeer_id(customer_id);
-  }, []);
+  }
+  const appVersion = async url => {
 
+  };
   const logoutUser = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     dispatch({
@@ -98,7 +104,7 @@ const Profile = () => {
         text: 'Cancel',
         style: 'cancel',
       },
-      {text: 'YES', onPress: () => logoutUser()},
+      { text: 'YES', onPress: () => logoutUser() },
     ]);
   };
 
@@ -124,33 +130,61 @@ const Profile = () => {
     });
   };
 
+  const appReview = async () => {
+    // console.log('called')
+    // Linking.openURL('https://play.google.com/store/apps/details?id=com.merwans')
+    try {
+      const response = await axios({
+        method: 'GET',
+        headers: {
+          'content-type': 'multipart/form-data',
+          Accept: 'multipart/form-data',
+        },
+        url: 'https://merwans.co.in/index.php?route=api/version',
+      });
+      if (Platform.OS == 'android') {
+        if (response.data.android_url != '') {
+          Linking.openURL(response.data.android_url);
+        }
+      } else {
+        if (response.data.ios_url != '') {
+          Linking.openURL(response.data.ios_url)
+        }
+      }
+
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {isFetching ? <Loader /> : null}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../../../assets/Icon/bg.png')}>
         <ScrollView stickyHeaderIndices={[0]}>
           <Header
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           />
-          <View style={{paddingHorizontal: 5, marginTop: 10}}>
+          <View style={{ paddingHorizontal: 5, marginTop: 10 }}>
             {customer_id ? (
               <View style={styles.view}>
-                <View style={{width: '75%'}}>
+                <View style={{ width: '75%' }}>
                   <Text
                     style={
                       styles.name
                     }>{`${detail?.firstname} ${detail?.lastname}`}</Text>
-                  <Text style={[styles.email, {marginTop: 4}]}>
+                  <Text style={[styles.email, { marginTop: 4 }]}>
                     {detail?.email}
                   </Text>
                 </View>
                 <TouchableOpacity
                   onPress={() => navigation.navigate('MyAccountPage')}
-                  style={{height: 59, width: 59}}>
+                  style={{ height: 59, width: 59 }}>
                   <Image
-                    style={{height: 58, width: 58}}
+                    style={{ height: 58, width: 58 }}
                     source={require('../../../assets/Logo/profile.png')}
                   />
                 </TouchableOpacity>
@@ -159,7 +193,7 @@ const Profile = () => {
             {customer_id ? (
               <View style={styles.cont}>
                 <Text style={styles.food}>Food Orders</Text>
-                <View style={{marginTop: 0}}>
+                <View style={{ marginTop: 0 }}>
                   <TouchableOpacity
                     onPress={() => manageOrder()}
                     style={[styles.card1]}>
@@ -170,7 +204,7 @@ const Profile = () => {
                       </View>
                       <Text style={styles.title}>{'Your Orders'}</Text>
                     </View>
-                    <View style={{marginRight: 0}}>
+                    <View style={{ marginRight: 0 }}>
                       <Forward />
                     </View>
                   </TouchableOpacity>
@@ -188,7 +222,7 @@ const Profile = () => {
                       </View>
                       <Text style={styles.title}>{'Address Book'}</Text>
                     </View>
-                    <View style={{marginRight: 0}}>
+                    <View style={{ marginRight: 0 }}>
                       <Forward />
                     </View>
                   </TouchableOpacity>
@@ -197,7 +231,7 @@ const Profile = () => {
             ) : null}
             <View style={styles.cont}>
               <Text style={styles.food}>More</Text>
-              <View style={{marginTop: 0}}>
+              <View style={{ marginTop: 0 }}>
                 <TouchableOpacity
                   onPress={() => about()}
                   style={[styles.card1]}>
@@ -208,20 +242,20 @@ const Profile = () => {
                     </View>
                     <Text style={styles.title}>{'About'}</Text>
                   </View>
-                  <View style={{marginRight: 0}}>
+                  <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.card1]}>
+                <TouchableOpacity onPress={() => appReview()} style={[styles.card1]}>
                   <View style={styles.main}>
                     <View style={styles.round}>
                       <Rating />
                       {/* <Image source={require('../../../assets/Icon/rating1.png')} /> */}
                     </View>
-                    <Text style={styles.title}>{'Rate Us on Play store'}</Text>
+                    <Text style={styles.title}>{Platform.OS === 'android' ? 'Rate Us' : 'Rate Us'}</Text>
                   </View>
-                  <View style={{marginRight: 0}}>
+                  <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
                 </TouchableOpacity>
@@ -236,7 +270,7 @@ const Profile = () => {
                     </View>
                     <Text style={styles.title}>{'Privacy Policy'}</Text>
                   </View>
-                  <View style={{marginRight: 0}}>
+                  <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
                 </TouchableOpacity>
@@ -249,7 +283,7 @@ const Profile = () => {
                     </View>
                     <Text style={styles.title}>{'Terms & Conditions'}</Text>
                   </View>
-                  <View style={{marginRight: 0}}>
+                  <View style={{ marginRight: 0 }}>
                     <Forward />
                   </View>
                 </TouchableOpacity>
@@ -265,17 +299,17 @@ const Profile = () => {
                       </View>
                       <Text style={styles.title}>{'Logout'}</Text>
                     </View>
-                    <View style={{marginRight: 0}}>
+                    <View style={{ marginRight: 0 }}>
                       <Forward />
                     </View>
                   </TouchableOpacity>
                 ) : null}
               </View>
             </View>
-            <View style={{height: 120}} />
+            <View style={{ height: 120 }} />
           </View>
         </ScrollView>
-        <View style={{bottom: 0, left: 0, right: 0, position: 'absolute'}}>
+        <View style={{ bottom: 0, left: 0, right: 0, position: 'absolute' }}>
           <BottomTab home={false} search={false} cart={false} profile={true} />
         </View>
       </ImageBackground>

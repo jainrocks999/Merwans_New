@@ -1,4 +1,4 @@
-import {takeEvery, put, call, take} from 'redux-saga/effects';
+import { takeEvery, put, call, take } from 'redux-saga/effects';
 import Api from '../Api';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,7 +25,7 @@ function* doLogin(action) {
       yield AsyncStorage.setItem(Storage.telephone, response.telephone);
       action.navigation.reset({
         index: 0,
-        routes: [{name: 'Main'}],
+        routes: [{ name: 'Main' }],
       });
     } else {
       Toast.show(response.message);
@@ -65,7 +65,7 @@ function* doRegister(action) {
       yield AsyncStorage.setItem(Storage.telephone, response.telephone);
       action.navigation.reset({
         index: 0,
-        routes: [{name: 'Main'}],
+        routes: [{ name: 'Main' }],
       });
     } else {
       Toast.show(response.message);
@@ -97,7 +97,7 @@ function* logout(action) {
       });
       action.navigation.reset({
         index: 0,
-        routes: [{name: 'Login'}],
+        routes: [{ name: 'Login' }],
       });
     } else {
       Toast.show(response.message);
@@ -170,7 +170,7 @@ function* addressList(action) {
       // Toast.show(response.message);
       if (action.from == 'carts') {
       } else {
-        action.navigation.navigate('MyAddress', {from: action.from});
+        action.navigation.navigate('MyAddress', { from: action.from });
       }
     } else {
       // Toast.show(response.message);
@@ -312,7 +312,7 @@ function* categoryList(action) {
 }
 
 function* getMenu(action) {
-  console.log('this is working fine', action.store_id);
+
   try {
     const data = new FormData();
     data.append('store_id', action.store_id);

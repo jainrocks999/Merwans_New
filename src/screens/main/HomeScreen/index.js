@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import BottomTab from '../../../components/BottomTab';
-import {useNavigation, DrawerActions} from '@react-navigation/native';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import styles from './style';
 import Header from '../../../components/Header';
 import Arrow from '../../../assets/Svg/arrow-forward.svg';
@@ -19,24 +19,23 @@ import Arrow2 from '../../../assets/Svg/arrow2.svg';
 import Modal from 'react-native-modal';
 import Arro from '../../../assets/Svg/arro';
 import RNPickerSelect from 'react-native-picker-select';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
 import Toast from 'react-native-simple-toast';
 import Loader from '../../../components/Loader';
-import {ScrollView} from 'react-native-gesture-handler';
-import {FlatListSlider} from 'react-native-flatlist-slider';
+import { ScrollView } from 'react-native-gesture-handler';
+import { FlatListSlider } from 'react-native-flatlist-slider';
 import Banner from '../../../components/Banner';
 import axios from 'axios';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
-const HomeScreen = ({route}) => {
+const HomeScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const selector = useSelector(state => state.Auth.Store);
   const selector1 = useSelector(state => state.Auth.Home);
-  console.log('this is selector', selector1);
   const isFetching = useSelector(state => state.Auth.isFetching);
   const BannerWidth = Dimensions.get('window').width;
   const BannerWidth1 = Dimensions.get('window').width / 3;
@@ -62,10 +61,11 @@ const HomeScreen = ({route}) => {
   const iddd = async () => {
     let id = await AsyncStorage.getItem(Storage.store_id);
     setStroreId(id);
-    console.log('thjsi sissi id.......', id);
+
   };
 
-  useEffect(async () => {
+  useEffect(() => { dataa() }, []);
+  const dataa = async () => {
     const data = await AsyncStorage.getItem(Storage.location);
     data == null ? setVisible(true) : setVisible(false);
     setState(data);
@@ -96,9 +96,10 @@ const HomeScreen = ({route}) => {
         AsyncStorage.setItem('new_token', response.data.api_token);
       } else {
       }
-    } catch (error) {}
-  }, []);
-  useEffect(async () => {
+    } catch (error) { }
+  }
+  useEffect(() => { data2() }, []);
+  const data2 = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
     const pageKey = await AsyncStorage.getItem('pageKey');
     const store_id = await AsyncStorage.getItem(Storage.store_id);
@@ -128,7 +129,7 @@ const HomeScreen = ({route}) => {
       customer_id: customer_id,
     });
     navigation.navigate(pageKey);
-  }, []);
+  }
   const handleLocation = async () => {
     const store_id = await AsyncStorage.getItem(Storage.store_id);
     const customer_id = await AsyncStorage.getItem(Storage.customer_id);
@@ -264,12 +265,12 @@ const HomeScreen = ({route}) => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {isFetching ? <Loader /> : null}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         stickyHeaderIndices={[0]}
-        style={{flex: 1}}>
+        style={{ flex: 1 }}>
         <Header
           location={location}
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
@@ -287,8 +288,8 @@ const HomeScreen = ({route}) => {
               data={selector1.bannerData}
               width={BannerWidth}
               height={BannerHeight}
-              contentContainerStyle={{paddingHorizontal: 0}}
-              indicatorContainerStyle={{position: 'absolute', bottom: 5}}
+              contentContainerStyle={{ paddingHorizontal: 0 }}
+              indicatorContainerStyle={{ position: 'absolute', bottom: 5 }}
               indicatorActiveColor={'#ED1B1A'}
               indicatorInActiveColor={'#737373'}
               loop={false}
@@ -304,13 +305,13 @@ const HomeScreen = ({route}) => {
             <View style={styles.specialView}>
               <Text style={styles.merwans}>Merwans Special</Text>
             </View>
-            <View style={{paddingHorizontal: 10, marginBottom: 25}}>
+            <View style={{ paddingHorizontal: 10, marginBottom: 25 }}>
               <FlatListSlider
                 data={selector1.specialProducts}
                 width={BannerWidth1}
                 height={BannerHeight}
-                contentContainerStyle={{paddingHorizontal: 0}}
-                indicatorContainerStyle={{position: 'absolute', bottom: -15}}
+                contentContainerStyle={{ paddingHorizontal: 0 }}
+                indicatorContainerStyle={{ position: 'absolute', bottom: -15 }}
                 indicatorActiveColor={'#ED1B1A'}
                 indicatorInActiveColor={'#737373'}
                 component={<Banner />}
@@ -329,11 +330,11 @@ const HomeScreen = ({route}) => {
               <Text style={styles.ready}>Ready To Deliver</Text>
             </View>
 
-            <View style={{height: 370}} />
+            <View style={{ height: 370 }} />
             <View>
               <Image source={require('../../../assets/Icon/badam.png')} />
             </View>
-            <View style={{paddingHorizontal: 12, marginTop: -449}}>
+            <View style={{ paddingHorizontal: 12, marginTop: -449 }}>
               <View style={styles.row}>
                 <TouchableOpacity
                   onPress={() =>
@@ -344,7 +345,7 @@ const HomeScreen = ({route}) => {
                     style={styles.image}
                     source={
                       selector1.deliverCategory[0].image
-                        ? {uri: selector1.deliverCategory[0].image}
+                        ? { uri: selector1.deliverCategory[0].image }
                         : require('../../../assets/Logo/rtd1.png')
                     }
                   />
@@ -367,7 +368,7 @@ const HomeScreen = ({route}) => {
                     style={styles.image}
                     source={
                       selector1.deliverCategory[1].image
-                        ? {uri: selector1.deliverCategory[1].image}
+                        ? { uri: selector1.deliverCategory[1].image }
                         : require('../../../assets/Logo/rtd1.png')
                     }
                   />
@@ -382,7 +383,7 @@ const HomeScreen = ({route}) => {
                   </Text>
                 </TouchableOpacity>
               </View>
-              <View style={[styles.row, {marginTop: 12}]}>
+              <View style={[styles.row, { marginTop: 12 }]}>
                 <TouchableOpacity
                   onPress={() =>
                     manageList(selector1.deliverCategory[2].category_id)
@@ -392,7 +393,7 @@ const HomeScreen = ({route}) => {
                     style={styles.image}
                     source={
                       selector1.deliverCategory[2].image
-                        ? {uri: selector1.deliverCategory[2].image}
+                        ? { uri: selector1.deliverCategory[2].image }
                         : require('../../../assets/Logo/rtd1.png')
                     }
                   />
@@ -415,7 +416,7 @@ const HomeScreen = ({route}) => {
                     style={styles.image}
                     source={
                       selector1.deliverCategory[3].image
-                        ? {uri: selector1.deliverCategory[3].image}
+                        ? { uri: selector1.deliverCategory[3].image }
                         : require('../../../assets/Logo/rtd1.png')
                     }
                   />
@@ -439,7 +440,7 @@ const HomeScreen = ({route}) => {
             marginTop: selector1.category == true ? 40 : 0,
           }}>
           {selector1.specialCategory == true &&
-          selector1.specialCategoryData[0].products ? (
+            selector1.specialCategoryData[0].products ? (
             <View style={styles.cont}>
               <Text style={styles.cat}>
                 {selector1.specialCategoryData[0].name}
@@ -455,8 +456,8 @@ const HomeScreen = ({route}) => {
             </View>
           ) : null}
           {selector1.specialCategory == true &&
-          selector1.specialCategoryData[0].products ? (
-            <View style={[styles.row1, {marginBottom: 30}]}>
+            selector1.specialCategoryData[0].products ? (
+            <View style={[styles.row1, { marginBottom: 30 }]}>
               <TouchableOpacity
                 onPress={() =>
                   manageListIem(
@@ -470,9 +471,9 @@ const HomeScreen = ({route}) => {
                   source={
                     selector1.specialCategoryData[0].products[0].image
                       ? {
-                          uri: selector1.specialCategoryData[0].products[0]
-                            .image,
-                        }
+                        uri: selector1.specialCategoryData[0].products[0]
+                          .image,
+                      }
                       : require('../../../assets/Logo/cake-box.png')
                   }
                 />
@@ -503,9 +504,9 @@ const HomeScreen = ({route}) => {
                   source={
                     selector1.specialCategoryData[0].products[1].image
                       ? {
-                          uri: selector1.specialCategoryData[0].products[1]
-                            .image,
-                        }
+                        uri: selector1.specialCategoryData[0].products[1]
+                          .image,
+                      }
                       : require('../../../assets/Logo/cake-box.png')
                   }
                 />
@@ -530,13 +531,13 @@ const HomeScreen = ({route}) => {
               <View style={styles.trending1}>
                 <Text style={styles.trending2}>Trending Now</Text>
               </View>
-              <View style={{marginTop: 20}}>
+              <View style={{ marginTop: 20 }}>
                 <FlatList
                   data={selector1.trendingProducts}
                   ref={flatListRef}
                   horizontal={true}
                   showsHorizontalScrollIndicator={false}
-                  renderItem={({item}) => {
+                  renderItem={({ item }) => {
                     return (
                       <TouchableOpacity
                         onPress={() => manageTranding(item)}
@@ -544,10 +545,10 @@ const HomeScreen = ({route}) => {
                           marginHorizontal: 8,
                         }}>
                         <Image
-                          style={{width: 133, height: 125}}
+                          style={{ width: 133, height: 125 }}
                           source={
                             item.image
-                              ? {uri: item.image}
+                              ? { uri: item.image }
                               : require('../../../assets/Logo/samosa.png')
                           }
                         />
@@ -562,12 +563,12 @@ const HomeScreen = ({route}) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => nextPress()}
-                    style={{marginLeft: 12}}>
+                    style={{ marginLeft: 12 }}>
                     <Arrow2 height={25} width={25} />
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{height: 30}} />
+              <View style={{ height: 30 }} />
             </View>
           ) : null}
         </View>
@@ -583,8 +584,8 @@ const HomeScreen = ({route}) => {
               {'WELCOME TO MERWANS CONFECTIONERS PVT. LTD.'}
             </Text>
           </View>
-          <View style={{borderWidth: 0.5, borderColor: '#D9D9D9'}} />
-          <View style={{marginTop: 15, paddingHorizontal: 10}}>
+          <View style={{ borderWidth: 0.5, borderColor: '#D9D9D9' }} />
+          <View style={{ marginTop: 15, paddingHorizontal: 10 }}>
             <Text style={styles.select}>Select Store To Start Shopping</Text>
             <View style={styles.main1}>
               <View style={styles.container}>
@@ -616,20 +617,20 @@ const HomeScreen = ({route}) => {
                   }}
                   value={state == null || state == 0 ? '' : state}
                   useNativeAndroidPickerStyle={false}
-                  placeholder={{label: 'Select Store', value: ''}}
+                  placeholder={{ label: 'Select Store', value: '' }}
                 />
               </View>
               <TouchableOpacity
                 onPress={() => handleLocation()}
                 style={styles.go}>
                 <Text style={styles.text}>Go</Text>
-                <View style={{marginTop: 4, marginLeft: 6}}>
+                <View style={{ marginTop: 4, marginLeft: 6 }}>
                   <Arro />
                 </View>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{height: 15}} />
+          <View style={{ height: 15 }} />
         </View>
       </Modal>
       <StatusBar barStyle="light-content" backgroundColor={'#232323'} />

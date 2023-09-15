@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity,StatusBar } from "react-native";
+import { View, Text, Image, ImageBackground, TouchableOpacity, StatusBar } from "react-native";
 import styles from './style';
-import { useNavigation,StackActions } from "@react-navigation/native";
+import { useNavigation, StackActions } from "@react-navigation/native";
 import Back from "../../../assets/Svg/back1.svg";
 import Edit from '../../../assets/Svg/edit.svg';
 import List from "../../../assets/Svg/check-list.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Storage from "../../../components/AsyncStorage";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import NetInfo from "@react-native-community/netinfo";
 import { showMessage } from "react-native-flash-message";
 import Loader from '../../../components/Loader'
@@ -17,9 +17,9 @@ const MyAccountPage = () => {
     const [lname, setLname] = useState('')
     const [email, setEmail] = useState('')
     const [telephone, setTelephone] = useState('')
-    const detail=useSelector(state=>state.Auth.UserDetail)
-    const isFetching=useSelector(state=>state.Auth.isFetching)
-    const dispatch=useDispatch()
+    const detail = useSelector(state => state.Auth.UserDetail)
+    const isFetching = useSelector(state => state.Auth.isFetching)
+    const dispatch = useDispatch()
     // useEffect(() => {
     //     NetInfo.addEventListener(state => {
     //       if(!state.isConnected){
@@ -31,7 +31,8 @@ const MyAccountPage = () => {
     //     });
     //   },[])
 
-    useEffect(async () => {
+    useEffect(() => userDetail(), [])
+    const userDetail = async () => {
         const fname = await AsyncStorage.getItem(Storage.firstname)
         const lname = await AsyncStorage.getItem(Storage.lastname)
         const email = await AsyncStorage.getItem(Storage.email)
@@ -46,28 +47,28 @@ const MyAccountPage = () => {
             type: 'User_Detail_Request',
             url: `customer/getDetail&customer_id=${customer_id}`,
         });
-    }, [])
+    }
 
     const manageOrder = async () => {
         const customer_id = await AsyncStorage.getItem(Storage.customer_id)
         dispatch({
-          type: 'Order_List_Request',
-          url: 'apiorder',
-          customer_id: customer_id,
-          route:'Account',
-          navigation: navigation
+            type: 'Order_List_Request',
+            url: 'apiorder',
+            customer_id: customer_id,
+            route: 'Account',
+            navigation: navigation
         });
-      }
+    }
 
     return (
         <View style={{ flex: 1 }}>
-            {isFetching?<Loader/>:null}
+            {isFetching ? <Loader /> : null}
             <ImageBackground style={{ padding: 8 }}
                 source={require('../../../assets/Icon/bg1.png')}>
                 <TouchableOpacity style={styles.arrow}
                     onPress={() => navigation.navigate('ProfileWithLogin')}
-                    // onPress={()=>navigation.dispatch(StackActions.push('ProfileWithLogin'))}
-                    >
+                // onPress={()=>navigation.dispatch(StackActions.push('ProfileWithLogin'))}
+                >
                     <Back />
                 </TouchableOpacity>
                 <View>
@@ -99,13 +100,13 @@ const MyAccountPage = () => {
                             telephone: detail.telephone
                         })}
                         style={styles.button}>
-                        <Edit height={20}/>
+                        <Edit height={20} />
                         <Text
                             style={styles.text}>Edit Profile</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <StatusBar backgroundColor={'#fff'} barStyle='dark-content'/>
+            <StatusBar backgroundColor={'#fff'} barStyle='dark-content' />
         </View>
     )
 }

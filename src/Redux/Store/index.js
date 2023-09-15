@@ -1,4 +1,4 @@
-import { createStore,applyMiddleware} from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import logger from 'redux-logger';
 import Reducer from '../Reducer';
@@ -7,8 +7,8 @@ import itemSaga from '../Saga/List'
 
 const sagamiddleware = createSagaMiddleware()
 
- const store=createStore(Reducer,applyMiddleware(sagamiddleware,logger))
+const store = createStore(Reducer, applyMiddleware(sagamiddleware))
 
-  sagamiddleware.run(authSaga)
-  sagamiddleware.run(itemSaga)
-    export default store;
+sagamiddleware.run(authSaga)
+sagamiddleware.run(itemSaga)
+export default store;

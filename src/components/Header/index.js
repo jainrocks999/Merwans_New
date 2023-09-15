@@ -22,42 +22,44 @@ const Header = ({ location, onPress, }) => {
   const [lat, setLat] = useState()
   const [long, setLong] = useState()
   const [position, setPosition] = useState({
-    latitude: 19.1733,
-    longitude: 72.8360,
-    latitudeDelta: 0.001,
-    longitudeDelta: 0.001,
+    latitude: '',//19.1733,
+    longitude: '',//72.8360,
+    latitudeDelta: '',// 0.001,
+    longitudeDelta: '' //0.001,
   });
 
-  useEffect(async () => {
+  useEffect(() => setLocationl(), [])
+  const setLocationl = async () => {
     const locations = await AsyncStorage.getItem(Storage.location)
     const lat = await AsyncStorage.getItem(Storage.lat)
     const long = await AsyncStorage.getItem(Storage.long)
     setLocation(locations)
     setLat(lat)
     setLong(long)
-  }, [])
+  }
 
   const manageList = async () => {
     const customer_id = await AsyncStorage.getItem(Storage.customer_id)
     const store_id = await AsyncStorage.getItem(Storage.store_id)
-   if(customer_id){
-    dispatch({
-      type: 'Wish_List_Request',
-      url: 'apiproduct/wishlist',
-      customer_id: customer_id,
-      store_id:store_id,
-      navigation: navigation
-    });
-  }
-  else{
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-  })
-  }
+    if (customer_id) {
+      dispatch({
+        type: 'Wish_List_Request',
+        url: 'apiproduct/wishlist',
+        customer_id: customer_id,
+        store_id: store_id,
+        navigation: navigation
+      });
+    }
+    else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      })
+    }
   }
 
-  useEffect(() => {
+  useEffect(() => manageLocation(), []);
+  const manageLocation = () => {
     Geolocation.getCurrentPosition((pos) => {
       const crd = pos.coords;
       setPosition({
@@ -79,7 +81,7 @@ const Header = ({ location, onPress, }) => {
           .catch(error => console.warn(error));
       }
       else {
-        Geocoder.from(crd.latitude,crd.longitude)
+        Geocoder.from(crd.latitude, crd.longitude)
           .then(json => {
             var location = json.results[0].address_components[1].long_name
             var location1 = json.results[0].address_components[2].long_name
@@ -91,7 +93,7 @@ const Header = ({ location, onPress, }) => {
           .catch(error => console.warn(error));
       }
     })
-  }, []);
+  }
   if (lat && long) {
     Geocoder.from(lat, long)
       .then(json => {
@@ -141,10 +143,10 @@ const Header = ({ location, onPress, }) => {
                   color: '#fff',
                   marginLeft: 10,
                   fontSize: 12
-                }}>{'Your Location'}</Text>}
+                }}>{'Select Location'}</Text>}
             {add1 ? null : <Image style={{ tintColor: '#fff', marginLeft: 15, marginTop: 2 }}
               source={require('../../assets/Icon/down.png')} />}
-          </TouchableOpacity> 
+          </TouchableOpacity>
         </View>
         <View style={{
           flexDirection: 'row',

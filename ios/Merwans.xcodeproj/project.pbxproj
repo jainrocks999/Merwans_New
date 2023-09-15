@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* MerwansTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MerwansTests.m */; };
-		09135E8E121CB2CBE0FB86CE /* libPods-Merwans.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F03417F3EE40480794C097A7 /* libPods-Merwans.a */; };
-		0E0832A31CF3A0C93D9923A0 /* libPods-Merwans-MerwansTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CE85E097007BF82DB3961C /* libPods-Merwans-MerwansTests.a */; };
+		0B382D7D77ECF3932BD049F0 /* libPods-Merwans.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5268E76C39B1DAD957E1B1DB /* libPods-Merwans.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -18,6 +17,7 @@
 		1847C99A29405A4700ACEE8F /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1847C99729405A4700ACEE8F /* Montserrat-SemiBold.ttf */; };
 		1847C99C29405A5D00ACEE8F /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1847C99B29405A5D00ACEE8F /* Montserrat-Bold.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		DF4797868210BEF44D9C3F9C /* libPods-Merwans-MerwansTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F68989D8BC01C0A95B13137B /* libPods-Merwans-MerwansTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +34,7 @@
 		00E356EE1AD99517003FC87E /* MerwansTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MerwansTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* MerwansTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MerwansTests.m; sourceTree = "<group>"; };
+		07AA2C3B3E51A3BC439FAE3C /* Pods-Merwans.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans.release.xcconfig"; path = "Target Support Files/Pods-Merwans/Pods-Merwans.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Merwans.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Merwans.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Merwans/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Merwans/AppDelegate.m; sourceTree = "<group>"; };
@@ -44,14 +45,13 @@
 		1847C99629405A4700ACEE8F /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Medium.ttf"; path = "../src/assets/Fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
 		1847C99729405A4700ACEE8F /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-SemiBold.ttf"; path = "../src/assets/Fonts/Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 		1847C99B29405A5D00ACEE8F /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Bold.ttf"; path = "../src/assets/Fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
-		573E5E819C810DEE6CA596E4 /* Pods-Merwans-MerwansTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans-MerwansTests.debug.xcconfig"; path = "Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests.debug.xcconfig"; sourceTree = "<group>"; };
+		47C275655B210260AB28E5C2 /* Pods-Merwans-MerwansTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans-MerwansTests.debug.xcconfig"; path = "Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5268E76C39B1DAD957E1B1DB /* libPods-Merwans.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Merwans.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Merwans/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		AEC5FD6AEA75323BA031EFBF /* Pods-Merwans.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans.debug.xcconfig"; path = "Target Support Files/Pods-Merwans/Pods-Merwans.debug.xcconfig"; sourceTree = "<group>"; };
-		B2CE85E097007BF82DB3961C /* libPods-Merwans-MerwansTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Merwans-MerwansTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E1BCFAA3071FF0BF8BF4268C /* Pods-Merwans-MerwansTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans-MerwansTests.release.xcconfig"; path = "Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests.release.xcconfig"; sourceTree = "<group>"; };
-		E8AB44966AA62F75556B23DA /* Pods-Merwans.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans.release.xcconfig"; path = "Target Support Files/Pods-Merwans/Pods-Merwans.release.xcconfig"; sourceTree = "<group>"; };
+		8DD827EAA3247B52A708458F /* Pods-Merwans-MerwansTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans-MerwansTests.release.xcconfig"; path = "Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests.release.xcconfig"; sourceTree = "<group>"; };
+		AE4444402F67446A715FB0DD /* Pods-Merwans.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Merwans.debug.xcconfig"; path = "Target Support Files/Pods-Merwans/Pods-Merwans.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F03417F3EE40480794C097A7 /* libPods-Merwans.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Merwans.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F68989D8BC01C0A95B13137B /* libPods-Merwans-MerwansTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Merwans-MerwansTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E0832A31CF3A0C93D9923A0 /* libPods-Merwans-MerwansTests.a in Frameworks */,
+				DF4797868210BEF44D9C3F9C /* libPods-Merwans-MerwansTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09135E8E121CB2CBE0FB86CE /* libPods-Merwans.a in Frameworks */,
+				0B382D7D77ECF3932BD049F0 /* libPods-Merwans.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,8 +108,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				F03417F3EE40480794C097A7 /* libPods-Merwans.a */,
-				B2CE85E097007BF82DB3961C /* libPods-Merwans-MerwansTests.a */,
+				5268E76C39B1DAD957E1B1DB /* libPods-Merwans.a */,
+				F68989D8BC01C0A95B13137B /* libPods-Merwans-MerwansTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -152,10 +152,10 @@
 		EE700155F9E743258536A6BC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				AEC5FD6AEA75323BA031EFBF /* Pods-Merwans.debug.xcconfig */,
-				E8AB44966AA62F75556B23DA /* Pods-Merwans.release.xcconfig */,
-				573E5E819C810DEE6CA596E4 /* Pods-Merwans-MerwansTests.debug.xcconfig */,
-				E1BCFAA3071FF0BF8BF4268C /* Pods-Merwans-MerwansTests.release.xcconfig */,
+				AE4444402F67446A715FB0DD /* Pods-Merwans.debug.xcconfig */,
+				07AA2C3B3E51A3BC439FAE3C /* Pods-Merwans.release.xcconfig */,
+				47C275655B210260AB28E5C2 /* Pods-Merwans-MerwansTests.debug.xcconfig */,
+				8DD827EAA3247B52A708458F /* Pods-Merwans-MerwansTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -167,12 +167,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "MerwansTests" */;
 			buildPhases = (
-				5CDF56D75675EF443DAF12CB /* [CP] Check Pods Manifest.lock */,
+				88C09049253394B9B5073C80 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				11931E1C3619E177F9592017 /* [CP] Embed Pods Frameworks */,
-				C81905B2E5201A150D998CF3 /* [CP] Copy Pods Resources */,
+				C70434812B3ABACCEB19243F /* [CP] Embed Pods Frameworks */,
+				EA3C5F044C673AD8548C9FB9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -188,14 +188,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Merwans" */;
 			buildPhases = (
-				FF960FA800C8426C36F67813 /* [CP] Check Pods Manifest.lock */,
+				76B4A29AED460EE1C4459418 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				84C9F511D7A360D71A256184 /* [CP] Embed Pods Frameworks */,
-				857522DEFC28F479844A9EF4 /* [CP] Copy Pods Resources */,
+				F2B9D4B9E9CC282862D503F4 /* [CP] Embed Pods Frameworks */,
+				97372807475AA48C53958958 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -280,24 +280,29 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		11931E1C3619E177F9592017 /* [CP] Embed Pods Frameworks */ = {
+		76B4A29AED460EE1C4459418 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Merwans-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5CDF56D75675EF443DAF12CB /* [CP] Check Pods Manifest.lock */ = {
+		88C09049253394B9B5073C80 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -319,24 +324,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		84C9F511D7A360D71A256184 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		857522DEFC28F479844A9EF4 /* [CP] Copy Pods Resources */ = {
+		97372807475AA48C53958958 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -353,7 +341,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C81905B2E5201A150D998CF3 /* [CP] Copy Pods Resources */ = {
+		C70434812B3ABACCEB19243F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EA3C5F044C673AD8548C9FB9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -368,6 +373,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans-MerwansTests/Pods-Merwans-MerwansTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F2B9D4B9E9CC282862D503F4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Merwans/Pods-Merwans-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -387,28 +409,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		FF960FA800C8426C36F67813 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Merwans-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -444,7 +444,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 573E5E819C810DEE6CA596E4 /* Pods-Merwans-MerwansTests.debug.xcconfig */;
+			baseConfigurationReference = 47C275655B210260AB28E5C2 /* Pods-Merwans-MerwansTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -471,7 +471,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E1BCFAA3071FF0BF8BF4268C /* Pods-Merwans-MerwansTests.release.xcconfig */;
+			baseConfigurationReference = 8DD827EAA3247B52A708458F /* Pods-Merwans-MerwansTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -495,18 +495,20 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AEC5FD6AEA75323BA031EFBF /* Pods-Merwans.debug.xcconfig */;
+			baseConfigurationReference = AE4444402F67446A715FB0DD /* Pods-Merwans.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = QRB33QK9W7;
+				DEVELOPMENT_TEAM = MX3P4J4382;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Merwans/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Merwans;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -522,17 +524,19 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E8AB44966AA62F75556B23DA /* Pods-Merwans.release.xcconfig */;
+			baseConfigurationReference = 07AA2C3B3E51A3BC439FAE3C /* Pods-Merwans.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = QRB33QK9W7;
+				DEVELOPMENT_TEAM = MX3P4J4382;
 				INFOPLIST_FILE = Merwans/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Merwans;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

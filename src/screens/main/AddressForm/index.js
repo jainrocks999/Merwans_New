@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,23 +11,23 @@ import {
 } from 'react-native';
 import styles from './style';
 import Multi from '../../../assets/Svg/multip.svg';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
 import Down from '../../../assets/Svg/down.svg';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as yup from 'yup';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../../components/Loader';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import CheckBox from '@react-native-community/checkbox';
 import Geocoder from 'react-native-geocoding';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import { showMessage } from 'react-native-flash-message';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 Geocoder.init('AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw');
 
@@ -45,7 +45,7 @@ const loginValidationSchema = yup.object().shape({
   land: yup.string(),
 });
 
-const AddressForm = ({route}) => {
+const AddressForm = ({ route }) => {
   const [home, setHome] = useState(true);
   const [work, setWork] = useState(false);
   const [hotel, setHotel] = useState(false);
@@ -129,7 +129,7 @@ const AddressForm = ({route}) => {
           },
           url: 'https://merwans.co.in/index.php?route=api/apiorder/addressAdd',
         });
-        console.log('this is address', JSON.stringify(response.data));
+
         if (response.data.status == true) {
           Geocoder.from(values.address1)
             .then(json => {
@@ -184,44 +184,44 @@ const AddressForm = ({route}) => {
       onSubmit={values => validateUser(values)}
       validateOnMount={true}
       validationSchema={loginValidationSchema}>
-      {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
-        <View style={{flex: 1}}>
+      {({ handleChange, handleBlur, handleSubmit, values, touched, errors }) => (
+        <View style={{ flex: 1 }}>
           {isFetching || Fetching ? <Loader /> : null}
           <ImageBackground
-            style={{flex: 1}}
+            style={{ flex: 1 }}
             source={require('../../../assets/Icon/bg.png')}>
             <View style={styles.view1}>
-              <View style={{width: 30}} />
+              <View style={{ width: 30 }} />
               <Text style={styles.enter}>Enter Address Details</Text>
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
-                style={{marginRight: 10}}>
+                style={{ marginRight: 10 }}>
                 <Multi width={20} height={20} />
               </TouchableOpacity>
             </View>
-            <View style={{paddingHorizontal: 6}}>
-              <View style={{marginTop: 10}}>
+            <View style={{ paddingHorizontal: 6 }}>
+              <View style={{ marginTop: 10 }}>
                 <Text style={styles.as}>Save Address As</Text>
               </View>
               <View style={styles.row}>
                 <TouchableOpacity
                   onPress={() => manageHome()}
-                  style={[styles.button, {borderWidth: home ? 1 : 0}]}>
+                  style={[styles.button, { borderWidth: home ? 1 : 0 }]}>
                   <Text style={styles.text}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => manageWork()}
-                  style={[styles.button, {borderWidth: work ? 1 : 0}]}>
+                  style={[styles.button, { borderWidth: work ? 1 : 0 }]}>
                   <Text style={styles.text}>Work</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => manageHotel()}
-                  style={[styles.button, {borderWidth: hotel ? 1 : 0}]}>
+                  style={[styles.button, { borderWidth: hotel ? 1 : 0 }]}>
                   <Text style={styles.text}>Hotel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => manageOther()}
-                  style={[styles.button, {borderWidth: other ? 1 : 0}]}>
+                  style={[styles.button, { borderWidth: other ? 1 : 0 }]}>
                   <Text style={styles.text}>Other</Text>
                 </TouchableOpacity>
               </View>
@@ -230,16 +230,16 @@ const AddressForm = ({route}) => {
                   extraScrollHeight={10}
                   enableOnAndroid={true}
                   keyboardShouldPersistTaps="handled"
-                  contentContainerStyle={{flex: 1}}>
-                  <View style={{paddingHorizontal: 20, paddingBottom: 20}}>
-                    <View style={{marginTop: 15}}>
-                      <View style={{flexDirection: 'row'}}>
+                  contentContainerStyle={{ flex: 1 }}>
+                  <View style={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+                    <View style={{ marginTop: 15 }}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.heading}>Location</Text>
                         <Text style={styles.str}>*</Text>
                       </View>
                       <ScrollView
                         keyboardShouldPersistTaps="handled"
-                        style={{flex: 1}}>
+                        style={{ flex: 1 }}>
                         <GooglePlacesAutocomplete
                           placeholder="Location"
                           fetchDetails={true}
@@ -263,9 +263,7 @@ const AddressForm = ({route}) => {
                             }
                           }}
                           listViewDisplayed={false}
-                          // onPress={(data, details = null) => {
-                          //     console.log(data, details);
-                          //   }}
+
                           query={{
                             key: 'AIzaSyAEAzAu0Pi_HLLURabwR36YY9_aiFsKrsw',
                             language: 'en',
@@ -289,13 +287,13 @@ const AddressForm = ({route}) => {
                               fontFamily: 'Montserrat-Medium',
                               fontSize: 12,
                             },
-                            description: {color: 'black'},
+                            description: { color: 'black' },
                           }}
                         />
                       </ScrollView>
                     </View>
-                    <View style={{marginTop: 16}}>
-                      <View style={{flexDirection: 'row'}}>
+                    <View style={{ marginTop: 16 }}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.heading}>
                           Flat No./Building Name
                         </Text>
@@ -311,8 +309,8 @@ const AddressForm = ({route}) => {
                         />
                       </View>
                     </View>
-                    <View style={{marginTop: 15}}>
-                      <View style={{flexDirection: 'row'}}>
+                    <View style={{ marginTop: 15 }}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.heading}>City</Text>
                         <Text style={styles.str}>*</Text>
                       </View>
@@ -333,8 +331,8 @@ const AddressForm = ({route}) => {
                         <Text style={styles.warn}>{errors.city}</Text>
                       )}
                     </View>
-                    <View style={{marginTop: 10}}>
-                      <View style={{flexDirection: 'row'}}>
+                    <View style={{ marginTop: 10 }}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.heading}>Post Code</Text>
                         <Text style={styles.str}>*</Text>
                       </View>
@@ -353,8 +351,8 @@ const AddressForm = ({route}) => {
                                                 <Text style={styles.warn}>{errors.post}</Text>
                                             )}
                                         </View> */}
-                    <View style={{marginTop: 16}}>
-                      <View style={{flexDirection: 'row'}}>
+                    <View style={{ marginTop: 16 }}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.heading}>Region / State</Text>
                         <Text style={styles.str}>*</Text>
                       </View>
@@ -383,7 +381,7 @@ const AddressForm = ({route}) => {
                           }}
                           value={state}
                           useNativeAndroidPickerStyle={false}
-                          placeholder={{label: 'Select state', value: ''}}
+                          placeholder={{ label: 'Select state', value: '' }}
                           Icon={() => (
                             <View
                               style={{
@@ -401,7 +399,7 @@ const AddressForm = ({route}) => {
                         <Text style={styles.warn}>{errors.states}</Text>
                       )}
                     </View>
-                    <View style={{marginTop: 10}}>
+                    <View style={{ marginTop: 10 }}>
                       <Text style={styles.heading}>
                         Nearby Landmark(Optional)
                       </Text>
@@ -426,7 +424,7 @@ const AddressForm = ({route}) => {
                         disabled={false}
                         value={toggleCheckBox}
                         onValueChange={newValue => setToggleCheckBox(newValue)}
-                        tintColors={{true: '#ED1B1A', false: 'grey'}}
+                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
                         onTintColor="#ED1B1A"
                         onCheckColor="#ED1B1A"
                         boxType="square"
@@ -435,18 +433,18 @@ const AddressForm = ({route}) => {
                           width: Platform.OS == 'android' ? 30 : 17,
                         }}
                       />
-                      <Text style={[styles.as1, {marginLeft: 10}]}>
+                      <Text style={[styles.as1, { marginLeft: 10 }]}>
                         Set as default address
                       </Text>
                     </View>
-                    <View style={{marginTop: 25, alignItems: 'center'}}>
+                    <View style={{ marginTop: 25, alignItems: 'center' }}>
                       <TouchableOpacity
                         onPress={() => handleSubmit()}
                         style={styles.add}>
                         <Text style={styles.save}>Save Address</Text>
                       </TouchableOpacity>
                     </View>
-                    <View style={{height: 130}} />
+                    <View style={{ height: 130 }} />
                   </View>
                 </KeyboardAwareScrollView>
               </ScrollView>
@@ -460,7 +458,7 @@ const AddressForm = ({route}) => {
 };
 export default AddressForm;
 const data = [
-  {label: 'Maharashtra', value: '1'},
-  {label: 'Indore', value: '2'},
-  {label: 'Delhi', value: '3'},
+  { label: 'Maharashtra', value: '1' },
+  { label: 'Indore', value: '2' },
+  { label: 'Delhi', value: '3' },
 ];

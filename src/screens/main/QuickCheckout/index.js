@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useF} from 'react';
+import React, { useState, useEffect, useF } from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ import {
 import Multi from '../../../assets/Svg/multiply.svg';
 import styles from './style';
 import Header from '../../../components/Header';
-import {RadioButton} from 'react-native-paper';
+import { RadioButton } from 'react-native-paper';
 import Fast from '../../../assets/Svg/fast-delivery1.svg';
 import Delivery from '../../../assets/Svg/fast-delivery.svg';
 import Option from '../../../assets/Svg/option.svg';
@@ -29,15 +29,16 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from '../../../components/AsyncStorage';
 import Loader from '../../../components/Loader';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
-import Done from '../../../assets/Svg/Done.svg';
+import Done from '../../../assets/Svg/Done3.svg';
+import Done2 from '../../../assets/Svg/Done2.svg';
 import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-simple-toast';
 import NetInfo from '@react-native-community/netinfo';
-import {showMessage} from 'react-native-flash-message';
+import { showMessage } from 'react-native-flash-message';
 
-const Payment = ({route}) => {
+const Payment = ({ route }) => {
   const navigation = useNavigation();
   // const [dunzo, setDunzo] = useState('checked');
   // const [pick, setPick] = useState();
@@ -639,10 +640,10 @@ const Payment = ({route}) => {
   };
   const version = Platform.OS;
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {isFetching ? <Loader /> : null}
       <ImageBackground
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         source={require('../../../assets/Icon/bg.png')}>
         {data && data.products ? (
           <ScrollView stickyHeaderIndices={[0]}>
@@ -653,17 +654,17 @@ const Payment = ({route}) => {
               <Text style={styles.quick}>Quick Checkout</Text>
             </View>
             {data && data.products.length > 0 ? (
-              <View style={{paddingHorizontal: 5}}>
-                <View style={[styles.ship, {marginTop: 15}]}>
+              <View style={{ paddingHorizontal: 5 }}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <Text style={styles.shipp}>Shipping Method</Text>
-                  <View style={{height: 14}} />
+                  <View style={{ height: 14 }} />
                   {Object.values(selector.shipping_methods).map(
                     (item, index) => {
                       return (
                         <View>
                           <View style={styles.checkV}>
                             <Fast />
-                            <View style={[{marginLeft: 6}]}>
+                            <View style={[{ marginLeft: 6 }]}>
                               {/* <RadioButton
                               value="first"
                               status={index === 0 ? 'checked' : 'unchecked'}
@@ -681,15 +682,15 @@ const Payment = ({route}) => {
                                       Object.values(item.quote)[0].title,
                                     )
                                   }
-                                  style={{margin: 5}}>
-                                  <Done width={26} height={25} />
+                                  style={{ margin: 5 }}>
+                                  {Object.values(item.quote)[0].code === shipingOption ? <Done width={26} height={25} /> : <Done2 width={26} height={25} />}
                                 </TouchableOpacity>
                               ) : (
                                 <RadioButton
                                   value="first"
                                   status={
                                     Object.values(item.quote)[0].code ===
-                                    shipingOption
+                                      shipingOption
                                       ? 'checked'
                                       : 'unchecked'
                                   }
@@ -705,13 +706,12 @@ const Payment = ({route}) => {
                                 />
                               )}
                             </View>
-                            <Text style={styles.dunzo}>{`${
-                              Object.values(item.quote)[0].title
-                            } - ${Object.values(item.quote)[0].text}`}</Text>
+                            <Text style={styles.dunzo}>{`${Object.values(item.quote)[0].title
+                              } - ${Object.values(item.quote)[0].text}`}</Text>
                           </View>
                           {Object.values(item.quote)[0].code ===
                             'pickup.pickup' &&
-                          shipingOption === 'pickup.pickup' ? (
+                            shipingOption === 'pickup.pickup' ? (
                             <View style={styles.view1}>
                               <Text style={styles.time}>{'Pickup Time'}</Text>
                               <View style={styles.drop}>
@@ -760,7 +760,7 @@ const Payment = ({route}) => {
                                     state == null || state == 0 ? '' : state
                                   }
                                   useNativeAndroidPickerStyle={false}
-                                  placeholder={{label: 'Time', value: ''}}
+                                  placeholder={{ label: 'Time', value: '' }}
                                   Icon={() => (
                                     <Image
                                       style={{
@@ -858,10 +858,10 @@ const Payment = ({route}) => {
                   </View> */}
                 </View>
 
-                <View style={[styles.ship, {marginTop: 15}]}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <Text style={styles.pay}>Payment Method</Text>
                   <View style={styles.view2}>
-                    <View style={[{marginLeft: -7}]}>
+                    <View style={[{ marginLeft: -7 }]}>
                       {mcpg == 'checked' ? (
                         <RadioButton
                           value="first"
@@ -873,7 +873,7 @@ const Payment = ({route}) => {
                       ) : version == 'ios' ? (
                         <TouchableOpacity
                           onPress={() => manageMcpg()}
-                          style={{margin: 5}}>
+                          style={{ margin: 5 }}>
                           <Done width={26} height={25} />
                         </TouchableOpacity>
                       ) : (
@@ -889,7 +889,7 @@ const Payment = ({route}) => {
                     </View>
                     <Text style={styles.cc}>{'CCAvenue MCPG'}</Text>
                   </View>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     {/* <View style={[{ marginLeft: -7, marginTop: -7 }]}>
                                     {online == 'checked' ? <RadioButton
                                         value="first"
@@ -912,7 +912,7 @@ const Payment = ({route}) => {
                                             />
                                     }
                                 </View> */}
-                    <View style={{width: '90%', marginLeft: 3}}>
+                    <View style={{ width: '90%', marginLeft: 3 }}>
                       <Option width={'100%'} />
                     </View>
                   </View>
@@ -947,12 +947,12 @@ const Payment = ({route}) => {
                     <View>
                       <Text style={styles.coupon}>Instructions</Text>
                     </View>
-                    <Text style={{marginTop: 8, color: '#000'}}>
+                    <Text style={{ marginTop: 8, color: '#000' }}>
                       {route.params?.instruction}
                     </Text>
                   </View>
                 ) : null}
-                <View style={[styles.ship, {marginTop: 15}]}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <View>
                     <Text style={styles.coupon}>Apply Coupon</Text>
                   </View>
@@ -999,7 +999,7 @@ const Payment = ({route}) => {
                       </Text>
 
                       <TouchableOpacity
-                        style={{marginRight: 10}}
+                        style={{ marginRight: 10 }}
                         onPress={async () => {
                           setInput('');
                           DeleteCoupon('');
@@ -1009,13 +1009,13 @@ const Payment = ({route}) => {
                     </View>
                   )}
                 </View>
-                <View style={[styles.ship, {marginTop: 15}]}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <View>
                     <Text style={styles.order}>Your Order</Text>
-                    <View style={{marginTop: -3}}>
+                    <View style={{ marginTop: -3 }}>
                       <FlatList
                         data={data ? product : []}
-                        renderItem={({item, index}) => (
+                        renderItem={({ item, index }) => (
                           <View
                             style={{
                               borderBottomWidth:
@@ -1023,7 +1023,7 @@ const Payment = ({route}) => {
                               borderColor: '#dae1ed',
                             }}>
                             <View style={styles.border}>
-                              <View style={[styles.color, {width: '75.5%'}]}>
+                              <View style={[styles.color, { width: '75.5%' }]}>
                                 <View
                                   style={{
                                     height: 38,
@@ -1034,12 +1034,12 @@ const Payment = ({route}) => {
                                     <View
                                       style={[
                                         styles.flex,
-                                        {borderColor: '#0FAF33'},
+                                        { borderColor: '#0FAF33' },
                                       ]}>
                                       <View
                                         style={[
                                           styles.line,
-                                          {backgroundColor: '#0FAF33'},
+                                          { backgroundColor: '#0FAF33' },
                                         ]}
                                       />
                                     </View>
@@ -1047,31 +1047,31 @@ const Payment = ({route}) => {
                                     <View
                                       style={[
                                         styles.flex,
-                                        {borderColor: '#ED1B1A'},
+                                        { borderColor: '#ED1B1A' },
                                       ]}>
                                       <View
                                         style={[
                                           styles.line,
-                                          {backgroundColor: '#ED1B1A'},
+                                          { backgroundColor: '#ED1B1A' },
                                         ]}
                                       />
                                     </View>
                                   )}
                                 </View>
-                                <View style={{width: '85%'}}>
-                                  <View style={{flexDirection: 'row'}}>
-                                    <View style={{marginLeft: 12}}>
+                                <View style={{ width: '85%' }}>
+                                  <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ marginLeft: 12 }}>
                                       <Image
                                         style={{
                                           height: 38,
                                           width: 38,
                                           borderRadius: 5,
                                         }}
-                                        source={{uri: item.image}}
+                                        source={{ uri: item.image }}
                                       />
                                     </View>
                                     <View
-                                      style={{marginTop: -1, marginLeft: 2}}>
+                                      style={{ marginTop: -1, marginLeft: 2 }}>
                                       <Text style={styles.data}>
                                         {item.name}
                                       </Text>
@@ -1086,9 +1086,9 @@ const Payment = ({route}) => {
                                       </View>
                                     </View>
                                   </View>
-                                  <View style={{marginLeft: 12, width: '100%'}}>
+                                  <View style={{ marginLeft: 12, width: '100%' }}>
                                     {item.option.length > 0 ? (
-                                      <View style={{marginTop: 2}}>
+                                      <View style={{ marginTop: 2 }}>
                                         <Text
                                           style={
                                             styles.pric
@@ -1096,7 +1096,7 @@ const Payment = ({route}) => {
                                       </View>
                                     ) : null}
                                     {item.option.length > 1 ? (
-                                      <View style={{marginTop: 2}}>
+                                      <View style={{ marginTop: 2 }}>
                                         <Text
                                           style={
                                             styles.pric
@@ -1106,7 +1106,7 @@ const Payment = ({route}) => {
                                   </View>
                                 </View>
                               </View>
-                              <View style={{alignItems: 'center'}}>
+                              <View style={{ alignItems: 'center' }}>
                                 <View style={styles.cont}>
                                   <TouchableOpacity
                                     style={styles.uri}
@@ -1122,23 +1122,23 @@ const Payment = ({route}) => {
                                     //     Number(product[index].quantity).toFixed(0)==''?'':Number(product[index].quantity).toFixed(0)
                                     // }
                                     onChangeText={val =>
-                                      //
-                                      {
-                                        if (val == 0) {
-                                          let newArr = [...product]; // copying the old datas array
-                                          // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
-                                          newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
-                                          setProduct(newArr);
-                                          //console.log('this i value', val);
-                                        }
-                                        {
-                                          let newArr = [...product]; // copying the old datas array
-                                          // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
-                                          newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
-                                          setProduct(newArr);
-                                          updateCartInput(item, val, index);
-                                        }
+                                    //
+                                    {
+                                      if (val == 0) {
+                                        let newArr = [...product]; // copying the old datas array
+                                        // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                        newArr[index].quantity = ''; // replace e.target.value with whatever you want to change it to
+                                        setProduct(newArr);
+                                        //console.log('this i value', val);
                                       }
+                                      {
+                                        let newArr = [...product]; // copying the old datas array
+                                        // a deep copy is not needed as we are overriding the whole object below, and not setting a property of it. this does not mutate the state.
+                                        newArr[index].quantity = val; // replace e.target.value with whatever you want to change it to
+                                        setProduct(newArr);
+                                        updateCartInput(item, val, index);
+                                      }
+                                    }
                                     }
                                     style={{
                                       textAlign: 'center',
@@ -1162,14 +1162,14 @@ const Payment = ({route}) => {
                                 </View>
                               </View>
                             </View>
-                            <View style={{height: 10}} />
+                            <View style={{ height: 10 }} />
                           </View>
                         )}
                       />
                     </View>
                   </View>
                 </View>
-                <View style={[styles.ship, {marginTop: 15}]}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <View>
                     <View style={styles.bill}>
                       <Text style={styles.bll}>Bill Summary</Text>
@@ -1191,7 +1191,7 @@ const Payment = ({route}) => {
                         data={total}
                         keyExtractor={(item, index) => index}
                         scrollEnabled={false}
-                        renderItem={({item, index}) => {
+                        renderItem={({ item, index }) => {
                           return (
                             <View style={styles.row1}>
                               <View style={styles.row2}>
@@ -1221,7 +1221,7 @@ const Payment = ({route}) => {
                     </View>
                   </View>
                 </View>
-                <View style={[styles.ship, {marginTop: 15}]}>
+                <View style={[styles.ship, { marginTop: 15 }]}>
                   <View>
                     <Text style={styles.bll}>Confirm Your Order</Text>
                     <TouchableOpacity
@@ -1236,7 +1236,7 @@ const Payment = ({route}) => {
                         multiline={true}
                       />
                     </TouchableOpacity>
-                    <View style={[styles.view, {marginTop: 10}]}>
+                    <View style={[styles.view, { marginTop: 10 }]}>
                       {/* <Checkbox
                                         value="red"
                                         size="sm"
@@ -1249,7 +1249,7 @@ const Payment = ({route}) => {
                         disabled={false}
                         value={toggleCheckBox}
                         onValueChange={newValue => setToggleCheckBox(newValue)}
-                        tintColors={{true: '#ED1B1A', false: 'grey'}}
+                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
                         onTintColor="#ED1B1A"
                         onCheckColor="#ED1B1A"
                         boxType="square"
@@ -1261,7 +1261,7 @@ const Payment = ({route}) => {
                       <Text
                         style={[
                           styles.check1,
-                          {width: '96%', marginLeft: 10, marginTop: 9},
+                          { width: '96%', marginLeft: 10, marginTop: 9 },
                         ]}>
                         I wish to subscribe to the Merwans Confectioners Pvt.
                         Ltd. newsletter.
@@ -1280,7 +1280,7 @@ const Payment = ({route}) => {
                         disabled={false}
                         value={toggleCheckBox1}
                         onValueChange={newValue => setToggleCheckBox1(newValue)}
-                        tintColors={{true: '#ED1B1A', false: 'grey'}}
+                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
                         onTintColor="#ED1B1A"
                         onCheckColor="#ED1B1A"
                         boxType="square"
@@ -1296,7 +1296,7 @@ const Payment = ({route}) => {
                         <TouchableOpacity onPress={() => Policy()}>
                           <Text style={styles.priv}>Privacy Policy</Text>
                           <View
-                            style={{borderWidth: 0.5, borderColor: '#000'}}
+                            style={{ borderWidth: 0.5, borderColor: '#000' }}
                           />
                         </TouchableOpacity>
                       </View>
@@ -1306,7 +1306,7 @@ const Payment = ({route}) => {
                         disabled={false}
                         value={toggleCheckBox2}
                         onValueChange={newValue => setToggleCheckBox2(newValue)}
-                        tintColors={{true: '#ED1B1A', false: 'grey'}}
+                        tintColors={{ true: '#ED1B1A', false: 'grey' }}
                         onTintColor="#ED1B1A"
                         onCheckColor="#ED1B1A"
                         boxType="square"
@@ -1333,23 +1333,23 @@ const Payment = ({route}) => {
                             {'Terms & Conditions'}
                           </Text>
                           <View
-                            style={{borderWidth: 0.5, borderColor: '#000'}}
+                            style={{ borderWidth: 0.5, borderColor: '#000' }}
                           />
                         </TouchableOpacity>
                       </View>
                     </View>
 
-                    <View style={{paddingHorizontal: 0}}>
+                    <View style={{ paddingHorizontal: 0 }}>
                       <TouchableOpacity
                         onPress={() => confirmOrder()}
                         style={styles.mainBtn}>
                         <Text style={styles.confirm1}>{`Confirm Order`}</Text>
                       </TouchableOpacity>
-                      <View style={{height: 10}} />
+                      <View style={{ height: 10 }} />
                     </View>
                   </View>
                 </View>
-                <View style={{height: 20}} />
+                <View style={{ height: 20 }} />
               </View>
             ) : (
               <View
@@ -1360,16 +1360,16 @@ const Payment = ({route}) => {
                   marginTop: '80%',
                   flexDirection: 'row',
                 }}>
-                <Text style={{textAlign: 'center', fontSize: 18}}>
+                <Text style={{ textAlign: 'center', fontSize: 18 }}>
                   Your cart is Empty!{' '}
                 </Text>
                 <View>
                   <Text
                     onPress={() => navigation.navigate('Home')}
-                    style={{fontSize: 18}}>
+                    style={{ fontSize: 18 }}>
                     Continue Shopping
                   </Text>
-                  <View style={{borderWidth: 0.6}} />
+                  <View style={{ borderWidth: 0.6 }} />
                 </View>
               </View>
             )}
