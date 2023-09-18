@@ -152,7 +152,7 @@ const Splash = () => {
     else if (result === 'blocked') {
       Alert.alert(
         'Merwans needs To access the Location !',
-        `\n Do you want to allow?`,
+        `\nMerwans app needs access to location for updating your location to Merwans team while submitting orders.`,
         [
           {
             text: 'Cancel',

@@ -33,14 +33,8 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Merwans needs access to your location both when in use and always.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Merwans needs continuous access to your location.</string>
-	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
-	<dict/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Merwans needs access to your location while in use.</string>
+	<string>Merwans app needs access to location for updating your location to Merwans team while submitting orders.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-SemiBold.ttf</string>

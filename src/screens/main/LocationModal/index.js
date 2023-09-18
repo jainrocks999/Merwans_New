@@ -51,7 +51,7 @@ const Modal = ({ route }) => {
                 default:
                     Alert.alert(
                         'Merwans needs To access the Location !',
-                        `\n Do you want to allow?`,
+                        `\n Merwans app needs access to location for updating your location to Merwans team while submitting orders.`,
                         [
                             {
                                 text: 'Cancel',
