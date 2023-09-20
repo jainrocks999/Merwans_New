@@ -4,13 +4,14 @@ import Constants from '../Constants';
 export default class Api {
   static fetchDataByPOST = async (url, data) => {
     try {
+      console.log(Constants.MainUrl + url)
       const response = await axios({
         method: 'POST',
         headers: {
           'content-type': 'multipart/form-data',
           Accept: 'multipart/form-data',
         },
-        url: Constants.MainUrl+url,
+        url: Constants.MainUrl + url,
         data,
       });
       return response.data;
@@ -68,5 +69,5 @@ export default class Api {
     }
   };
 
- 
+
 }

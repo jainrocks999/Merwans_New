@@ -28,6 +28,7 @@ import Privacy from '../../../assets/Svg/privacy-info.svg';
 import Terms from '../../../assets/Svg/terms-and-conditions.svg';
 import Logout from '../../../assets/Svg/log-out.svg';
 import axios from 'axios';
+import { watchPosition } from 'react-native-geolocation-service';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -107,6 +108,25 @@ const Profile = () => {
       { text: 'YES', onPress: () => logoutUser() },
     ]);
   };
+  const disableAccount = () => {
+    Alert.alert('CONFIRM', 'All data will be deleted, Are you sure want to delete your account ?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      { text: 'YES', onPress: () => deleteAccout() },
+    ]);
+  };
+  const deleteAccout = () => {
+
+    dispatch({
+      type: 'User_delete_account_request',
+      url: 'customer/disabled',
+      customer_id: customer_id,
+      navigation: navigation,
+    });
+  }
+
 
   const about = () => {
     dispatch({
@@ -179,6 +199,10 @@ const Profile = () => {
                   <Text style={[styles.email, { marginTop: 4 }]}>
                     {detail?.email}
                   </Text>
+                  <TouchableOpacity onPress={() => { disableAccount() }}>
+                    <Text style={{ marginTop: 10, color: 'red', width: 115, fontFamily: 'Montserrat-Medium' }}>Delete Account</Text>
+                    <View style={{ borderBottomWidth: 1, width: 115, borderColor: 'red' /*'#000000'*/, }} />
+                  </TouchableOpacity>
                 </View>
                 <TouchableOpacity
                   onPress={() => navigation.navigate('MyAccountPage')}
@@ -226,6 +250,7 @@ const Profile = () => {
                       <Forward />
                     </View>
                   </TouchableOpacity>
+
                 </View>
               </View>
             ) : null}

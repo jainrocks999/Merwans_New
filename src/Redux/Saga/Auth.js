@@ -1003,6 +1003,44 @@ function* orderStatus(action) {
     });
   }
 }
+function* disableAccount(action) {
+  try {
+    const data = new FormData()
+    data.append('customer_id', action.customer_id)
+    const res = yield call(Api.fetchDataByPOST, action.url, data)
+    console.log('this inot  re', JSON.stringify(res))
+    if (res?.status === true) {
+      yield put({
+        type: 'User_delete_account_success'
+      })
+      yield AsyncStorage.setItem(Storage.customer_id, '');
+      yield AsyncStorage.setItem(Storage.firstname, '');
+      yield AsyncStorage.setItem(Storage.lastname, '');
+      yield AsyncStorage.setItem(Storage.email, '');
+      yield AsyncStorage.setItem(Storage.telephone, '');
+      yield AsyncStorage.setItem(Storage.location, '');
+      Toast.show(res?.msg ? res.msg : 'Something went wrong')
+      action.navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+
+    }
+    else {
+      yield put({
+        type: 'User_delete_account_error'
+      })
+      Toast.show(res?.msg ? res.msg : 'Something went wrong')
+    }
+    //  console.log('cclrrlrrrlrrl')
+  } catch (err) {
+    console.log('this is error', err);
+    yield put({
+      type: 'User_delete_account_error'
+    })
+    Toast.show('Something went wrong')
+  }
+}
 
 export default function* authSaga() {
   yield takeEvery('User_Login_Request', doLogin);
@@ -1038,6 +1076,7 @@ export default function* authSaga() {
   yield takeEvery('Home_Data_Request', homeList);
   yield takeEvery('User_Detail_Request', userDetail);
   yield takeEvery('Order_Status_Request', orderStatus);
+  yield takeEvery('User_delete_account_request', disableAccount)
 }
 // navigation.navigate('Feedback')
 // navigation.navigate('About')
