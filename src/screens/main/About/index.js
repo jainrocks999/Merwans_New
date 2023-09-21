@@ -1,13 +1,12 @@
-import React,{useEffect} from 'react';
-import { View, Text,ImageBackground, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, ImageBackground, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import styles from "./style";
 import Loader from "../../../components/Loader";
 import Back from "../../../assets/Svg/back.svg";
 import HTMLView from 'react-native-htmlview';
-import NetInfo from "@react-native-community/netinfo";
-import { showMessage } from "react-native-flash-message";
+
 
 const About = ({ route }) => {
     const navigation = useNavigation()

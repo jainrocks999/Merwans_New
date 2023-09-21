@@ -1008,7 +1008,6 @@ function* disableAccount(action) {
     const data = new FormData()
     data.append('customer_id', action.customer_id)
     const res = yield call(Api.fetchDataByPOST, action.url, data)
-    console.log('this inot  re', JSON.stringify(res))
     if (res?.status === true) {
       yield put({
         type: 'User_delete_account_success'

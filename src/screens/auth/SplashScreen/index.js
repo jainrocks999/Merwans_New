@@ -29,6 +29,7 @@ const Splash = () => {
   const [iosUrl, setIosUrl] = useState('');
   const dispatch = useDispatch();
   useEffect(() => {
+
     appVersion();
 
   }, []);
@@ -75,6 +76,7 @@ const Splash = () => {
   }
   const appVersion = async url => {
     try {
+
       const response = await axios({
         method: 'GET',
         headers: {
@@ -83,6 +85,7 @@ const Splash = () => {
         },
         url: 'https://merwans.co.in/index.php?route=api/version',
       });
+
       if (Platform.OS == 'android') {
         if (response.data.android_version > 4) {
           setAndroidUrl(response.data.android_url);
@@ -99,8 +102,12 @@ const Splash = () => {
         }
       }
     } catch (error) {
+      console.log(error)
       throw error;
+
+
     }
+    console.log('this is callled')
   };
   const permisssionAndroid = async () => {
 

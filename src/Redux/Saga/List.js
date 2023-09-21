@@ -64,9 +64,9 @@ export default function* itemSaga() {
   //   yield takeEvery('Wish_Remove_Request',removewishlist)
   //   yield takeEvery('Add_Wish_Request',addWish)
   //   yield takeEvery('About_Us_Request',about)
-  yield takeEvery('Privacy_Policy_Request', policy);
-  yield takeEvery('Privacy_Policy_Request1', policy1);
-  yield takeEvery('Term_Condition_Request', term);
+  // yield takeEvery('Privacy_Policy_Request', policy);
+  // yield takeEvery('Privacy_Policy_Request1', policy1);
+  // yield takeEvery('Term_Condition_Request', term);
   //   yield takeEvery('Reset_Pass_Request',resetPass)
   //   yield takeEvery('Change_Pass_Request',changePassword)
   //   yield takeEvery('Add_Lat_Request',addLat)
